@@ -1,0 +1,45 @@
+.j22-world{margin-block:clamp(3rem,7vw,7rem)}
+.j22-world-stage{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:clamp(1.5rem,4vw,4rem);overflow:hidden;padding:clamp(1.5rem,5vw,4.75rem);border-radius:1.5rem;background:radial-gradient(ellipse at 85% 10%,#39424d 0%,transparent 52%),radial-gradient(ellipse at 5% 100%,#0b718e 0%,transparent 54%),#191b1e;color:#f6f2ee}
+.j22-world-mark{display:inline-flex;width:4.2rem;overflow:hidden;border-radius:.65rem;background:#1b2128;margin-bottom:1rem}
+.j22-world-mark img{display:block;width:100%;height:auto}
+.j22-world-copy .eyebrow,.j22-world-caption{color:#bccfe4}
+.j22-world-copy h2,.j22-video-heading h2{font-size:clamp(2.6rem,6vw,5.5rem);line-height:.98;letter-spacing:-.065em;margin:.18em 0 .33em}
+.j22-world-copy h2 em{color:#c8d6e6}
+.j22-world-copy p:not(.eyebrow){max-width:32ch;color:#e8e1db;line-height:1.65}
+.j22-world-link{display:inline-block;margin-top:1rem;padding:.78rem 1.2rem;background:#0f97bd;color:#fff;text-decoration:none;font-weight:750;border-radius:99px}
+.j22-world-link:hover{background:#0d7e9d;color:#fff}
+.j22-world-portrait{margin:0;min-width:0}
+.j22-world-portrait a{display:block;text-decoration:none}
+.j22-world-crop{position:relative;display:block;overflow:hidden;aspect-ratio:1;border-radius:1.05rem;border:1px solid #d7baa0;background:#eedac8}
+.j22-world-crop img{position:absolute;display:block;width:212%;max-width:none;height:auto;left:-56%;top:-53%}
+.j22-world-caption{display:block;margin-top:.7rem;font-size:.72rem;letter-spacing:.12em;font-weight:750}
+.j22-video-heading{margin-top:clamp(2.5rem,5vw,4.5rem)}
+.j22-video-heading h2{font-size:clamp(2rem,4vw,3.6rem)}
+.j22-video-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.15rem;margin-top:1.25rem}
+.j22-video-card{display:block;text-decoration:none;color:inherit;border:1px solid var(--line,#2a323c);border-radius:1rem;overflow:hidden;background:var(--paper,#1b2128);transition:border-color .15s ease}
+.j22-video-card:hover{color:inherit;border-color:#109cc2}
+.j22-video-image{position:relative;aspect-ratio:16/9;overflow:hidden;background:#191b1e}
+.j22-video-image>img:first-child{width:100%;height:100%;object-fit:cover}
+.j22-video-image .j22-video-sign{position:absolute;left:.65rem;bottom:.65rem;width:2.5rem;height:auto;border-radius:.3rem}
+.j22-video-arrow{position:absolute;top:.65rem;right:.65rem;padding:.2rem .55rem;color:#fff;background:#191b1e;border-radius:.35rem}
+.j22-video-copy{display:grid;grid-template-columns:2.4rem 1fr;gap:.7rem;padding:1rem}
+.j22-video-copy>img{width:2.4rem;height:2.4rem;object-fit:contain;border-radius:50%;background:#25282b}
+.j22-video-copy small{font-size:.68rem;font-weight:750;letter-spacing:.08em}
+.j22-video-copy h3{font-size:1.14rem;line-height:1.2;margin:.25rem 0}
+.j22-video-copy p{font-size:.86rem;margin:.25rem 0;line-height:1.45}
+.j22-logo-sheet{display:flex;align-items:center;gap:1rem;width:fit-content;margin-top:1.65rem;padding:.65rem .9rem;border-radius:.75rem;border:1px solid var(--line,#2a323c);text-decoration:none;color:inherit}
+.j22-logo-sheet img{width:6rem;max-width:30vw;height:auto;border-radius:.3rem}
+.j22-world a:focus-visible{outline:3px solid #109cc2;outline-offset:3px}
+@media(max-width:760px){.j22-world-stage,.j22-video-grid{grid-template-columns:1fr}.j22-world-portrait{max-width:27rem}.j22-video-copy{padding:.85rem}}
+@media(prefers-reduced-motion:reduce){.j22-video-card{transition:none}}
+
+/* Sillage, deuxième compagnon de studio (copie de travail). */
+.sillage-stage{margin-top:1.25rem;grid-template-columns:minmax(0,1fr) minmax(0,1fr);background:radial-gradient(ellipse at 10% 10%,#2c4a5a 0%,transparent 55%),radial-gradient(ellipse at 95% 100%,#0b718e 0%,transparent 55%),#16202a}
+.sillage-crop{display:block;overflow:hidden;aspect-ratio:1;border-radius:1.05rem;border:1px solid #d7baa0;background:#eedac8}
+.sillage-crop img{display:block;width:100%;height:100%;object-fit:cover}
+.sillage-badge{display:inline-grid;place-items:center;width:3rem;height:3rem;border-radius:50%;background:#2c5e73;color:#f6f2ee;font:700 1.4rem Georgia,serif;margin-bottom:1rem}
+.sillage-stage .j22-world-copy .eyebrow,.sillage-stage .j22-world-caption{color:#a9d3e3}
+.sillage-stage .j22-world-copy h2 em{color:#f0bc8f}
+.sillage-links{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1.2rem}
+.sillage-more{color:#f6f2ee;text-decoration:underline;text-underline-offset:4px;margin-top:1rem}
+@media(max-width:760px){.sillage-stage{grid-template-columns:1fr}.sillage-stage .j22-world-portrait{order:2}}

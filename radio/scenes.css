@@ -1,0 +1,78 @@
+.stage,.wheel-section{isolation:isolate}
+.stage::before,.wheel-section::after{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background-image:linear-gradient(90deg,#070707ed,#07070738 65%,#07070780),url("radio-scenes.jpg");
+  background-size:100% 100%,300% 300%;
+  background-position:center,var(--scene,0% 0%);
+  transition:filter .6s,opacity .6s;
+  filter:saturate(1.25);
+}
+.wheel-section::after{background-image:linear-gradient(#090909c9,#09090950 48%,#090909e8),url("radio-scenes.jpg")}
+.art{mix-blend-mode:screen}
+[data-station=casarap]{--badge:linear-gradient(130deg,#ca4b25,#3a1223);--letter:#fff1bd}
+[data-station=lbeldi]{--badge:linear-gradient(45deg,#dca135,#512d16);--letter:#fff7de}
+[data-station=algerrap]{--badge:linear-gradient(135deg,#1f754d 50%,#e9e5da 50%);--letter:#f5ce60;--cut:circle(48%)}
+[data-station=jowrap]{--badge:linear-gradient(135deg,#7536ba,#241246);--cut:polygon(12% 0,100% 0,88% 100%,0 100%);--tilt:skew(-9deg)}
+[data-station=tunisrap]{--badge:radial-gradient(circle,#992534,#3b1018);--cut:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+[data-station=losurban]{--badge:linear-gradient(135deg,#ef366d 40%,#f98f36 40% 60%,#792e9b 60%);--tilt:rotate(-12deg)}
+[data-station=deutschrap]{--badge:repeating-linear-gradient(90deg,#184047 0 12px,#0d2329 12px 24px);--letter:#b7f6ff}
+[data-station=declassic]{--badge:repeating-radial-gradient(circle,#2a2117 0 6px,#524027 6px 8px);--letter:#f3d19a;--cut:circle(49%);--face:900 22px/1 Georgia}
+[data-station=rmjam]{--badge:linear-gradient(130deg,#148b77,#13382e);--cut:inset(10% 0 round 40% 10%);--tilt:rotate(8deg)}
+.wheel-card .station-art{border:0;border-radius:0;background:var(--badge);color:var(--letter,#fff);clip-path:var(--cut,none);box-shadow:none;font:var(--face,900 29px/1 'Barlow Condensed',sans-serif);text-shadow:0 2px 4px #0007}
+.station-art b{transform:var(--tilt,none)}
+.wheel-card .symbol-badge{clip-path:none;transform:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-radius:12px}
+.symbol-badge svg{width:54%;height:54%;filter:drop-shadow(0 2px 2px #0008)}
+.symbol-badge b{font:900 clamp(11px,2vw,19px)/1 Inter,sans-serif;transform:none}
+[data-station=tracecg]{--badge:linear-gradient(145deg,#473169,#100c1d 75%);--letter:#e2c1ff}
+[data-station=kledu]{--badge:linear-gradient(145deg,#174b35,#171c13 60%,#973931);--letter:#ffd26b}
+[data-station=hitmaroc]{--badge:linear-gradient(145deg,#a72c40,#411326);--letter:#9cffbb}
+[data-station=traceci]{--badge:linear-gradient(125deg,#ff561c 60%,#161616 60%);--cut:polygon(12% 0,100% 0,88% 100%,0 100%);--tilt:skew(-9deg)}
+[data-station=skyci]{--badge:radial-gradient(circle at 50% 42%,#ee7931 28%,#172d29 29% 48%,#ee7931 49% 54%,#172d29 55%);--cut:circle(50%)}
+[data-station=camerhits]{--badge:linear-gradient(145deg,#126e4d 45%,#f2c747 45% 57%,#a92336 57%);--cut:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+[data-station=onair237]{--badge:repeating-linear-gradient(0deg,#071a13 0 5px,#173b27 5px 7px);--letter:#bfff82;--face:900 31px/1 monospace;--cut:inset(17% 0 round 9px)}
+[data-station=sensi]{--badge:linear-gradient(135deg,#592140,#140f21);--face:italic 900 25px/1 Georgia;--cut:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+[data-station=skyrock]{--badge:linear-gradient(0deg,#fbf0d7 40%,#b51925 40% 47%,#141414 47%);--tilt:rotate(-11deg)}
+[data-station=skyfr]{--badge:linear-gradient(90deg,#164aa0 33%,#f6f1e7 33% 66%,#d72738 66%);--cut:inset(10% 0 round 40% 12%);--letter:#171717}
+[data-station=skyclassics]{--badge:repeating-radial-gradient(circle,#26211c 0 5px,#453522 6px 7px);--letter:#f2c98f;--cut:circle(50%);--face:900 27px/1 Georgia}
+[data-station=mouv]{--badge:#d50064;--cut:polygon(0 0,100% 0,100% 75%,70% 75%,53% 100%,53% 75%,0 75%);--tilt:translateY(-9px)}
+[data-station=hot97]{--badge:linear-gradient(25deg,#9d140d,#ff641d 57%,#181212 58%);--cut:polygon(7% 17%,31% 24%,44% 0,60% 24%,84% 7%,100% 53%,85% 100%,12% 100%,0 55%);--tilt:skew(-12deg)}
+[data-station=kday]{--badge:linear-gradient(#8c318c,#f08461 48%,#301e55 49%);--cut:ellipse(50% 38%);--face:italic 900 28px/1 Georgia}
+[data-station=oldschool]{--badge:linear-gradient(#d2aa69 28%,#483320 28% 68%,#d2aa69 68%);--cut:inset(16% 0 round 9px);--face:900 30px/1 monospace}
+[data-station=gotradio]{--badge:radial-gradient(circle,#474ed2,#151438 65%);--cut:polygon(50% 0,62% 32%,98% 22%,76% 50%,98% 79%,62% 69%,50% 100%,38% 69%,2% 79%,24% 50%,2% 22%,38% 32%)}
+[data-station=bounce]{--badge:repeating-linear-gradient(145deg,#ac2148 0 18px,#e64970 18px 27px);--cut:ellipse(47% 40%);--tilt:rotate(14deg)}
+[data-station=westcoast]{--badge:linear-gradient(#0a3b44,#0a3b44 64%,#d89a32 65%);--cut:polygon(0 0,100% 0,93% 66%,50% 100%,7% 66%);--face:italic 900 32px/1 Georgia}
+[data-station=hot108]{--badge:repeating-linear-gradient(90deg,#322c3a 0 10px,#18141e 10px 18px);--letter:#ffca65;--face:900 38px/1 Georgia}
+[data-station=fubu]{--badge:linear-gradient(115deg,#13302b,#4f896f);--cut:inset(4% round 50% 4%);--face:900 26px/1 Georgia}
+[data-station=capital]{--badge:#4829c3;--cut:polygon(0 0,100% 0,77% 50%,100% 100%,0 100%,23% 50%);--tilt:skew(-12deg)}
+[data-station=reload]{--badge:conic-gradient(#bd820f,#372504,#ffdc75,#372504,#bd820f);--cut:circle(46%);--letter:#181000;--face:900 30px/1 monospace}
+[data-station=reprezent]{--badge:linear-gradient(155deg,#a3ee2c 50%,#47710d 50%);--letter:#152000;--cut:polygon(0 11%,100% 0,92% 85%,23% 100%);--tilt:rotate(-13deg)}
+[data-station=kisstory]{--badge:#c45576;--cut:polygon(50% 95%,4% 51%,0 22%,19% 5%,39% 5%,50% 22%,61% 5%,81% 5%,100% 22%,96% 51%);--face:italic 900 32px/1 Georgia}
+[data-station=funkysx]{--badge:repeating-linear-gradient(90deg,#13444c 0 12px,#146e79 12px 24px);--cut:polygon(0 34%,18% 34%,18% 10%,39% 10%,39% 25%,60% 25%,60% 0,81% 0,81% 34%,100% 34%,100% 85%,0 85%)}
+[data-station=chocolate]{--badge:radial-gradient(ellipse,#a46739,#3b1f17 72%);--cut:ellipse(49% 34%);--face:italic 900 27px/1 Georgia}
+[data-station=shatta]{--badge:#c6ed39;--letter:#182800;--cut:polygon(0 20%,61% 20%,61% 0,100% 51%,61% 100%,61% 80%,0 80%);--tilt:rotate(-7deg)}
+[data-station=antilles]{--badge:radial-gradient(circle at 50% 100%,#ffad65 45%,#bf483e 46%,#412637 75%);--cut:inset(10% 0 round 50% 50% 8% 8%);--face:italic 900 31px/1 Georgia}
+[data-station=dancehall]{--badge:conic-gradient(from 45deg,#ae2338 25%,#172129 0 50%,#ae2338 0 75%,#172129 0);--cut:polygon(25% 0,75% 0,100% 25%,100% 75%,75% 100%,25% 100%,0 75%,0 25%)}
+[data-station=guyane]{--badge:linear-gradient(145deg,#eac53c 49%,#177d52 50%);--cut:polygon(50% 0,100% 93%,0 93%);--tilt:translateY(12px);--letter:#161c15}
+[data-station=iskeya],[data-station=kiskeya]{--badge:linear-gradient(#254fa7 50%,#b6294c 50%);--cut:inset(11% 0 round 5px 35px);--face:900 35px/1 Georgia}
+[data-station=mole]{--badge:linear-gradient(#147979 60%,#182a43 60%);--cut:polygon(0 26%,23% 11%,52% 25%,82% 8%,100% 24%,100% 82%,76% 94%,49% 79%,22% 96%,0 80%);--face:italic 900 24px/1 Georgia}
+/* Décors régionaux dessinés (outils/dessiner-decors.ps1) : Afrique, Maghreb, Espagne, Allemagne. */
+[data-scene=afrique] .stage::before{background-image:linear-gradient(90deg,#070707ed,#07070738 65%,#07070780),url("scene-afrique.svg")}
+[data-scene=afrique] .wheel-section::after{background-image:linear-gradient(#090909c9,#09090950 48%,#090909e8),url("scene-afrique.svg")}
+[data-scene=maghreb] .stage::before{background-image:linear-gradient(90deg,#070707ed,#07070738 65%,#07070780),url("scene-maghreb.svg")}
+[data-scene=maghreb] .wheel-section::after{background-image:linear-gradient(#090909c9,#09090950 48%,#090909e8),url("scene-maghreb.svg")}
+[data-scene=espagne] .stage::before{background-image:linear-gradient(90deg,#070707ed,#07070738 65%,#07070780),url("scene-espagne.svg")}
+[data-scene=espagne] .wheel-section::after{background-image:linear-gradient(#090909c9,#09090950 48%,#090909e8),url("scene-espagne.svg")}
+[data-scene=allemagne] .stage::before{background-image:linear-gradient(90deg,#070707ed,#07070738 65%,#07070780),url("scene-allemagne.svg")}
+[data-scene=allemagne] .wheel-section::after{background-image:linear-gradient(#090909c9,#09090950 48%,#090909e8),url("scene-allemagne.svg")}
+:is([data-scene=afrique],[data-scene=maghreb],[data-scene=espagne],[data-scene=allemagne]) .stage::before,
+:is([data-scene=afrique],[data-scene=maghreb],[data-scene=espagne],[data-scene=allemagne]) .wheel-section::after{background-size:100% 100%,cover;background-position:center,center bottom}
+[data-scene=ny]{--scene:50% 0%}
+[data-scene=la]{--scene:100% 0%}
+[data-scene=london]{--scene:0% 50%}
+[data-scene=guada]{--scene:50% 50%}
+[data-scene=martinique]{--scene:100% 50%}
+[data-scene=guyane]{--scene:0% 100%}
+[data-scene=haiti]{--scene:50% 100%}
+.playing .stage::before,.playing .wheel-section::after{animation:scene-light 5s ease-in-out infinite alternate}
+@keyframes scene-light{from{filter:saturate(1.1) brightness(.88)}to{filter:saturate(1.5) brightness(1.17)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}

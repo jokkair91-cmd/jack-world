@@ -1,0 +1,138 @@
+/* J-DJ : même présentation que JACK22 STUDIO, codes Club Graphite (cyan A, orange B, graphite, rouge J22). */
+:root{--paper:#0b0d10;--ink:#e9edf1;--muted:#9aa5b1;--red:#0b9cc0;--line:#252c35;--dark:#07090b;--sage:#6f8fb0;--deck-a:#17d4f2;--deck-b:#ff8a1c;--deck-a-ink:#0b9cc0;--deck-b-ink:#ff8a1c;--j22:#3d7bff;color-scheme:dark}
+html,body{background:var(--paper);color:var(--ink)}
+h1,h2,h3,.wordmark{color:var(--ink)}
+p,li,figcaption span,.intro,.hero-note{color:var(--muted)}
+h1 em,h2 em,.hero h1 em{color:var(--deck-b)}
+.top{background:#0b0d10e6!important;border-color:var(--line)!important}
+#navigation a{color:#c9d1da}#navigation a:hover,#navigation a.active{color:var(--deck-a)}
+.studio-story,.real-studio-grid figure,.beginner-paths a,.download-box,.faq-list details,.feature-panel,.j22-video-card,.first-track li,.newduc-link a,.identity-strip,.slide-stage,.brand-slideshow{background:#12161b!important;border-color:var(--line)!important;color:var(--ink)}
+.text-link,.web-button{color:var(--deck-a)!important}
+.menu-toggle{background:#12161b;color:var(--ink);border-color:var(--line)}
+.eyebrow{letter-spacing:.14em}
+.live-dot{background:var(--deck-a)!important;box-shadow:0 0 0 4px #17d4f233}
+.btn.red,.nav-cta,.j22-world-link{background:var(--deck-a-ink)!important;color:#fff!important}
+.btn.red:hover,.nav-cta:hover,.j22-world-link:hover{background:#086a80!important}
+.wordmark>span{color:var(--deck-b-ink)}
+.wordmark .nav-jackbot{object-fit:contain}
+.jack-promo{background:var(--dark)!important;color:#e8ecf0}
+.jack-promo .promo-tag{background:var(--deck-b)!important;color:#14181d!important}
+.jack-promo i{color:var(--deck-a)!important}
+.swatch.deck-a{background:var(--deck-a)}.swatch.deck-b{background:var(--deck-b)}.swatch.deck-r{background:var(--j22)}
+.slide-stage.shot .slide-visual img{object-fit:cover;width:100%;height:100%;border-radius:.6rem}
+.slide-stage.robot .slide-visual img{object-fit:contain}
+.story-signature img{object-fit:contain}
+.beginner-heading img{object-fit:contain}
+.path-brand{object-fit:cover}
+.tabs [aria-selected="true"]{border-color:var(--deck-a-ink)}
+.tabs [aria-selected="true"] span{color:var(--deck-b-ink)}
+.mix-label{letter-spacing:.18em}
+.planet.p1{background:var(--deck-a)!important}.planet.p2{background:var(--deck-b)!important}.sun{background:var(--j22)!important}
+.j22-world-stage{background:radial-gradient(ellipse at 85% 10%,#0e4c5c 0%,transparent 52%),radial-gradient(ellipse at 5% 100%,#5a2a0c 0%,transparent 54%),#0d1014}
+.j22-world-copy .eyebrow,.j22-world-caption{color:#8fe6f5}
+.j22-world-copy h2 em{color:var(--deck-b)}
+.j22-world-mark{background:#f1f3f6;padding:.35rem}
+.jdj-bot-crop{display:block;overflow:hidden;aspect-ratio:1;border-radius:1.05rem;border:1px solid #2a3440;background:radial-gradient(circle at 50% 45%,#1f2a35,#0d1014 70%)}
+.jdj-bot-crop img{display:block;width:100%;height:100%;object-fit:contain;padding:8%}
+.jackbot-guest{background:radial-gradient(ellipse at 10% 10%,#0f2a4a 0%,transparent 55%),radial-gradient(ellipse at 95% 100%,#0e4c5c 0%,transparent 55%),#121519}
+.jackbot-guest .sillage-badge{background:var(--deck-b);color:#1a0d00}
+.jackbot-guest .j22-world-copy .eyebrow{color:#9cc3ff}
+.jackbot-guest .j22-world-copy h2 em{color:var(--deck-b)}
+.identity-signatures img{object-fit:contain;background:#fff;border-radius:.8rem;padding:.6rem}
+.release-label .live-dot{background:var(--deck-b)!important}
+.footer-mark{color:#17d4f21a}
+.newduc-monogram{color:var(--deck-b-ink)}
+
+/* Le bot J-DJ en arrière-plan. */
+html{background:var(--paper)}
+body{background:transparent!important;position:relative}
+body::before{content:"";position:fixed;right:-4vw;bottom:-6vh;width:min(62vw,720px);height:96vh;background:url("assets/jdj-bot-hd.png") no-repeat right bottom/contain;opacity:.07;pointer-events:none;z-index:-1}
+.hero{position:relative;isolation:isolate}
+.hero::before{content:"";position:absolute;left:-2%;bottom:-2%;width:min(44vw,520px);height:96%;background:url("assets/jdj-bot-hd.png") no-repeat left bottom/contain;opacity:.13;pointer-events:none;z-index:-1}
+.jdj-bot-crop img.jdj-bot-full{padding:4% 8% 2%}
+.beginner-heading img{object-fit:contain}
+@media (max-width:760px){body::before{width:90vw;height:70vh;opacity:.06}.hero::before{width:80vw;height:60%;opacity:.10}}
+
+/* Logos sur fond noir : ils gardent leur fond crème, en vignettes nettes. */
+img[src*="logo-"],img[src*="planche-logos"]{mix-blend-mode:normal!important;filter:none!important;opacity:1!important;border-radius:.7rem;background:#f3eee6}
+.slide-visual img[src*="logo-"]{max-height:88%;width:auto;padding:4%;box-shadow:0 20px 50px #0008}
+.path-panorama img[src*="logo-"]{padding:.3rem}
+/* Le robot en arrière-plan, plus présent sur le noir. */
+body::before{opacity:.12}
+.hero::before{opacity:.32}
+@media (max-width:760px){body::before{opacity:.10}.hero::before{opacity:.22}}
+
+/* Votre logo à la place des captures de console. */
+.studio-section,.beginner-section,.creation,.first-track,.download-section,.universe{background-image:url("assets/j22-filigrane.png")!important;background-repeat:no-repeat!important;background-position:right 4% center!important;background-size:min(34vw,420px) auto!important;background-color:#0d1014!important}
+.jack-promo{background-image:none!important}
+.j22-video-image.logo-tile{background:radial-gradient(circle at 50% 50%,#1b2430,#0a0d11 75%)}
+.j22-video-image.logo-tile>img:first-child{object-fit:contain!important;width:auto!important;height:84%!important;margin:3% auto 0;display:block}
+.j22-video-image.logo-tile .j22-video-sign{display:none}
+#feature-image{object-fit:contain;max-height:360px;width:auto;margin:auto;padding:1rem}
+
+h1 em,h2 em,h3 em{color:var(--deck-b)!important}
+
+/* V4 — slogan amateurs, chansons, images 3D du robot. */
+.hero .slogan{margin:.2rem 0 1rem;font-size:clamp(1.1rem,1.8vw,1.45rem);font-weight:700;letter-spacing:.01em;color:var(--deck-a)!important}
+.hero::before{background-image:url("assets/robot-dj-fond.jpg")!important;background-size:cover!important;background-position:center!important;left:auto!important;right:0!important;bottom:0!important;width:100%!important;height:100%!important;opacity:.22!important;-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 55%);mask-image:linear-gradient(90deg,transparent 0%,#000 55%)}
+.song-card .j22-video-image>img:first-child{object-fit:cover!important}
+.song-card .j22-video-arrow{background:var(--deck-b)!important;color:#1a0d00!important;font-size:.8rem}
+.song-bpm{position:absolute;left:.65rem;bottom:.65rem;padding:.25rem .55rem;border-radius:.35rem;background:#0b0d10d9;color:var(--deck-a);font:700 .72rem/1 Arial,sans-serif;letter-spacing:.06em}
+.song-note{margin-top:1.2rem;color:var(--muted)}
+.song-note b{color:var(--ink)}
+.flight-case{margin:1.5rem 0 0;max-width:420px}
+.flight-case img{display:block;width:100%;height:auto;border-radius:1rem;border:1px solid var(--line);box-shadow:0 20px 50px #0009}
+.sillage-crop img{object-fit:cover}
+@media (max-width:760px){.hero::before{opacity:.18!important;-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 60%);mask-image:linear-gradient(180deg,transparent 0%,#000 60%)}}
+
+/* V5 — logos J22 découpés dans la planche (fond noir), un seul robot en arrière-plan. */
+img[src*="j22-logo"],img[src*="j22-icone"]{background:#07090b!important;border-radius:.8rem;mix-blend-mode:normal!important;filter:none!important;padding:0!important}
+.slide-visual img[src*="j22-logo"]{max-height:86%;box-shadow:0 0 0 1px #2a323c,0 24px 60px #000c}
+.j22-world-mark{background:transparent!important;padding:0!important;width:5.2rem!important}
+.identity-signatures img[src*="j22-logo"]{box-shadow:0 0 0 1px #2a323c}
+body::before{display:none!important}
+.hero-icons span{display:inline-flex;align-items:center;gap:.55rem}.hero-icons img{width:30px;height:auto;border-radius:.4rem!important}.song-play{position:absolute;top:.6rem;right:.6rem;width:44px;height:auto;border-radius:.6rem!important;box-shadow:0 6px 18px #000a}
+
+/* V6 — un parcours en 8 étapes qui se suivent. */
+.step-rail{position:fixed;left:18px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:6px;opacity:0;pointer-events:none;transition:opacity .3s}
+.step-rail.visible{opacity:1;pointer-events:auto}
+.step-rail::before{content:"";position:absolute;left:13px;top:14px;bottom:14px;width:2px;background:linear-gradient(#17d4f2,#ff8a1c);opacity:.35}
+.step-rail a{position:relative;display:flex;align-items:center;gap:10px;text-decoration:none;color:#8b96a3;font:600 .7rem/1 Arial,sans-serif;letter-spacing:.06em}
+.step-rail i{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#12161b;border:2px solid #2a323c;font-style:normal;font-weight:700;color:#c9d1da;transition:all .2s}
+.step-rail span{opacity:0;transform:translateX(-4px);transition:all .2s;white-space:nowrap;background:#0b0d10e6;padding:.3rem .5rem;border-radius:.3rem}
+.step-rail a:hover span,.step-rail a.active span{opacity:1;transform:none}
+.step-rail a.done i{border-color:#17d4f2;color:#17d4f2}
+.step-rail a.active i{background:#ff8a1c;border-color:#ff8a1c;color:#1a0d00;box-shadow:0 0 14px #ff8a1c88}
+.step-rail a.active{color:#e9edf1}
+@media (max-width:1100px){.step-rail{display:none}}
+.next-step{display:flex;align-items:center;gap:14px;width:fit-content;margin:2.6rem auto 0;padding:.9rem 1.3rem .9rem 1.1rem;border-radius:999px;background:#12161bcc;border:1px solid #2a323c;color:#e9edf1!important;text-decoration:none;transition:border-color .2s,transform .2s}
+.next-step:hover{border-color:#ff8a1c;transform:translateY(2px)}
+.next-step span{font:600 .66rem/1 Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#17d4f2}
+.next-step b{font-size:1rem}
+.next-step i{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#ff8a1c;color:#1a0d00;font-style:normal;font-weight:700;animation:nextBounce 1.8s ease-in-out infinite}
+@keyframes nextBounce{50%{transform:translateY(4px)}}
+@media (prefers-reduced-motion:reduce){.next-step i{animation:none}}
+.songs-section{padding-top:clamp(3rem,6vw,5rem)}
+section[id]{scroll-margin-top:90px}
+
+/* Étape 3 : la console en grand, avec ses repères. */
+#voir-studio{max-width:none}
+.cabine-big{margin:2rem auto 0;max-width:1400px}
+.cabine-zoom{position:relative;display:block;width:100%;padding:0;border:1px solid #2a323c;border-radius:1.2rem;overflow:hidden;background:#0a0d11;cursor:zoom-in;box-shadow:0 30px 80px #000c,0 0 0 1px #17d4f222,0 0 60px #17d4f214}
+.cabine-zoom>img{display:block;width:100%;height:auto;transition:transform .5s}
+.cabine-zoom:hover>img{transform:scale(1.015)}
+.pin{position:absolute;left:var(--x);top:var(--y);transform:translate(-50%,-50%);display:grid;grid-template-columns:auto auto;grid-template-rows:auto auto;column-gap:.55rem;align-items:center;padding:.5rem .8rem .5rem .5rem;border-radius:.8rem;background:#0b0d10e8;border:1px solid var(--pc);box-shadow:0 0 0 4px #0b0d1066,0 0 22px color-mix(in srgb,var(--pc) 45%,transparent);font:700 .82rem/1.2 Arial,sans-serif;color:#e9edf1;text-align:left;pointer-events:none;white-space:nowrap}
+.pin b{grid-row:span 2;display:grid;place-items:center;width:1.9rem;height:1.9rem;border-radius:50%;background:var(--pc);color:#0b0d10;font-size:.9rem}
+.pin small{font-weight:400;font-size:.68rem;color:#a3adb9}
+.pin-a{--pc:#17d4f2}.pin-b{--pc:#ff8a1c}.pin-m{--pc:#e9edf1}.pin-l{--pc:#3d7bff}
+.cabine-plus{position:absolute;right:1rem;bottom:1rem;padding:.45rem .7rem;border-radius:.5rem;background:#0b0d10d9;border:1px solid #2a323c;color:#e9edf1;font:600 .75rem Arial,sans-serif}
+.cabine-big figcaption{display:grid;gap:.3rem;margin-top:1rem;text-align:center}
+.cabine-big figcaption b{font-size:1.2rem;color:#e9edf1}
+.cabine-big figcaption span{color:#9aa5b1}
+@media (max-width:760px){.pin{padding:.3rem;column-gap:0}.pin small,.pin{font-size:0}.pin b{width:1.6rem;height:1.6rem;font-size:.8rem}.cabine-plus{font-size:.65rem}}
+#lightbox img{max-width:96vw;max-height:86vh}
+
+/* V7 — fond de l'accueil : le robot DJ bleu et orange aux platines. */
+.hero::before{background-image:url("assets/robot-dj-fond.jpg")!important;background-size:cover!important;background-position:62% 30%!important;opacity:.42!important;-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 38%,#000 100%)!important;mask-image:linear-gradient(90deg,transparent 0%,#000 38%,#000 100%)!important}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,#0b0d10 0%,#0b0d10cc 30%,#0b0d1055 60%,#0b0d1022 100%),linear-gradient(0deg,#0b0d10 0%,transparent 25%)}
+@media (max-width:760px){.hero::before{opacity:.32!important;background-position:50% 20%!important;-webkit-mask-image:linear-gradient(180deg,#000 0%,#000 55%,transparent 100%)!important;mask-image:linear-gradient(180deg,#000 0%,#000 55%,transparent 100%)!important}.hero::after{background:linear-gradient(180deg,#0b0d1066 0%,#0b0d10cc 45%,#0b0d10 100%)}}

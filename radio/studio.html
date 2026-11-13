@@ -1,0 +1,79 @@
+<!doctype html>
+<html class="site-radio" lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Jack Radio — rap, hip-hop et sons urbains du monde." />
+    <title>Jack Radio — La fréquence du bloc</title>
+    <meta name="theme-color" content="#070707" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="Jack Radio" />
+    <link rel="stylesheet" href="studio.css" />
+    <link rel="stylesheet" href="studio-v2.css" />
+    <link rel="stylesheet" href="studio-v3.css" />
+    <link rel="stylesheet" href="scenes.css" />
+    <link rel="stylesheet" href="polish.css" />
+    <link rel="stylesheet" href="immersive.css" />
+    <link rel="stylesheet" href="club.css" />
+  <style id="jw-radio-logo">.topbar .brand .brand-mark{height:30px;width:auto;flex:none;margin-right:4px;filter:drop-shadow(0 0 6px #39ff8855)}.topbar .brand .header-cassette{display:none}</style>
+  <link rel="stylesheet" href="../retro.css">
+</head>
+  <body>
+    <header class="topbar"><a class="brand" href="#top"><img class="brand-mark" src="radio-logo.svg" alt="" width="41" height="30" />JACK <span>22</span><small>RADIO</small></a><p>LA FRÉQUENCE DU BLOC</p><button class="sound-toggle" id="soundToggle" aria-label="Lire ou mettre en pause">▶ <span>PLAY</span></button></header>
+    <main id="top">
+      <section id="jackWelcome" class="jack-welcome" aria-label="Bienvenue sur Jack 22">
+        <div class="club-scene" aria-hidden="true">
+          <img class="club-crowd" src="club-crowd.jpg" alt="" />
+          <div class="club-haze haze-left"></div><div class="club-haze haze-right"></div>
+          <div class="club-beam beam-one"></div><div class="club-beam beam-two"></div>
+          <div class="club-beam beam-three"></div><div class="club-beam beam-four"></div>
+          <div class="club-floor"></div><div class="club-particles"></div>
+          <div class="club-speaker speaker-left"><i></i><i></i></div>
+          <div class="club-speaker speaker-right"><i></i><i></i></div>
+          <div class="club-levels"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+        <button id="clubMotion" class="club-motion" aria-pressed="true">Ambiance animée</button>
+        <img src="jack22-cassette.jpg" alt="Jack 22 — cassette rouge, chrome et vert néon" />
+        <div class="welcome-caption">
+          <p>LA FRÉQUENCE DU BLOC</p>
+          <button id="enterRadio">Choisir ma radio <span aria-hidden="true">→</span></button>
+        </div>
+      </section>
+      <section class="project-showcase" aria-label="Présentation des projets">
+        <div class="project-reel">
+          <article class="project-slide"><img src="j22-logo-jack.png" alt="Logo Jack Studio"><div><h2>JACK STUDIO</h2><p>Crée ton univers sonore.</p></div></article>
+          <article class="project-slide"><img src="jdj-bot.png" alt="Logo JACK22 DJ"><div><h2>JACK22 DJ</h2><p>Tes platines. Ton mix.</p></div></article>
+          <article class="project-slide"><img src="nd-sillage.png" alt="Logo New Duc"><div><h2>NEW DUC</h2><p>Des idées aux nouveaux possibles.</p></div></article>
+        </div>
+        <button class="reel-pause" aria-label="Mettre le défilement en pause" onclick="const paused=this.parentElement.classList.toggle('paused');this.textContent=paused?'Reprendre le défilement':'Pause';this.setAttribute('aria-label',paused?'Reprendre le défilement':'Mettre le défilement en pause')">Pause</button>
+      </section>
+      <section class="stage">
+        <div class="stage-copy"><p class="eyebrow">JACK RADIO</p><h1>CHOISIS.<br /><em>APPUIE.</em><br />ÉCOUTE.</h1><p>Le rap, le R&amp;B, le shatta, le dancehall et les sons caribéens — dans Jack Radio.</p></div>
+        <div class="radio-waves" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="art"><img src="jack22-cassette.jpg" alt="Cassette Jack 22" /></div>
+        <div class="now-card" aria-live="polite"><span class="live-dot"></span><p>MAINTENANT SUR JACK RADIO</p><strong id="stationName">SÉLECTIONNE UNE RADIO</strong><small id="stationMeta">8 DESTINATIONS</small><span class="visualizer" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span><button id="primaryPlay" aria-label="Lancer la station sélectionnée">▶</button></div>
+      </section>
+      <section class="station-section wheel-section">
+        <img class="jack-backdrop" src="jack22-cassette.jpg" alt="" aria-hidden="true" />
+        <div class="station-heading"><div><p class="eyebrow">RADIOS EN DIRECT</p><h2>TOURNE.<br />TROUVE.</h2><span class="station-count" id="stationCount">33 STATIONS</span></div><p>Comme dans un jeu : la station choisie arrive au centre. Tourne la roulette, choisis ton son, puis lance la diffusion.</p></div>
+        <div class="country-tabs" role="tablist" aria-label="Filtrer les radios par zone"><button class="active" data-country="all">TOUT</button><button data-country="fr">FRANCE</button><button data-country="us">USA</button><button data-country="uk">UK</button><button data-country="car">CARAÏBES / DOM</button></div>
+        <div class="wheel-shell" aria-label="Roulette de radios"><div class="wheel-orbit orbit-one" aria-hidden="true"></div><div class="wheel-orbit orbit-two" aria-hidden="true"></div><button class="wheel-arrow previous" id="wheelPrevious" aria-label="Radio précédente">←</button><div class="wheel-track" id="wheelTrack" aria-live="polite"></div><button class="wheel-arrow next" id="wheelNext" aria-label="Radio suivante">→</button><div class="wheel-hint">TOURNE LA ROULETTE</div></div>
+        <div class="selected-station" id="selectedStation"><span class="selected-tag" id="selectedZone">JACK RADIO</span><div><p id="selectedType">RAP · R&amp;B · URBAIN</p><h3 id="selectedName">CHOISIS UNE RADIO</h3></div><button id="wheelPlay" aria-label="Lancer la station de la roulette">▶ <span>ÉCOUTER</span></button></div>
+        <p class="availability" id="availability" role="status">Choisis une radio pour commencer.</p>
+      </section>
+      <nav class="project-links" aria-label="Ouvrir les projets">
+        <a href="../newduc/" target="_blank" rel="noopener"><img src="nd-sillage.png" alt="">NEW DUC <span>Découvrir les projets ↗</span></a>
+      </nav>
+    </main>
+    <audio id="radioAudio" preload="none"></audio>
+    <footer><div class="brand">JACK <span>22</span><small>RADIO</small></div><p>FRANCE / USA / UK / CARAÏBES-DOM / AFRIQUE / MAGHREB / ESPAGNE / ALLEMAGNE</p><p>Les disponibilités peuvent varier selon les pays et les diffuseurs.</p></footer>
+    <script src="studio-v3.js"></script>
+    <script src="features.js"></script>
+    <script src="immersive.js"></script>
+    <script src="club.js"></script>
+    <script src="extras.js"></script>
+  </body>
+</html>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>Jack Radio</title>
+  <rect width="64" height="64" rx="14" fill="#0b0c0b"/>
+  <!-- Cassette chrome -->
+  <rect x="6.5" y="14" width="51" height="36" rx="5" fill="#18191b" stroke="#cfd5dc" stroke-width="2.6"/>
+  <!-- Étiquette rouge -->
+  <rect x="11" y="18.5" width="42" height="9" rx="2" fill="#e3203a"/>
+  <!-- Fenêtre et bobines vert fluo -->
+  <rect x="16" y="30" width="32" height="12" rx="6" fill="#060706" stroke="#3a3d42"/>
+  <circle cx="23" cy="36" r="4.2" fill="none" stroke="#39ff88" stroke-width="2.4"/>
+  <circle cx="41" cy="36" r="4.2" fill="none" stroke="#39ff88" stroke-width="2.4"/>
+  <path d="M27.5 36h9" stroke="#39ff88" stroke-opacity=".4" stroke-width="1.2"/>
+  <path d="M19 50l2.6-4.6h20.8L45 50" fill="none" stroke="#cfd5dc" stroke-width="2.2" stroke-linejoin="round"/>
+</svg>

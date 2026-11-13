@@ -1,0 +1,111 @@
+/* Jack World — style rétro multicolore.
+   Partagé par : index.html, newduc/, studio/, j-dj/ et radio/studio.html.
+   Chaque page porte une classe sur <html> (site-jw, site-nd, site-studio, site-jdj, site-radio)
+   qui lui donne sa propre police et ses propres couleurs.
+   Pour revenir en arrière sur une page : retirer la ligne <link ... retro.css> de son <head>. */
+@import url("https://fonts.googleapis.com/css2?family=Bungee&family=Righteous&family=Audiowide&family=Chakra+Petch:wght@500;600;700&family=Russo+One&family=Fugaz+One&display=swap");
+
+/* ---------- Identité de chaque site ---------- */
+:root{
+  --retro-font:"Bungee","Arial Black","Segoe UI",sans-serif;           /* petits titres, partout */
+  --site-font:"Righteous","Segoe UI",sans-serif;                         /* menu et textes d'intro */
+  --c1:#ffc145;--c2:#ff8a1c;--c3:#ff3d55;--c4:#d94bff;--c5:#3dd6ff;     /* coucher de soleil rétro */
+}
+.site-jw{--site-font:"Righteous","Segoe UI",sans-serif}                                       /* Jack World : années 70, rond */
+.site-nd{--site-font:"Audiowide","Segoe UI",sans-serif;--c1:#ffd166;--c2:#ff9f1c;--c3:#ff4257;--c4:#ff6b9a;--c5:#c084fc} /* NEW DUC : néon rouge-or */
+.site-studio{--site-font:"Chakra Petch","Segoe UI",sans-serif;--c1:#ff4257;--c2:#ff6b9a;--c3:#d94bff;--c4:#8b7bff;--c5:#3dd6ff} /* JACK22 : console 80s, rouge → violet → cyan */
+.site-jdj{--site-font:"Russo One","Segoe UI",sans-serif;--c1:#3dd6ff;--c2:#4d8dff;--c3:#a77bff;--c4:#ff8a1c;--c5:#ffc145}  /* J-DJ : platine A cyan → platine B orange */
+.site-radio{--site-font:"Fugaz One","Segoe UI",sans-serif;--c1:#b6ff3a;--c2:#ffe14d;--c3:#ff8a1c;--c4:#ff3d55;--c5:#ff4fd8} /* Jack Radio : vert fluo → rose */
+:root{--retro-degrade:linear-gradient(90deg,var(--c1) 0%,var(--c2) 22%,var(--c3) 46%,var(--c4) 72%,var(--c5) 100%)}
+
+/* ---------- 1. Petits titres et étiquettes : Bungee + dégradé multicolore ---------- */
+.eyebrow,
+.card .tag,.visual-label,.visual-foot,
+.brand small,.col h3 span,.steps-line span,.p-copy small,.freq small,
+.wordmark small,.hero-footer,.jackbot-card small,.logo-card>span:first-child,.release-label,
+.beginner-paths>a>span,.slide-top,.slide-caption small,.brand-kicker,.universe-number,
+.demo-label,.promo-track>span,.newduc-link small,.j22-world-caption,.j22-video-copy small,
+.topbar>p,.station-count,.now-card p,.now-card small,.station-copy small{
+  font-family:var(--retro-font)!important;
+  font-weight:400!important;
+  font-style:normal;
+  text-transform:uppercase;
+  letter-spacing:.07em!important;
+  font-size:max(11px,.72rem)!important;
+  line-height:1.35;
+  /* le bloc épouse le texte : toutes les couleurs du dégradé sont visibles, même sur un mot court */
+  width:fit-content;
+  max-width:100%;
+  background-image:var(--retro-degrade)!important;
+  background-color:transparent!important;
+  -webkit-background-clip:text!important;
+  background-clip:text!important;
+  -webkit-text-fill-color:transparent;
+  color:transparent!important;
+  text-shadow:none!important;
+}
+/* Barres à deux bouts (texte à gauche, numéro à droite) : elles gardent toute leur largeur. */
+.slide-top,.hero-footer{width:auto!important}
+/* Les points décoratifs dans les petits titres gardent leur couleur. */
+.eyebrow i{-webkit-text-fill-color:initial}
+
+/* ---------- 2. Badges sur fond coloré : police rétro, couleurs d'origine ---------- */
+.w-state,.promo-tag,.signature-card>span,.ribbon div,.onair{
+  font-family:var(--retro-font)!important;
+  font-weight:400!important;
+  letter-spacing:.08em!important;
+}
+.w-state,.promo-tag,.signature-card>span{font-size:max(10.5px,.66rem)!important}
+
+/* ---------- 3. Menus : police du site, un lien par couleur ---------- */
+.site-jw header nav a,
+.site-nd #navigation a,
+.site-studio #navigation a,
+.site-jdj #navigation a,
+.site-radio .project-links a{
+  font-family:var(--site-font)!important;
+  font-weight:600;
+  font-size:max(14px,.9rem)!important;
+  letter-spacing:.03em;
+  color:var(--c1)!important;
+  -webkit-text-fill-color:currentColor;
+  text-shadow:0 0 14px color-mix(in srgb,currentColor 35%,transparent);
+  transition:filter .2s,text-shadow .2s;
+}
+.site-jw header nav a:nth-child(5n+2),.site-nd #navigation a:nth-child(5n+2),.site-studio #navigation a:nth-child(5n+2),.site-jdj #navigation a:nth-child(5n+2){color:var(--c2)!important}
+.site-jw header nav a:nth-child(5n+3),.site-nd #navigation a:nth-child(5n+3),.site-studio #navigation a:nth-child(5n+3),.site-jdj #navigation a:nth-child(5n+3){color:var(--c3)!important}
+.site-jw header nav a:nth-child(5n+4),.site-nd #navigation a:nth-child(5n+4),.site-studio #navigation a:nth-child(5n+4),.site-jdj #navigation a:nth-child(5n+4){color:var(--c4)!important}
+.site-jw header nav a:nth-child(5n+5),.site-nd #navigation a:nth-child(5n+5),.site-studio #navigation a:nth-child(5n+5),.site-jdj #navigation a:nth-child(5n+5){color:var(--c5)!important}
+.site-jw header nav a:hover,.site-nd #navigation a:hover,.site-studio #navigation a:hover,.site-jdj #navigation a:hover,.site-radio .project-links a:hover{
+  filter:brightness(1.25);
+  text-shadow:0 0 18px currentColor;
+}
+/* Jack World, petits téléphones : le menu passe sur deux lignes, les cartes s'arrêtent sous l'en-tête. */
+@media (max-width:400px){.site-jw .card{scroll-margin-top:160px}}
+/* Boutons du menu (fond rouge ou coloré) : la police du site seulement. */
+.site-nd .cta,.site-studio .nav-cta,.site-jdj .nav-cta{font-family:var(--site-font)!important;letter-spacing:.03em}
+.site-jdj .step-rail span{font-family:var(--site-font)!important}
+
+/* ---------- 4. Textes d'introduction : police du site, plus grands, faciles à lire ---------- */
+.site-jw .lead,
+.site-nd .lead,
+.site-studio .intro,.site-studio .hero-note,.site-studio .beginner-intro,.site-studio .real-note,
+.site-jdj .intro,.site-jdj .hero-note,.site-jdj .beginner-intro,.site-jdj .real-note,
+.site-radio .availability{
+  font-family:var(--site-font)!important;
+  font-weight:500;
+  letter-spacing:.01em;
+  line-height:1.6!important;
+  color:#ecebf2!important;
+}
+/* Le slogan de J-DJ prend la police du site mais garde sa couleur cyan d'origine. */
+.site-jdj .slogan{font-family:var(--site-font)!important;letter-spacing:.01em}
+.site-jw .lead,.site-nd .lead,.site-studio .intro,.site-jdj .intro{font-size:max(17px,1.05rem)!important}
+.site-studio .hero-note,.site-studio .beginner-intro,.site-studio .real-note,
+.site-jdj .hero-note,.site-jdj .beginner-intro,.site-jdj .real-note,.site-radio .availability{font-size:max(14px,.88rem)!important}
+/* Un trait multicolore à gauche des grands textes d'intro, façon cassette. */
+.site-jw .hero .lead,.site-nd .hero .lead,.site-studio .intro,.site-jdj .intro{
+  padding-left:14px;
+  border-left:3px solid;
+  border-image:linear-gradient(180deg,var(--c1),var(--c3),var(--c5)) 1;
+}

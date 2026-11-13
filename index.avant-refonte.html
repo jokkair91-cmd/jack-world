@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07070a">
+<meta name="description" content="Jack World : J-DJ, JACK22 Studio, Jack Radio et NEW DUC réunis au même endroit.">
+<title>Jack World</title>
+<link rel="icon" href="newduc/assets/nd/nd-rouge.png">
+<style>
+:root{--bg:#07070a;--card:#121218;--card2:#18181f;--ink:#f4f4f6;--muted:#a6a6b0;--red:#e3203a;--line:#ffffff1f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(ellipse at 80% 0%,#49102040,transparent 45%),var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5;min-height:100vh}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+header{border-bottom:1px solid var(--line);position:sticky;top:0;background:#07070ae6;backdrop-filter:blur(10px);z-index:5}
+header .wrap{display:flex;align-items:center;gap:14px;height:64px}
+header img{height:34px;width:auto}
+.brand{font-weight:800;letter-spacing:.06em;font-size:16px}
+.brand b{color:var(--red)}
+header nav{margin-left:auto;display:flex;gap:18px;font-size:13px;color:var(--muted)}
+header nav a{text-decoration:none}
+header nav a:hover{color:var(--ink)}
+.hero{padding:76px 0 48px}
+.eyebrow{font-size:11px;letter-spacing:.2em;color:var(--red);font-weight:700;margin-bottom:12px}
+h1{font-size:clamp(40px,6.5vw,76px);line-height:1.06;font-weight:900;letter-spacing:-.045em}
+h1 em{font-style:normal;color:var(--red)}
+.lead{color:var(--muted);max-width:600px;font-size:17px;line-height:1.7;margin-top:22px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;padding-bottom:48px;align-items:start}
+.card{border:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden;border-radius:20px;scroll-margin-top:88px;background:linear-gradient(145deg,#16161e,#101015);transition:border-color .2s,transform .2s}
+.card:hover{border-color:#e3203a80;transform:translateY(-3px)}
+.card-body{padding:26px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.card .tag{font-size:10px;letter-spacing:.2em;color:var(--muted);font-weight:700}
+.card h2{font-size:28px;font-weight:850;letter-spacing:-.035em}
+.card p{color:var(--muted);font-size:15px;min-height:46px;line-height:1.65}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:10px;padding:12px 18px;font-size:14px;font-weight:700;text-decoration:none;background:var(--red);color:#fff}
+.btn:hover{filter:brightness(1.12)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.btn.ghost:hover{background:#ffffff0a;border-color:#ffffff55}
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:4px 0 6px}
+.visual{height:210px;position:relative;overflow:hidden;padding:22px 26px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between}
+.visual-label,.visual-foot{font-size:9px;letter-spacing:.2em;font-weight:700;position:relative;z-index:1;color:#ffffff99}
+.decks{background:radial-gradient(ellipse at center,#73304355,transparent 70%),#101017}
+.deck-row{display:flex;align-items:center;justify-content:center;gap:22px}
+.disc{width:108px;height:108px;border-radius:50%;background:repeating-radial-gradient(circle,#24242c 0 2px,#15151d 3px 5px);box-shadow:0 0 0 1px #ffffff22,0 8px 30px #0008;position:relative}
+.disc:after{content:'';position:absolute;inset:35%;border-radius:50%;background:#e3203a;border:10px solid #94172d;box-shadow:0 0 20px #e3203a33}
+.mixer{display:flex;gap:5px;align-items:center;height:70px}.mixer i{height:65%;width:4px;background:linear-gradient(to top,#e3203a 45%,#ffffff40 45%);border-radius:2px}.mixer i:nth-child(2n){height:95%}
+.studio-art{background:linear-gradient(130deg,#171526,#2b1c4155)}
+.tracks{display:flex;flex-direction:column;gap:7px;margin:14px 0}.tracks i{height:16px;border-radius:3px;width:85%;background:repeating-linear-gradient(90deg,#b29be766 0 3px,#b29be722 3px 9px);border-left:3px solid #b29be7}.tracks i:nth-child(2){width:65%;margin-left:15%}.tracks i:nth-child(3){width:75%;margin-left:5%}.tracks i:nth-child(4){width:55%;margin-left:30%}
+.keys{display:flex;gap:3px;height:36px}.keys i{flex:1;background:#dbd6e2;border-radius:0 0 3px 3px;position:relative}.keys i:nth-child(3n):after{content:'';position:absolute;right:-5px;top:0;background:#18141f;width:8px;height:22px;z-index:1}
+.radio-art{background:radial-gradient(ellipse at center,#16474288,transparent 75%),#101a1c}
+.wave{display:flex;gap:6px;align-items:center;justify-content:center;height:112px}.wave i{width:5px;height:var(--h);border-radius:5px;background:linear-gradient(#b1e7cf,#4d9a8d);box-shadow:0 0 12px #7fd4bd15}
+.house-art{background:linear-gradient(135deg,#30241b,#161412)}
+.wordmark{font-weight:950;line-height:.8;letter-spacing:-.07em;font-size:68px;color:#e8c9a1;transform:rotate(-5deg);align-self:center}.wordmark span{display:block;margin-left:65px;color:#fff2df}
+footer{border-top:1px solid var(--line);padding:24px 0;color:var(--muted);font-size:13px}
+footer .wrap{display:flex;flex-direction:column;gap:6px}
+a:focus-visible{outline:2px solid #ff6b80;outline-offset:5px;border-radius:4px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.wrap{padding:0 20px}header nav{display:none}.hero{padding:46px 0 32px}.card-body{padding:22px}.visual{height:200px}.card p{min-height:0}}
+@media(prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <img src="newduc/assets/nd/nd-blanc.png" alt="">
+    <span class="brand">JACK <b>WORLD</b></span>
+    <nav><a href="#jdj">J-DJ</a><a href="#studio">JACK22 Studio</a><a href="#radio">Jack Radio</a><a href="#newduc">NEW DUC</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow">QUATRE UNIVERS. UNE MÊME ÉNERGIE.</p>
+    <h1>Tout l'univers Jack.<br><em>Un seul endroit.</em></h1>
+    <p class="lead">J-DJ, JACK22 Studio, Jack Radio et NEW DUC réunis ici. Mixe, compose, écoute et découvre. Gratuit, dans ton navigateur, sans compte.</p>
+  </section>
+
+  <section class="grid" aria-label="Les projets Jack">
+
+    <article class="card" id="jdj">
+      <div class="visual decks" aria-hidden="true"><span class="visual-label">J-DJ / MIX SESSION</span><div class="deck-row"><i class="disc"></i><div class="mixer"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><i class="disc"></i></div><span class="visual-foot">DEUX PLATINES. TON STYLE.</span></div>
+      <div class="card-body">
+        <span class="tag">MIX &amp; DJ</span>
+        <h2>J-DJ</h2>
+        <p>Deux platines pour enchaîner tes morceaux : synchro, scratch, sampler et export MP3.</p>
+        <div class="actions"><a class="btn" href="j-dj/console.html">Ouvrir J-DJ ↗</a><a class="btn ghost" href="j-dj/">Le site</a></div>
+      </div>
+    </article>
+
+    <article class="card" id="studio">
+      <div class="visual studio-art" aria-hidden="true"><span class="visual-label">JACK22 / CREATE YOUR SOUND</span><div class="tracks"><i></i><i></i><i></i><i></i></div><div class="keys"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div class="card-body">
+        <span class="tag">CRÉATION MUSICALE</span>
+        <h2>JACK22 Studio</h2>
+        <p>Ton studio dans le navigateur : beat, 808, mélodie, voix, montage, puis export en WAV ou MP3.</p>
+        <div class="actions"><a class="btn" href="studio/studio/">Ouvrir le studio ↗</a><a class="btn ghost" href="studio/">Le site</a></div>
+      </div>
+    </article>
+
+    <article class="card" id="radio">
+      <div class="visual radio-art" aria-hidden="true"><span class="visual-label">JACK RADIO / LA FRÉQUENCE DU BLOC</span><div class="wave"><i style="--h:14px"></i><i style="--h:24px"></i><i style="--h:40px"></i><i style="--h:28px"></i><i style="--h:62px"></i><i style="--h:84px"></i><i style="--h:50px"></i><i style="--h:34px"></i><i style="--h:70px"></i><i style="--h:98px"></i><i style="--h:60px"></i><i style="--h:38px"></i><i style="--h:78px"></i><i style="--h:50px"></i><i style="--h:28px"></i><i style="--h:66px"></i><i style="--h:88px"></i><i style="--h:42px"></i><i style="--h:24px"></i><i style="--h:52px"></i><i style="--h:34px"></i><i style="--h:16px"></i></div><span class="visual-foot">RAP · R&amp;B · AFRO · DANCEHALL</span></div>
+      <div class="card-body">
+        <span class="tag">RADIO EN DIRECT</span>
+        <h2>Jack Radio</h2>
+        <p>La fréquence du bloc : rap, R&amp;B, shatta, dancehall, afro et reggaeton en direct, du monde entier.</p>
+        <div class="actions"><a class="btn" href="radio/studio.html">Écouter Jack Radio ↗</a></div>
+      </div>
+    </article>
+
+    <article class="card" id="newduc">
+      <div class="visual house-art" aria-hidden="true"><span class="visual-label">NEW DUC / LA MAISON MÈRE</span><div class="wordmark">NEW<span>DUC.</span></div><span class="visual-foot">UN UNIVERS EN MOUVEMENT.</span></div>
+      <div class="card-body">
+        <span class="tag">LA MAISON MÈRE</span>
+        <h2>NEW DUC</h2>
+        <p>La maison mère de l’univers Jack. Découvre son identité, sa mascotte Sillage et tous ses projets.</p>
+        <div class="actions"><a class="btn" href="newduc/">Découvrir NEW DUC ↗</a></div>
+      </div>
+    </article>
+
+  </section>
+</main>
+
+<footer><div class="wrap">
+  <span>JACK WORLD · 2026 · J-DJ · JACK22 Studio · Jack Radio · NEW DUC</span>
+  <span>Les radios de Jack Radio appartiennent à leurs diffuseurs. Leur disponibilité peut varier selon le pays.</span>
+</div></footer>
+</body>
+</html>
