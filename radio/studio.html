@@ -43,14 +43,7 @@
           <button id="enterRadio">Choisir ma radio <span aria-hidden="true">→</span></button>
         </div>
       </section>
-      <section class="project-showcase" aria-label="Présentation des projets">
-        <div class="project-reel">
-          <article class="project-slide"><img src="j22-logo-jack.png" alt="Logo Jack Studio"><div><h2>JACK STUDIO</h2><p>Crée ton univers sonore.</p></div></article>
-          <article class="project-slide"><img src="jdj-bot.png" alt="Logo JACK22 DJ"><div><h2>JACK22 DJ</h2><p>Tes platines. Ton mix.</p></div></article>
-          <article class="project-slide"><img src="nd-sillage.png" alt="Logo New Duc"><div><h2>NEW DUC</h2><p>Des idées aux nouveaux possibles.</p></div></article>
-        </div>
-        <button class="reel-pause" aria-label="Mettre le défilement en pause" onclick="const paused=this.parentElement.classList.toggle('paused');this.textContent=paused?'Reprendre le défilement':'Pause';this.setAttribute('aria-label',paused?'Reprendre le défilement':'Mettre le défilement en pause')">Pause</button>
-      </section>
+      <div data-jack-pub-ici></div>
       <section class="stage">
         <div class="stage-copy"><p class="eyebrow">JACK RADIO</p><h1>CHOISIS.<br /><em>APPUIE.</em><br />ÉCOUTE.</h1><p>Le rap, le R&amp;B, le shatta, le dancehall et les sons caribéens — dans Jack Radio.</p></div>
         <div class="radio-waves" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -65,9 +58,6 @@
         <div class="selected-station" id="selectedStation"><span class="selected-tag" id="selectedZone">JACK RADIO</span><div><p id="selectedType">RAP · R&amp;B · URBAIN</p><h3 id="selectedName">CHOISIS UNE RADIO</h3></div><button id="wheelPlay" aria-label="Lancer la station de la roulette">▶ <span>ÉCOUTER</span></button></div>
         <p class="availability" id="availability" role="status">Choisis une radio pour commencer.</p>
       </section>
-      <nav class="project-links" aria-label="Ouvrir les projets">
-        <a href="../newduc/index.html" target="_blank" rel="noopener"><img src="nd-sillage.png" alt="">NEW DUC <span>Découvrir les projets ↗</span></a>
-      </nav>
     </main>
     <audio id="radioAudio" preload="none"></audio>
     <footer><div class="brand">JACK <span>22</span><small>RADIO</small></div><p>FRANCE / USA / UK / CARAÏBES-DOM / AFRIQUE / MAGHREB / ESPAGNE / ALLEMAGNE</p><p>Les disponibilités peuvent varier selon les pays et les diffuseurs.</p></footer>
@@ -76,5 +66,6 @@
     <script src="immersive.js"></script>
     <script src="club.js"></script>
     <script src="extras.js"></script>
-  </body>
+  <script data-jack-pub src="../jack-pub.js" defer></script>
+</body>
 </html>

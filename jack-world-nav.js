@@ -12,7 +12,7 @@
   const shadow = host.attachShadow({mode:'open'});
   shadow.innerHTML = '<style>:host{font:14px/1.5 system-ui,sans-serif;color:#f4f4f6}*{box-sizing:border-box}button{font:inherit;cursor:pointer;border:1px solid #ffd166;border-radius:24px;background:#15151d;color:#fff;padding:10px 16px;box-shadow:0 3px 16px #0008}button:hover{background:#292936}button:focus-visible,a:focus-visible{outline:3px solid #ffd166;outline-offset:3px}.panel{position:absolute;bottom:54px;left:0;width:280px;max-width:calc(100vw - 24px);max-height:calc(100dvh - 90px);overflow:auto;background:#15151d;border:1px solid #777;border-radius:16px;padding:14px;box-shadow:0 8px 30px #0009}.panel[hidden]{display:none}h2{font-size:16px;margin:0 0 10px}a{display:block;color:#f4f4f6;text-decoration:none;padding:10px 12px;border-radius:8px;min-height:44px}a:hover{background:#30303c}a[aria-current]{background:#513f16;color:#ffe09a;font-weight:700}small{display:block;color:#c0c0cb;font-size:12px;margin-top:10px}button span{color:#ffd166}</style><button type="button" aria-expanded="false" aria-controls="destinations"><span aria-hidden="true">↔</span> Changer de site</button><section class="panel" id="destinations" hidden><h2>Les sites Jack World</h2><nav aria-label="Navigation entre les sites"></nav><small></small></section>';
   const button = shadow.querySelector('button'), panel = shadow.querySelector('.panel'), nav = shadow.querySelector('nav');
-  destinations.forEach(([id,label,url]) => {
+  destinations.filter(([id]) => id !== 'home' || current === 'home' || current === 'nd').forEach(([id,label,url]) => {
     const a = document.createElement('a');
     a.href = new URL(url,base).href;
     a.textContent = label;
