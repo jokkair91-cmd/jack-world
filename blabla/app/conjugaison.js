@@ -18,6 +18,12 @@ const MOTEURS = {
       case "futur": return Array(6).fill("will " + b);
       case "perfect": return avec(["have", "have", "has", "have", "have", "have"]).map((a) => a + pp);
       case "conditionnel": return Array(6).fill("would " + b);
+      // Temps avancés (niveaux Avancé, Pro, Expert)
+      case "passe-continu": return avec(["was", "were", "was", "were", "were", "were"]).map((a) => a + ing);
+      case "pluperfect": return Array(6).fill("had " + pp);
+      case "perfect-continu": return avec(["have", "have", "has", "have", "have", "have"]).map((a) => a + "been " + ing);
+      case "futur-perfect": return Array(6).fill("will have " + pp);
+      case "cond-passe": return Array(6).fill("would have " + pp);
     }
   },
 
@@ -34,6 +40,11 @@ const MOTEURS = {
     const base = v.radicalFutur || v.inf;
     if (t === "futuro") return ["é", "ás", "á", "emos", "éis", "án"].map((fin) => base + fin);
     if (t === "condicional") return ["ía", "ías", "ía", "íamos", "íais", "ían"].map((fin) => base + fin);
+    // Temps composés (niveaux Avancé et Pro) : auxiliaire haber + participe
+    const PARTICIPES = { hacer: "hecho", decir: "dicho", ver: "visto", poner: "puesto", escribir: "escrito", volver: "vuelto", abrir: "abierto", romper: "roto", morir: "muerto", resolver: "resuelto", descubrir: "descubierto" };
+    const pp = v.participe || PARTICIPES[v.inf] || rad + (groupe === "ar" ? "ado" : "ido");
+    if (t === "perfecto") return ["he", "has", "ha", "hemos", "habéis", "han"].map((a) => a + " " + pp);
+    if (t === "pluscuamperfecto") return ["había", "habías", "había", "habíamos", "habíais", "habían"].map((a) => a + " " + pp);
   },
 
   // ---------------- ALLEMAND ----------------
@@ -63,8 +74,57 @@ const MOTEURS = {
       case "praeteritum": return praeteritum();
       case "perfekt": return AUX[v.aux || "haben"].map((a) => a + " " + participe);
       case "futur": return AUX.werden.map((a) => a + " " + v.inf);
+      // Temps avancés (niveaux Avancé et Pro)
+      case "plusquamperfekt": return (v.aux === "sein" ? ["war", "warst", "war", "waren", "wart", "waren"] : ["hatte", "hattest", "hatte", "hatten", "hattet", "hatten"]).map((a) => a + " " + participe);
+      case "konjunktiv": return ["würde", "würdest", "würde", "würden", "würdet", "würden"].map((a) => a + " " + v.inf);
     }
   },
+};
+
+// ---------------- FRANÇAIS (façon Bescherelle) ----------------
+// 1er groupe (-er) et 2e groupe (-ir, nous -issons) : calculés.
+// 3e groupe : formes du présent, du subjonctif et du passé simple écrites dans contenu/fr.js,
+// radical du futur (radFutur) et de l'imparfait (radImparfait) si besoin.
+MOTEURS.fr = function (v, t) {
+  const inf = v.inf, rad = inf.slice(0, -2);
+  const g = v.groupe || (inf.endsWith("er") ? 1 : 2);
+  // manger → mangeons, commencer → commençons (devant a et o)
+  const devantAO = (b) => (/g$/.test(b) ? b + "e" : /c$/.test(b) ? b.slice(0, -1) + "ç" : b);
+  const present = () => {
+    if (v.formes && v.formes.present) return v.formes.present;
+    if (g === 1) return [rad + "e", rad + "es", rad + "e", devantAO(rad) + "ons", rad + "ez", rad + "ent"];
+    return [rad + "is", rad + "is", rad + "it", rad + "issons", rad + "issez", rad + "issent"];
+  };
+  const radImp = v.radImparfait || present()[3].replace(/ons$/, "");
+  const imparfait = () => ["ais", "ais", "ait", "ions", "iez", "aient"].map((f) =>
+    (f[0] === "i" ? radImp.replace(/ge$/, "g").replace(/ç$/, "c") : radImp) + f);
+  const radF = v.radFutur || (g === 1 || g === 2 ? inf : inf.replace(/e$/, ""));
+  const pp = v.participe || (g === 1 ? rad + "é" : rad + "i");
+  const etre = v.aux === "etre";
+  const AUX = {
+    present: etre ? ["suis", "es", "est", "sommes", "êtes", "sont"] : ["ai", "as", "a", "avons", "avez", "ont"],
+    imparfait: etre ? ["étais", "étais", "était", "étions", "étiez", "étaient"] : ["avais", "avais", "avait", "avions", "aviez", "avaient"],
+    futur: etre ? ["serai", "seras", "sera", "serons", "serez", "seront"] : ["aurai", "auras", "aura", "aurons", "aurez", "auront"],
+    conditionnel: etre ? ["serais", "serais", "serait", "serions", "seriez", "seraient"] : ["aurais", "aurais", "aurait", "aurions", "auriez", "auraient"],
+  };
+  // Avec être, le participe s'accorde avec le sujet : allé(e), allé(e)s
+  const compose = (aux) => aux.map((a, i) => a + " " + (etre ? pp + (i < 3 ? "(e)" : "(e)s") : pp));
+  switch (t) {
+    case "present": return present();
+    case "imparfait": return imparfait();
+    case "futur": return ["ai", "as", "a", "ons", "ez", "ont"].map((f) => radF + f);
+    case "conditionnel": return ["ais", "ais", "ait", "ions", "iez", "aient"].map((f) => radF + f);
+    case "subjonctif":
+      if (g === 1) return ["e", "es", "e", "ions", "iez", "ent"].map((f) => rad + f);
+      return ["e", "es", "e", "ions", "iez", "ent"].map((f) => rad + "iss" + f);
+    case "passe-simple":
+      if (g === 1) return ["ai", "as", "a", "âmes", "âtes", "èrent"].map((f) => (f[0] === "è" ? rad : devantAO(rad)) + f);
+      return ["is", "is", "it", "îmes", "îtes", "irent"].map((f) => rad + f);
+    case "passe-compose": return compose(AUX.present);
+    case "plus-que-parfait": return compose(AUX.imparfait);
+    case "futur-anterieur": return compose(AUX.futur);
+    case "cond-passe": return compose(AUX.conditionnel);
+  }
 };
 
 function conjuguer(langue, verbe, temps) {

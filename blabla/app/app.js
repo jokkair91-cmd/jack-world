@@ -7,7 +7,7 @@ const toastEl = document.getElementById("toast");
 
 // ================= Sauvegarde =================
 const CLE = "jackblabla-v1";
-const etatParDefaut = () => ({ langue: null, xp: 0, serie: 0, dernierJour: null, cartes: {}, fait: {}, debloque: {}, niveauChoisi: {} });
+const etatParDefaut = () => ({ langue: null, xp: 0, serie: 0, dernierJour: null, cartes: {}, fait: {}, debloque: {}, niveauChoisi: {}, parcours: {} });
 let etat = charger();
 
 function charger() {
@@ -95,6 +95,11 @@ function verifier(saisie, attendu) {
   if (s && options.some((o) => normaliser(o) === normaliser(s))) return "accents";
   return "ko";
 }
+// Pronom + verbe à l'oral : en français, « je » s'élide devant une voyelle (j'aime, j'ai)
+const avecPronom = (pro, forme) => {
+  const p = pro.split("/")[0];
+  return etat.langue === "fr" && p === "je" && /^[aeéèêiîoôuûhy]/i.test(forme) ? `j'${forme}` : `${p} ${forme}`;
+};
 const barre = (p) => `<div class="barre" aria-label="Progression ${Math.round(p)}%"><div style="width:${p}%"></div></div>`;
 
 // ================= Voix =================
@@ -134,6 +139,39 @@ function parler(texte, langue = etat.langue) {
   speechSynthesis.cancel();
   // Bug connu de Chrome : un speak() juste après cancel() peut rester muet → petit délai
   setTimeout(() => { speechSynthesis.resume(); speechSynthesis.speak(u); }, 60);
+}
+
+// ================= Explications (écrites et vocales) =================
+// Jack explique en français ce qui ne va pas, puis redit la bonne réponse dans la langue étudiée.
+// Réglable dans le hub : « 🗣️ Explications à voix haute ».
+const explicVoix = () => etat.explicVoix !== false;
+const texteSeul = (html) => String(html || "").replace(/<br\s*\/?>/gi, ". ").replace(/<[^>]+>/g, "").replace(/___/g, "…").replace(/\s+/g, " ").trim();
+// Dit plusieurs morceaux à la suite, chacun avec la voix de sa langue : [[texte, langue], …]
+function direSuite(parts) {
+  if (!("speechSynthesis" in window)) return;
+  speechSynthesis.cancel();
+  setTimeout(() => {
+    speechSynthesis.resume();
+    parts.forEach(([txt, lg]) => {
+      const voix = voixPour(lg);
+      const t = texteSeul(txt).replace(/…/g, " ");
+      if (!voix || !t) return;
+      const u = new SpeechSynthesisUtterance(t);
+      u.voice = voix; u.lang = voix.lang; u.rate = lg === "fr" ? 1 : 0.9;
+      speechSynthesis.speak(u);
+    });
+  }, 60);
+}
+// Correction après une erreur : bloc écrit + explication orale
+function correction(bonne, pourquoi) {
+  if (explicVoix()) direSuite([["La bonne réponse est :", "fr"], [bonne, etat.langue], [pourquoi, "fr"]]);
+  else parler(bonne);
+  return pourquoi ? `<div class="explic">💡 <b>Pourquoi ?</b> ${pourquoi}</div>` : "";
+}
+// La règle d'une leçon de grammaire, en une phrase (sert d'explication par défaut)
+function regleDe(lecon) {
+  if (lecon.astuce) return lecon.astuce;
+  return lecon.explication.split(/<br\s*\/?>/i)[0].replace(/<[^>]+>/g, "").trim();
 }
 
 // Fenêtre d'aide quand il n'y a pas de son
@@ -180,7 +218,7 @@ document.getElementById("btn-home").onclick = () => aller(etat.langue ? { nom: "
 function rendre() {
   afficherStats();
   if (vue.nom === "accueil" || !etat.langue) return vueAccueil();
-  const vues = { hub: vueHub, theme: vueTheme, grammaire: vueGrammaire, conjugaison: vueConjugaison, irreguliers: vueIrreguliers, test: vueTest };
+  const vues = { hub: vueHub, theme: vueTheme, grammaire: vueGrammaire, conjugaison: vueConjugaison, irreguliers: vueIrreguliers, test: vueTest, parcours: vueParcours, revision: vueRevision };
   (vues[vue.nom] || vueHub)();
 }
 const boutonRetour = (texte = "← Retour") => `<button class="retour" id="retour">${texte}</button>`;
@@ -193,7 +231,7 @@ function vueAccueil() {
       <div class="accueil-texte">
         <h1>Salut, moi c'est <span>Jack</span>&nbsp;!</h1>
         <div class="bulle">Le perroquet qui t'apprend à blablater 🦜</div>
-        <p class="accroche">Anglais, espagnol, allemand : du premier « bonjour » jusqu'à donner ton avis. Leçons, quiz, conjugaison, et des conversations avec moi !</p>
+        <p class="accroche">Anglais, espagnol, allemand : du premier « bonjour » jusqu'au niveau professionnel, en 6 niveaux et un parcours de 6 mois. Leçons, quiz, conjugaison, et des conversations avec moi !</p>
         <button class="btn" id="commencer">Choisir ma langue ↓</button>
       </div>
     </section>
@@ -207,7 +245,7 @@ function vueAccueil() {
           <span class="sous">${NIVEAUX[etat.debloque[code] || 0].emoji} Niveau ${NIVEAUX[etat.debloque[code] || 0].nom}</span>
         </button>`).join("")}
     </div>
-    <p class="muted" style="margin-top:22px">Bientôt : chinois, italien… et le français pour les étrangers.</p>`;
+    <p class="muted" style="margin-top:22px">🇫🇷 <b>Français</b> : pour maîtriser l'orthographe, la grammaire et la conjugaison, comme avec un Bescherelle. Bientôt : chinois, italien…</p>`;
   document.getElementById("commencer").onclick = () =>
     document.getElementById("langues").scrollIntoView({ behavior: "smooth", block: "start" });
   app.querySelectorAll("[data-langue]").forEach((b) => b.onclick = () => {
@@ -259,7 +297,10 @@ function vueHub() {
   app.innerHTML = `
     <div class="rangee" style="justify-content:space-between">
       <button class="retour" id="changer">← Changer de langue</button>
-      <button class="lien-son" id="pas-de-son">${voixPour(etat.langue) ? "🔊 Tester le son" : "🔇 Pas de son ?"}</button>
+      <span class="rangee">
+        <button class="lien-son" id="explic-voix" aria-pressed="${explicVoix()}">${explicVoix() ? "🗣️ Explications à voix haute : oui" : "🤫 Explications à voix haute : non"}</button>
+        <button class="lien-son" id="pas-de-son">${voixPour(etat.langue) ? "🔊 Tester le son" : "🔇 Pas de son ?"}</button>
+      </span>
     </div>
     <div class="titre-jack">
       <span class="avatar-jack" aria-hidden="true"></span>
@@ -268,6 +309,13 @@ function vueHub() {
         <div class="bulle" style="margin-top:6px">${hasard(["On continue ? Je suis prêt !", "Un petit quiz aujourd'hui ?", "Blabla time ! 🦜", "Chaque jour un peu, et ça rentre !"])}</div>
       </div>
     </div>
+
+    <button class="tile parcours-carte" id="parcours" style="margin-top:16px">
+      <span class="big">🗓️</span>
+      <span style="flex:1"><span class="titre">Mon parcours 6 mois · ${parcoursEtat().debut ? `semaine ${parcoursEtat().semaine}/${PARCOURS_TOTAL}` : "pas encore commencé"}</span><br>
+        <span class="sous">Ta séance du jour : révision, leçon, grammaire. ${cartesARevoir().length} carte${cartesARevoir().length > 1 ? "s" : ""} à revoir.</span></span>
+      <span class="btn">Ma séance →</span>
+    </button>
 
     <div class="niveaux" role="tablist">
       ${NIVEAUX.map((niv, i) => `
@@ -332,6 +380,8 @@ function vueHub() {
     </div>`;
 
   document.getElementById("changer").onclick = () => aller({ nom: "accueil" });
+  document.getElementById("parcours").onclick = () => aller({ nom: "parcours" });
+  document.getElementById("explic-voix").onclick = () => { etat.explicVoix = !explicVoix(); sauver(); vueHub(); };
   document.getElementById("pas-de-son").onclick = () => aideSon();
   app.querySelectorAll("[data-niveau]").forEach((b) => b.onclick = () => {
     const i = +b.dataset.niveau;
@@ -374,10 +424,12 @@ function lancerQcm(zone, questions, onFin) {
         if (q.choix[x.dataset.i] === q.bonne) x.classList.add("bon");
       });
       if (!ok) b.classList.add("faux");
-      if (q.audioReponse) parler(q.audioReponse);
+      let explic = "";
+      if (ok) { if (q.audioReponse) parler(q.audioReponse); }
+      else explic = correction(q.audioReponse || q.bonne, q.pourquoi);
       document.getElementById("suite").innerHTML = `
         <div class="feedback ${ok ? "ok" : "ko"}">${ok ? "Bravo ! 🎉" : `Presque ! La bonne réponse : <b>${echap(q.bonne)}</b>`}
-          ${q.fr ? `<div class="trad-fb">En français : ${echap(q.fr)}</div>` : ""}</div>
+          ${q.fr ? `<div class="trad-fb">En français : ${echap(q.fr)}</div>` : ""}${explic}</div>
         <div class="rangee" style="margin-top:14px"><button class="btn" id="continuer">Continuer</button></div>`;
       const c = document.getElementById("continuer");
       c.focus();
@@ -422,10 +474,13 @@ function lancerSaisie(zone, items, onFin) {
       input.disabled = true;
       const r = verifier(input.value, it.attendu);
       if (r !== "ko") score++;
-      if (it.audio) parler(it.audio);
+      let explic = "";
+      if (r === "ok") { if (it.audio) parler(it.audio); }
+      else explic = correction(it.audio || it.attendu, (r === "accents" ? "Attention aux accents : ils changent la prononciation et parfois le sens. " : `Tu as écrit « ${echap(input.value.trim() || "rien")} ». `) + (it.pourquoi || ""));
       document.getElementById("suite").innerHTML = `
         <div class="feedback ${r === "ko" ? "ko" : "ok"}">
           ${r === "ok" ? "Parfait ! 🎉" : r === "accents" ? `Bien ! Attention aux accents : <b>${echap(it.attendu)}</b>` : `La bonne réponse : <b>${echap(it.attendu)}</b>`}
+          ${explic}
         </div>
         <div class="rangee" style="margin-top:14px"><button class="btn" id="continuer">Continuer</button></div>`;
       const c = document.getElementById("continuer");
@@ -475,7 +530,7 @@ function ongletLecon(zone, t) {
     <div class="card">
       <div class="rangee" style="justify-content:space-between; margin-bottom:6px">
         <p class="muted" style="margin:0">Écoute chaque mot 🔊 et répète-le à voix haute.</p>
-        <button class="lien-son" id="pas-de-son">Pas de son ?</button>
+        <span class="rangee"><button class="lien-son" id="toute-lecon">🔊 Écouter toute la leçon</button><button class="lien-son" id="pas-de-son">Pas de son ?</button></span>
       </div>
       ${t.mots.map(([fr, cible], i) => `
         <div class="mot">
@@ -485,6 +540,11 @@ function ongletLecon(zone, t) {
     </div>
     <div class="rangee" style="margin-top:18px"><button class="btn" id="fini">J'ai appris ces mots → Quiz</button></div>`;
   zone.querySelectorAll(".hp").forEach((b) => b.onclick = () => parler(t.mots[b.dataset.i][1]));
+  // Toute la leçon à l'oral : chaque mot dans la langue étudiée, puis sa traduction en français
+  document.getElementById("toute-lecon").onclick = () => direSuite([
+    [`Leçon : ${t.titre}. Répète après moi.`, "fr"],
+    ...t.mots.flatMap(([fr, cible]) => [[cible, etat.langue], [fr, "fr"]]),
+  ]);
   document.getElementById("pas-de-son").onclick = () => aideSon();
   document.getElementById("fini").onclick = () => {
     if (!fait(cleTheme(t)).lecon) { marquer(cleTheme(t), "lecon", true); gagnerXp(5); }
@@ -498,13 +558,17 @@ function questionsVocab(mots, nb) {
     const [fr, cible] = mots[i];
     const autres = melanger(mots.filter((_, j) => j !== i)).slice(0, 3);
     const bonne = versCible ? cible : fr;
+    const fr_ = etat.langue === "fr";
     return {
-      consigne: versCible ? `Comment dit-on en ${L().nom.toLowerCase()} ?` : "Que veut dire ?",
+      consigne: fr_ ? (versCible ? "Quelle est la bonne écriture ?" : "Dans quel cas écrit-on :") : versCible ? `Comment dit-on en ${L().nom.toLowerCase()} ?` : "Que veut dire ?",
       question: echap(versCible ? fr : cible),
       choix: melanger([bonne, ...autres.map(([f, c]) => (versCible ? c : f))]),
       bonne,
       audioQuestion: versCible ? null : cible,
       audioReponse: cible,
+      pourquoi: etat.langue === "fr"
+        ? `La bonne forme est « ${echap(cible)} » : ${echap(fr)}. Relis-la et écris-la une fois pour la retenir.`
+        : `« ${echap(cible)} » veut dire « ${echap(fr)} ». Écoute-le et répète-le à voix haute pour le retenir.`,
     };
   });
 }
@@ -529,7 +593,7 @@ function ongletCartes(zone, t) {
     const c = etat.cartes[`${etat.langue}:${t.id}:${i}`];
     return !c || c.prochain <= now;
   }));
-  let k = 0, retournee = false, sues = 0;
+  let k = 0, retournee = false, sues = 0, silence = false;
 
   function montrer() {
     if (k >= file.length) {
@@ -559,13 +623,15 @@ function ongletCartes(zone, t) {
     document.getElementById("carte").onclick = retourner;
     document.getElementById("carte").onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") retourner(); };
     document.getElementById("ecouter").onclick = () => parler(cible);
-    if (!retournee) { parler(cible); document.getElementById("retourner").onclick = retourner; return; }
+    if (!retournee) { if (!silence) parler(cible); silence = false; document.getElementById("retourner").onclick = retourner; return; }
     const repondre = (savait) => {
       const cle = `${etat.langue}:${t.id}:${file[k]}`;
       const c = etat.cartes[cle] || { boite: 0 };
       const boite = savait ? Math.min(c.boite + 1, INTERVALLES_JOURS.length - 1) : 0;
       etat.cartes[cle] = { boite, prochain: Date.now() + INTERVALLES_JOURS[boite] * 864e5 };
       if (savait) sues++;
+      // À revoir : Jack redit le mot et sa traduction pour l'ancrer
+      if (!savait && explicVoix()) { direSuite([[cible, etat.langue], [`veut dire : ${fr}. Je te le remontre demain.`, "fr"]]); silence = true; }
       sauver();
       k++; retournee = false; montrer();
     };
@@ -634,7 +700,14 @@ function ongletParler(zone, t) {
       const meilleur = alts.reduce((m, a) => (ressemblance(a, cible) > ressemblance(m, cible) ? a : m), alts[0]);
       const score = ressemblance(meilleur, cible);
       if (score >= 0.75) { reussis++; k++; toast("Parfait ! 🎉"); setTimeout(montrer, 700); }
-      else montrer(`<div class="feedback ko">J'ai entendu : « ${echap(meilleur)} ». Réessaie ! (${Math.round(score * 100)} %)</div>`);
+      else {
+        // Correction vocale : Jack dit ce qu'il a entendu, puis redit le mot lentement
+        const conseil = score >= 0.5 ? "Tu y es presque : articule bien chaque syllabe, surtout la fin du mot."
+          : "Écoute bien le modèle, puis répète-le lentement, syllabe par syllabe.";
+        if (explicVoix()) direSuite([[`J'ai entendu : ${meilleur}. ${conseil} Écoute :`, "fr"], [cible, etat.langue]]);
+        montrer(`<div class="feedback ko">J'ai entendu : « ${echap(meilleur)} ». Réessaie ! (${Math.round(score * 100)} %)
+          <div class="explic">💡 <b>Il fallait dire :</b> « ${echap(cible)} ». ${conseil}</div></div>`);
+      }
     };
     r.onerror = (e) => {
       micro.classList.remove("ecoute");
@@ -700,7 +773,13 @@ function ongletBlabla(zone, t) {
         erreurs++;
         b.classList.add("faux");
         b.disabled = true;
-        toast("Pas tout à fait… essaie une autre réponse");
+        // Explication : ce que tu veux dire, et pourquoi cette phrase ne convient pas
+        const pourquoi = `« ${echap(c)} » ne convient pas : soit le sens n'est pas le bon, soit la phrase contient une faute. Tu veux dire : « ${echap(r.fr)} ». Cherche la phrase qui dit exactement ça, sans faute.`;
+        let ex = reponses.querySelector(".explic");
+        if (!ex) { ex = document.createElement("div"); ex.className = "explic"; reponses.appendChild(ex); }
+        ex.innerHTML = `💡 ${pourquoi}`;
+        if (explicVoix()) direSuite([["Pas tout à fait.", "fr"], [`Tu veux dire : ${r.fr}`, "fr"]]);
+        else toast("Pas tout à fait… essaie une autre réponse");
       }
     });
   }
@@ -721,6 +800,7 @@ function questionsGrammaire(lecon) {
     bonne: ex.choix[0],
     fr: ex.fr,
     audioReponse: phraseComplete(ex.q, ex.choix[0]),
+    pourquoi: ex.pourquoi || `La règle : ${regleDe(lecon)} (leçon « ${lecon.titre} »)`,
   }));
 }
 
@@ -734,7 +814,9 @@ function vueGrammaire() {
     <p class="muted" style="margin:0">📐 Grammaire · leçon ${idx + 1}/${lecons.length}</p>
     <h1>${g.titre}</h1>
     <section id="zone">
-      <div class="card explication">${g.explication}</div>
+      <div class="card explication">${g.explication}
+        <div class="rangee" style="margin-top:12px"><button class="lien-son" id="expliquer">🔊 Jack m'explique la leçon</button></div>
+      </div>
       <h2 class="section">Exemples</h2>
       <div class="card">
         ${g.exemples.map(([cible, fr], i) => `
@@ -749,6 +831,11 @@ function vueGrammaire() {
     </section>`;
   brancherRetour();
   app.querySelectorAll(".hp").forEach((b) => b.onclick = () => parler(g.exemples[b.dataset.i][0]));
+  // Explication orale : la règle en français, puis chaque exemple (langue étudiée + traduction)
+  document.getElementById("expliquer").onclick = () => direSuite([
+    [`${g.titre}.`, "fr"], [g.explication, "fr"], ["Écoute les exemples.", "fr"],
+    ...g.exemples.flatMap(([cible, fr]) => [[cible, etat.langue], [fr, "fr"]]),
+  ]);
   const zone = document.getElementById("zone");
   const lancer = () => lancerQcm(zone, questionsGrammaire(g), (score, total) => {
     const cle = `${etat.langue}:g:${g.id}`;
@@ -802,7 +889,7 @@ function vueConjugaison() {
       ${verbes.map((x) => `<button class="puce ${x === v ? "actif" : ""}" data-verbe="${echap(x.inf)}">${x.irregulier || x.preterit ? "⚡ " : ""}${echap(x.inf)}</button>`).join("")}
     </div>`;
   brancherRetour();
-  const dire = (i) => parler(`${pronoms[i].split("/")[0]} ${formes[i]}`);
+  const dire = (i) => parler(avecPronom(pronoms[i], formes[i]));
   app.querySelectorAll("[data-i]").forEach((b) => b.onclick = () => dire(+b.dataset.i));
   app.querySelectorAll("[data-temps]").forEach((b) => b.onclick = () => aller({ ...vue, temps: b.dataset.temps, verbe: v.inf }));
   app.querySelectorAll("[data-verbe]").forEach((b) => b.onclick = () => aller({ ...vue, verbe: b.dataset.verbe, temps: t.id }));
@@ -821,7 +908,8 @@ function drillConjugaison(verbes, temps) {
       consigne: `<span class="muted">${t.nom}</span><div class="question" style="margin:8px 0">${echap(pronoms[p])} … <span class="trou">${echap(v.inf)}</span></div>
         <span class="muted">${pronomsFr[p]} + ${echap(v.fr)}</span>`,
       attendu,
-      audio: `${pronoms[p].split("/")[0]} ${attendu}`,
+      audio: avecPronom(pronoms[p], attendu),
+      pourquoi: `${t.nom.split(" (")[0]} : « ${echap(v.inf)} » avec « ${echap(pronoms[p])} » donne « ${echap(attendu)} ». ${v.irregulier || v.preterit || v.formes ? "C'est un verbe irrégulier : regarde bien son tableau." : "C'est un verbe régulier : il suit le modèle du tableau."}`,
     };
   });
   const fin = (score, total) => {
@@ -884,6 +972,7 @@ function drillIrreguliers(rows) {
         <div class="question" style="margin:8px 0">${echap(r[0])}</div><span class="muted">${echap(r[nbCol])}</span>`,
       attendu: r[col],
       audio: r[col].replace(/\//g, ", "),
+      pourquoi: `${colonnes[col]} de « ${echap(r[0])} » (${echap(r[nbCol])}) : « ${echap(r[col])} ». Ce verbe est irrégulier : il ne suit pas la règle, il s'apprend par cœur. Astuce : récite les formes à voix haute, dans l'ordre du tableau.`,
     };
   });
   lancerSaisie(zone, items, (score, total) => {
@@ -938,6 +1027,149 @@ function vueTest() {
       if (re) re.onclick = () => vueTest();
     });
   };
+}
+
+// ================= Parcours 6 mois =================
+// Un parcours de 26 semaines par langue : chaque niveau a ses semaines (PARCOURS_SEMAINES dans data.js).
+// La séance du jour s'ajuste à ce que tu as déjà fait : révision, prochaine leçon, grammaire, conjugaison, test.
+function parcoursEtat() {
+  const p = (etat.parcours || {})[etat.langue];
+  if (!p || !p.debut) return { debut: null, semaine: 0, vise: 0 };
+  const jours = Math.floor((Date.now() - new Date(p.debut).getTime()) / 864e5);
+  const semaine = Math.min(PARCOURS_TOTAL, Math.floor(jours / 7) + 1);
+  let vise = 0;
+  PARCOURS_SEMAINES.forEach((s, i) => { if (semaine >= s) vise = i; });
+  return { debut: p.debut, semaine, vise, jours };
+}
+// Cartes déjà vues dont la date de révision est arrivée, sur tous les niveaux débloqués
+function cartesARevoir() {
+  const now = Date.now(), max = niveauDebloque(), liste = [];
+  C().themes.filter((t) => t.niveau <= max).forEach((t) => t.mots.forEach((_, i) => {
+    const c = etat.cartes[`${etat.langue}:${t.id}:${i}`];
+    if (c && c.prochain <= now) liste.push({ t, i });
+  }));
+  return liste;
+}
+
+function vueParcours() {
+  if (!etat.parcours) etat.parcours = {};
+  const p = parcoursEtat();
+  const max = niveauDebloque();
+  const n = max;
+  app.innerHTML = `${boutonRetour(`← ${L().nom}`)}<h1>🗓️ Mon parcours 6 mois</h1><section id="zone"></section>`;
+  brancherRetour();
+  const zone = document.getElementById("zone");
+  if (!p.debut) {
+    zone.innerHTML = `
+      <div class="card">
+        <p><b>Du premier mot au niveau professionnel en ${L().nom.toLowerCase()}.</b> Le parcours dure <b>26 semaines</b>, avec une séance de <b>30 à 45 minutes par jour</b>.</p>
+        ${frise(0, max)}
+        <p class="muted">Chaque jour, Jack te prépare ta séance selon tes résultats : révision des mots, nouvelle leçon, grammaire, conjugaison, et le test de passage quand tu es prêt. Si tu as de l'avance ou du retard, il te le dit et adapte la séance.</p>
+        <p class="muted">Honnêtement : en 6 mois, avec une séance par jour, on vise un bon niveau B2 et l'aisance au travail. Le niveau Expert (C1) se consolide ensuite avec la pratique.</p>
+        <button class="btn" id="go">Commencer mon parcours aujourd'hui</button>
+      </div>`;
+    document.getElementById("go").onclick = () => {
+      etat.parcours[etat.langue] = { debut: new Date().toISOString().slice(0, 10) };
+      sauver(); vueParcours();
+    };
+    return;
+  }
+  // Ajustement : comparer le niveau atteint au niveau prévu pour cette semaine
+  const ecart = max - p.vise;
+  const conseil = ecart > 0 ? `🚀 Tu as de l'avance : tu es au niveau <b>${NIVEAUX[max].nom}</b> alors que le parcours prévoit <b>${NIVEAUX[p.vise].nom}</b>. Garde ce rythme !`
+    : ecart < 0 ? `⏰ Tu as un peu de retard : le parcours prévoit le niveau <b>${NIVEAUX[p.vise].nom}</b>. Aujourd'hui, fais la séance en entier, et une deuxième leçon si tu peux.`
+    : `✅ Tu es dans les temps : niveau <b>${NIVEAUX[max].nom}</b>, comme prévu.`;
+  const dues = cartesARevoir().length;
+  const themeSuivant = C().themes.find((t) => t.niveau === n && progressionTheme(t) < 100);
+  const gramSuivante = C().grammaire.find((g) => g.niveau === n && scoreGrammaire(g) < 80);
+  const prog = progressionNiveau(n);
+  const taches = [
+    { ic: "🃏", titre: dues ? `Réviser ${dues} carte${dues > 1 ? "s" : ""}` : "Révision : rien à revoir aujourd'hui", sous: "Les mots reviennent au bon moment pour ne pas les oublier.", ok: !dues, action: () => aller({ nom: "revision" }) },
+    themeSuivant
+      ? { ic: themeSuivant.emoji, titre: `Vocabulaire : ${themeSuivant.titre}`, sous: `Leçon, quiz, cartes, parler${themeSuivant.dialogue ? ", dialogue avec Jack" : ""} · ${Math.round(progressionTheme(themeSuivant))} % fait`, action: () => aller({ nom: "theme", theme: themeSuivant.id, onglet: fait(cleTheme(themeSuivant)).lecon ? "quiz" : "lecon" }) }
+      : { ic: "📚", titre: "Vocabulaire du niveau terminé", sous: "Bravo ! Refais un quiz si tu veux t'entraîner.", ok: true, action: () => aller({ nom: "hub" }) },
+    gramSuivante
+      ? { ic: "📐", titre: `Grammaire : ${gramSuivante.titre}`, sous: "Lis l'explication, écoute les exemples, fais les exercices.", action: () => aller({ nom: "grammaire", id: gramSuivante.id }) }
+      : { ic: "📐", titre: "Grammaire du niveau maîtrisée", sous: "Toutes les leçons sont à 80 % ou plus.", ok: true, action: () => aller({ nom: "hub" }) },
+    { ic: "🔤", titre: "10 questions de conjugaison", sous: "Les temps de ton niveau, à taper.", action: () => { etat.niveauChoisi[etat.langue] = n; sauver(); aller({ nom: "conjugaison" }); } },
+  ];
+  if (n < NIVEAUX.length - 1 && prog >= 80) taches.push({ ic: "🎓", titre: `Test de passage → ${NIVEAUX[n + 1].nom}`, sous: `Tu as fait ${Math.round(prog)} % du niveau : tu es prêt !`, action: () => aller({ nom: "test", niveau: n }) });
+  zone.innerHTML = `
+    <div class="card">
+      <div class="rangee" style="justify-content:space-between"><b>Semaine ${p.semaine} / ${PARCOURS_TOTAL}</b><span class="muted">commencé le ${new Date(p.debut).toLocaleDateString("fr-FR")}</span></div>
+      ${barre((p.semaine / PARCOURS_TOTAL) * 100)}
+      ${frise(p.vise, max)}
+      <p style="margin-bottom:0">${conseil}</p>
+    </div>
+    <h2 class="section">Ta séance du jour <span class="muted" style="font-size:1rem">· 30 à 45 min</span></h2>
+    <div class="taches">
+      ${taches.map((t, i) => `<button class="tache ${t.ok ? "ok" : ""}" data-t="${i}"><span class="num">${t.ok ? "✅" : t.ic}</span><span class="ligne-titre">${echap(t.titre)}<small>${t.sous}</small></span><span class="ligne-etat">→</span></button>`).join("")}
+    </div>
+    <p class="muted" style="margin-top:18px">Niveau ${NIVEAUX[n].emoji} ${NIVEAUX[n].nom} : ${Math.round(prog)} % fait. Le test de passage apparaît dans la séance à partir de 80 %.</p>
+    <button class="retour" id="reinit" style="margin-top:8px">Recommencer le parcours à zéro</button>`;
+  zone.querySelectorAll("[data-t]").forEach((b) => b.onclick = taches[b.dataset.t].action);
+  document.getElementById("reinit").onclick = () => {
+    if (confirm("Recommencer le parcours à la semaine 1 ? Tes niveaux et tes cartes sont gardés.")) { delete etat.parcours[etat.langue]; sauver(); vueParcours(); }
+  };
+}
+// Frise des 6 niveaux : semaines prévues, niveau visé, niveaux déjà atteints
+function frise(vise, max) {
+  return `<div class="frise">${NIVEAUX.map((niv, i) => {
+    const fin = (PARCOURS_SEMAINES[i + 1] || PARCOURS_TOTAL + 1) - 1;
+    return `<div class="${i < max ? "fait" : ""} ${i === vise ? "ici" : ""}">${niv.emoji} ${niv.nom}<br><small class="muted">sem. ${PARCOURS_SEMAINES[i]}–${fin}</small></div>`;
+  }).join("")}</div>`;
+}
+
+// Révision générale : toutes les cartes à revoir, tous thèmes confondus
+function vueRevision() {
+  const file = melanger(cartesARevoir());
+  app.innerHTML = `${boutonRetour("← Mon parcours")}<h1>🃏 Révision du jour</h1><section id="zone"></section>`;
+  document.getElementById("retour").onclick = () => aller({ nom: "parcours" });
+  const zone = document.getElementById("zone");
+  let k = 0, retournee = false, sues = 0, silence = false;
+  function montrer() {
+    if (k >= file.length) {
+      if (file.length) gagnerXp(sues + 2);
+      zone.innerHTML = `
+        <div class="card resultat">
+          <div class="big">🃏</div>
+          <h2>${file.length ? "Révision terminée !" : "Rien à revoir aujourd'hui"}</h2>
+          <p class="muted">${file.length ? `Tu connaissais ${sues} carte${sues > 1 ? "s" : ""} sur ${file.length}.` : "Les mots que tu apprends reviendront ici au bon moment."}</p>
+          <button class="btn" id="suivant">Retour à ma séance →</button>
+        </div>`;
+      document.getElementById("suivant").onclick = () => aller({ nom: "parcours" });
+      return;
+    }
+    const { t, i } = file[k];
+    const [fr, cible] = t.mots[i];
+    zone.innerHTML = `
+      <p class="muted">Carte ${k + 1} / ${file.length} · ${t.emoji} ${echap(t.titre)}</p>
+      <div class="card flashcard" id="carte" role="button" tabindex="0">
+        ${retournee ? `<span>${echap(fr)}</span><span class="indice">${echap(cible)}</span>` : `<span>${echap(cible)}</span><span class="indice">Tu sais ce que ça veut dire ?</span>`}
+      </div>
+      <div class="rangee" style="margin-top:16px; justify-content:center">
+        <button class="hp" id="ecouter" aria-label="Écouter">🔊</button>
+        ${retournee ? `<button class="btn rouge" id="non">À revoir</button><button class="btn vert" id="oui">Je savais !</button>` : `<button class="btn" id="retourner">Retourner</button>`}
+      </div>`;
+    const retourner = () => { retournee = true; montrer(); };
+    document.getElementById("carte").onclick = retourner;
+    document.getElementById("carte").onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") retourner(); };
+    document.getElementById("ecouter").onclick = () => parler(cible);
+    if (!retournee) { if (!silence) parler(cible); silence = false; document.getElementById("retourner").onclick = retourner; return; }
+    const repondre = (savait) => {
+      const cle = `${etat.langue}:${t.id}:${i}`;
+      const c = etat.cartes[cle] || { boite: 0 };
+      const boite = savait ? Math.min(c.boite + 1, INTERVALLES_JOURS.length - 1) : 0;
+      etat.cartes[cle] = { boite, prochain: Date.now() + INTERVALLES_JOURS[boite] * 864e5 };
+      if (savait) sues++;
+      else if (explicVoix()) { direSuite([[cible, etat.langue], [`veut dire : ${fr}. Je te le remontre demain.`, "fr"]]); silence = true; }
+      sauver();
+      k++; retournee = false; montrer();
+    };
+    document.getElementById("oui").onclick = () => repondre(true);
+    document.getElementById("non").onclick = () => repondre(false);
+  }
+  montrer();
 }
 
 // ================= Démarrage =================

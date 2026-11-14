@@ -28,14 +28,27 @@ const LANGUES = {
     nomLocal: "Deutsch", adj: "allemande", perso: "🥨", persoNom: "Bretzel de Bavière", couleur: "#d40000",
     drapeau: svgDrapeau(`<rect width="60" height="40" fill="#000"/><rect y="13.33" width="60" height="13.34" fill="#DD0000"/><rect y="26.67" width="60" height="13.33" fill="#FFCE00"/>`),
   },
+  // Pour les francophones : maîtriser l'orthographe, la grammaire et la conjugaison (façon Bescherelle)
+  fr: {
+    nom: "Français", voix: "fr-FR", bonjour: "Bonjour !", accents: ["é", "è", "ê", "à", "â", "ù", "û", "ç", "ô", "î", "ï", "ë", "œ"],
+    nomLocal: "Orthographe, grammaire, conjugaison", adj: "française", perso: "🥖", persoNom: "Baguette de Paris", couleur: "#1f4fbf",
+    drapeau: svgDrapeau(`<rect width="20" height="40" fill="#002395"/><rect x="20" width="20" height="40" fill="#fff"/><rect x="40" width="20" height="40" fill="#ED2939"/>`),
+  },
 };
 
-// Les trois paliers. On débloque le suivant en réussissant le test de passage.
+// Les six paliers, du débutant au professionnel. On débloque le suivant en réussissant le test de passage.
 const NIVEAUX = [
   { nom: "Amateur", code: "A1–A2", emoji: "🌱", desc: "Les bases : se présenter, compter, commander, le présent." },
   { nom: "Moyen", code: "A2–B1", emoji: "🌿", desc: "Raconter au passé, parler du futur, la vie de tous les jours." },
-  { nom: "Autonome", code: "B1–B2", emoji: "🌳", desc: "Donner son avis, nuancer, le conditionnel, les expressions." },
+  { nom: "Autonome", code: "B1", emoji: "🌳", desc: "Donner son avis, nuancer, le conditionnel, les expressions." },
+  { nom: "Avancé", code: "B2", emoji: "🦜", desc: "Argumenter, raconter avec précision, comprendre les médias." },
+  { nom: "Pro", code: "B2–C1", emoji: "💼", desc: "Mails, réunions, téléphone, présenter et négocier au travail." },
+  { nom: "Expert", code: "C1", emoji: "🏆", desc: "Nuances, registres, tournures avancées : parler comme un natif." },
 ];
+
+// Parcours conseillé sur 6 mois (26 semaines) : semaine de début de chaque niveau.
+const PARCOURS_SEMAINES = [1, 5, 9, 14, 19, 24];
+const PARCOURS_TOTAL = 26;
 
 const SEUIL_TEST = 7; // bonnes réponses sur 10 pour passer au niveau suivant
 
