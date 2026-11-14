@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b2621">
+  <title>Jack Blabla</title>
+  <link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="../icon-192.png" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+  <script data-jack-world-nav src="../../jack-world-nav.js" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" href="images/jack-jungle.webp" as="image">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="habillage.css">
+</head>
+<body>
+  <header class="topbar">
+    <button class="logo" id="btn-home" aria-label="Accueil">
+      <span class="logo-bulle"><span class="avatar-jack mini" aria-hidden="true"></span></span>
+      <span>Jack <b>Blabla</b></span>
+      <span id="country-brand" class="country-brand" hidden></span>
+    </button>
+    <div class="stats" id="stats"></div>
+  </header>
+  <main id="app"></main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="data.js"></script>
+  <script src="contenu/en.js"></script>
+  <script src="contenu/es.js"></script>
+  <script src="contenu/de.js"></script>
+  <script src="conjugaison.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

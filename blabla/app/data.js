@@ -1,0 +1,43 @@
+// Réglages généraux de Jack Blabla. Le contenu de chaque langue est dans contenu/<code>.js
+
+// Drapeaux dessinés en SVG (les emojis drapeaux ne s'affichent pas sous Windows).
+const svgDrapeau = (contenu) => `<svg class="drapeau" viewBox="0 0 60 40" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${contenu}</svg>`;
+
+// Badge rond d'un pays : drapeau en médaillon + petit personnage typique
+function badgePays(code, taille = "") {
+  const l = LANGUES[code];
+  return `<span class="badge-pays ${taille}" style="--pays:${l.couleur}" aria-hidden="true">
+    <span class="badge-drapeau">${l.drapeau}</span>
+    <span class="badge-perso" title="${l.persoNom}">${l.perso}</span>
+  </span>`;
+}
+
+const LANGUES = {
+  en: {
+    nom: "Anglais", voix: "en-GB", bonjour: "Hello!", accents: [],
+    nomLocal: "English", adj: "anglaise", perso: "💂", persoNom: "Garde royal de Londres", couleur: "#2b5cc4",
+    drapeau: svgDrapeau(`<rect width="60" height="40" fill="#012169"/><path d="M0,0 60,40M60,0 0,40" stroke="#fff" stroke-width="8"/><path d="M0,0 60,40M60,0 0,40" stroke="#C8102E" stroke-width="3"/><path d="M30,0V40M0,20H60" stroke="#fff" stroke-width="12"/><path d="M30,0V40M0,20H60" stroke="#C8102E" stroke-width="7"/>`),
+  },
+  es: {
+    nom: "Espagnol", voix: "es-ES", bonjour: "¡Hola!", accents: ["á", "é", "í", "ó", "ú", "ñ", "ü"],
+    nomLocal: "Español", adj: "espagnole", perso: "💃", persoNom: "Danseuse de flamenco", couleur: "#e8a400",
+    drapeau: svgDrapeau(`<rect width="60" height="40" fill="#AA151B"/><rect y="10" width="60" height="20" fill="#F1BF00"/>`),
+  },
+  de: {
+    nom: "Allemand", voix: "de-DE", bonjour: "Hallo!", accents: ["ä", "ö", "ü", "ß"],
+    nomLocal: "Deutsch", adj: "allemande", perso: "🥨", persoNom: "Bretzel de Bavière", couleur: "#d40000",
+    drapeau: svgDrapeau(`<rect width="60" height="40" fill="#000"/><rect y="13.33" width="60" height="13.34" fill="#DD0000"/><rect y="26.67" width="60" height="13.33" fill="#FFCE00"/>`),
+  },
+};
+
+// Les trois paliers. On débloque le suivant en réussissant le test de passage.
+const NIVEAUX = [
+  { nom: "Amateur", code: "A1–A2", emoji: "🌱", desc: "Les bases : se présenter, compter, commander, le présent." },
+  { nom: "Moyen", code: "A2–B1", emoji: "🌿", desc: "Raconter au passé, parler du futur, la vie de tous les jours." },
+  { nom: "Autonome", code: "B1–B2", emoji: "🌳", desc: "Donner son avis, nuancer, le conditionnel, les expressions." },
+];
+
+const SEUIL_TEST = 7; // bonnes réponses sur 10 pour passer au niveau suivant
+
+// Rempli par contenu/en.js, contenu/es.js, contenu/de.js
+const CONTENU = {};

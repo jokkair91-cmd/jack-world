@@ -1,0 +1,122 @@
+/* Jack Blabla — site vitrine. Couleurs et polices reprises de l'appli (app/habillage.css). */
+:root{--bg:#0b2621;--card:#12352e;--card2:#153d35;--ink:#f2f7ef;--muted:#a9c3b6;--line:#245146;
+  --rouge:#ef4b2f;--rouge-fonce:#b4321c;--jaune:#ffc83d;--turquoise:#2fc4b2;--vert:#3cc47c;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito","Segoe UI",system-ui,sans-serif;line-height:1.6;overflow-x:clip}
+/* La jungle de Jack, floutée, en fond de page (comme dans l'appli) */
+body::before{content:"";position:fixed;inset:-40px;z-index:-2;pointer-events:none;background:url("app/images/jack-jungle.webp") right center/cover no-repeat,var(--bg);filter:blur(14px) saturate(1.15) brightness(.42)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(9,32,28,.86),rgba(9,32,28,.6) 60%,rgba(9,32,28,.45))}
+img{max-width:100%;height:auto;display:block}
+a{color:inherit}
+a:focus-visible,summary:focus-visible{outline:3px solid var(--jaune);outline-offset:4px;border-radius:6px}
+h1,h2,h3{font-family:"Baloo 2","Nunito",sans-serif;line-height:1.08;margin:0}
+h2{font-size:clamp(2rem,4.4vw,3rem);margin:.3em 0 .4em}
+h3{font-size:1.35rem}
+em{font-style:normal;color:var(--jaune)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+.skip{position:absolute;left:12px;top:-60px;z-index:30;background:#fff;color:#000;padding:10px 14px;border-radius:8px;font-weight:700;text-decoration:none}
+.skip:focus{top:10px}
+
+/* Avatar de Jack, découpé dans l'illustration */
+.avatar{display:inline-block;flex:0 0 auto;border-radius:50%;width:38px;height:38px;background:url("app/images/jack-jungle.webp") no-repeat;background-size:190px auto;background-position:-118px -8px;background-color:#1d4a3f;box-shadow:0 0 0 2px var(--jaune)}
+
+/* En-tête */
+header{position:sticky;top:0;z-index:10;background:rgba(11,38,33,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;gap:18px;min-height:66px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.35rem}
+.logo b{color:var(--jaune)}
+header nav{margin-left:auto;display:flex;gap:20px;font-size:.92rem;color:var(--muted)}
+header nav a{text-decoration:none}
+header nav a:hover{color:var(--ink)}
+.cta{padding:9px 16px;border-radius:12px;background:var(--rouge);color:#fff;font-weight:800;text-decoration:none;box-shadow:0 4px 0 var(--rouge-fonce);white-space:nowrap}
+.cta:hover{filter:brightness(1.1)}
+
+/* Boutons */
+.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border-radius:14px;font-weight:800;font-size:1.05rem;text-decoration:none;background:var(--rouge);color:#fff;box-shadow:0 5px 0 var(--rouge-fonce)}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{background:rgba(255,255,255,.06);border:1px solid var(--line);box-shadow:none;color:var(--ink)}
+.btn.ghost:hover{border-color:var(--jaune)}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+
+/* Accueil */
+.hero{position:relative;min-height:clamp(520px,82vh,820px);display:flex;align-items:center}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,30,26,.97) 0%,rgba(8,30,26,.86) 36%,rgba(8,30,26,.2) 64%,transparent 78%),url("app/images/jack-jungle.webp") no-repeat right center/auto 100%,#0c3a33;-webkit-mask-image:linear-gradient(180deg,#000 82%,transparent);mask-image:linear-gradient(180deg,#000 82%,transparent)}
+.hero .wrap{position:relative;width:100%}
+.hero-copy{max-width:540px;padding:48px 0}
+.eyebrow{margin:0 0 10px;font-size:.78rem;font-weight:800;letter-spacing:.18em;color:var(--turquoise)}
+.hero h1{font-size:clamp(2.6rem,6vw,4.4rem);text-shadow:0 3px 14px rgba(0,0,0,.5)}
+.bulle{display:inline-block;margin:16px 0 4px;padding:8px 16px;border-radius:16px 16px 16px 4px;background:#3a3216;border:1px solid rgba(255,200,61,.35);font-weight:700}
+.lead{font-size:1.12rem;color:#d8eadf;margin:14px 0 0}
+.petit{font-size:.9rem;color:var(--muted);margin:16px 0 0}
+
+/* Sections */
+.section{padding:clamp(3.5rem,7vw,6rem) 0}
+.head{max-width:640px;margin-bottom:2.2rem}
+.head p{color:var(--muted);margin:0}
+.grille{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.carte{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:0 4px 0 rgba(0,0,0,.35)}
+.carte p{color:var(--muted);margin:.4rem 0 0}
+
+/* Langues */
+.langue{text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
+.medaille{position:relative;width:84px;height:84px}
+.medaille .drapeau{width:84px;height:84px;border-radius:50%;box-shadow:0 0 0 4px #fff,0 0 0 7px var(--pays),0 10px 22px rgba(0,0,0,.45)}
+.medaille span{position:absolute;right:-10px;bottom:-8px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:1.45rem;background:#fff8e6;box-shadow:0 0 0 3px var(--pays)}
+.salut{font-family:"Baloo 2",sans-serif;font-weight:800;color:var(--jaune);background:#3a3216;border:1px solid rgba(255,200,61,.35);border-radius:14px;padding:2px 12px}
+.bientot{margin-top:18px;color:var(--muted);font-size:.95rem}
+
+/* Rubriques */
+.rubriques{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.rubrique h3{display:flex;align-items:center;gap:10px}
+.rubrique .ic{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:#0a221d;border:1px solid var(--line);font-size:1.4rem}
+.rubrique ul{margin:.6rem 0 0;padding-left:1.1rem;color:var(--muted)}
+.rubrique li{margin:.2rem 0}
+
+/* Niveaux */
+.niveaux{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.niveau .em{font-size:2rem}
+.niveau small{display:block;font-weight:800;letter-spacing:.12em;color:var(--turquoise)}
+.passage{margin-top:20px;padding:14px 18px;border-radius:14px;background:rgba(47,196,178,.12);border:1px solid rgba(47,196,178,.4)}
+.tableau{width:100%;border-collapse:collapse;margin-top:22px;font-size:.95rem;background:rgba(10,34,29,.7);border-radius:14px;overflow:hidden}
+.tableau th,.tableau td{padding:10px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.tableau thead th{font-family:"Baloo 2",sans-serif;color:var(--jaune);font-size:1.05rem}
+.tableau tbody th{color:var(--ink)}
+.tableau td{color:var(--muted)}
+.defile{overflow-x:auto}
+
+/* Questions */
+.faq details{border:1px solid var(--line);border-radius:14px;background:rgba(18,53,46,.8);padding:4px 18px;margin-bottom:12px}
+.faq summary{cursor:pointer;font-weight:800;padding:12px 0;list-style:none;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";color:var(--jaune);font-size:1.3rem;line-height:1}
+.faq details[open] summary::after{content:"−"}
+.faq p{margin:0 0 14px;color:var(--muted)}
+
+/* Fin et pied de page */
+.fin{display:flex;align-items:center;gap:28px;padding:32px;border-radius:24px;background:linear-gradient(120deg,#2a3a1c,#12352e);border:1px solid rgba(255,200,61,.35)}
+.fin .avatar{width:110px;height:110px;background-size:550px auto;background-position:-342px -27px;box-shadow:0 0 0 4px var(--jaune),0 10px 24px rgba(0,0,0,.4)}
+.fin h2{margin-top:0}
+footer{border-top:1px solid var(--line);padding:26px 0;color:var(--muted);font-size:.9rem;background:rgba(5,20,17,.8)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;justify-content:space-between}
+footer nav{display:flex;flex-wrap:wrap;gap:8px 18px}
+footer a{text-decoration:none}
+footer a:hover{color:var(--ink)}
+
+/* Écrans moyens et petits */
+@media (max-width:900px){.grille,.niveaux{grid-template-columns:1fr}.rubriques{grid-template-columns:1fr}}
+@media (max-width:760px){
+  .wrap{padding:0 20px}
+  header .wrap{flex-wrap:wrap;row-gap:4px;padding-top:10px;padding-bottom:8px}
+  header nav{order:3;width:100%;margin-left:0;flex-wrap:wrap;gap:2px 18px}
+  header nav a{display:inline-block;padding:8px 0}
+  .cta{margin-left:auto}
+  html{scroll-padding-top:130px}
+  /* Jack en haut de l'écran, le texte en dessous (sans se chevaucher) */
+  .hero{align-items:flex-start;min-height:auto}
+  .hero::before{background:linear-gradient(180deg,transparent 0,transparent 190px,rgba(8,30,26,.75) 250px,rgba(8,30,26,.97) 300px),url("app/images/jack-jungle.webp") no-repeat 72% 0/auto 300px,#0b2621}
+  .hero-copy{padding:250px 0 30px}
+  .fin{flex-direction:column;text-align:center;padding:26px 20px}
+  .fin .actions{justify-content:center}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}

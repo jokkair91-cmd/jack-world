@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#07070a">
-<meta name="description" content="Jack World : J-DJ, JACK22 Studio, Jack Radio et NEW DUC réunis au même endroit.">
+<meta name="description" content="Jack World : J-DJ, JACK22 Studio, Jack Radio, Jack Blabla et NEW DUC réunis au même endroit.">
 <title>Jack World</title>
 <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -67,6 +67,8 @@ h1 em{font-style:normal;color:var(--red)}
 .radio-art{background:radial-gradient(ellipse at center,#16474288,transparent 75%),#101a1c}
 .wave{display:flex;gap:6px;align-items:center;justify-content:center;height:112px}.wave i{width:5px;height:var(--h);border-radius:5px;background:linear-gradient(#b1e7cf,#4d9a8d);box-shadow:0 0 12px #7fd4bd15}
 .house-art{background:linear-gradient(135deg,#30241b,#161412)}
+.jungle-art{background:linear-gradient(90deg,#0b2621 0%,#0b2621cc 38%,#0b262100 70%),url("blabla/app/images/jack-jungle.webp") right 30%/cover no-repeat,#0b2621}
+.jungle-art .bulle-jack{align-self:flex-start;position:relative;z-index:1;font-weight:800;font-size:15px;color:#ffc83d;background:#3a3216;border:1px solid #ffc83d59;border-radius:14px 14px 14px 4px;padding:6px 12px}
 .wordmark{font-weight:950;line-height:.8;letter-spacing:-.07em;font-size:68px;color:#e8c9a1;transform:rotate(-5deg);align-self:center}.wordmark span{display:block;margin-left:65px;color:#fff2df}
 
 /* Pied de page */
@@ -96,15 +98,15 @@ footer .wrap{display:flex;flex-direction:column;gap:6px}
 <header>
   <div class="wrap">
     <a class="jw-logo" href="index.html" aria-label="Jack World, accueil"><img src="jack-world-logo.svg" alt="" width="40" height="40"><span class="brand">JACK <b>WORLD</b></span></a>
-    <nav aria-label="Projets"><a href="#jdj">J-DJ</a><a href="#studio">JACK22 Studio</a><a href="#radio">Jack Radio</a><a href="#newduc">NEW DUC</a></nav>
+    <nav aria-label="Projets"><a href="#jdj">J-DJ</a><a href="#studio">JACK22 Studio</a><a href="#radio">Jack Radio</a><a href="#blabla">Jack Blabla</a><a href="#newduc">NEW DUC</a></nav>
   </div>
 </header>
 
 <main class="wrap" id="contenu" tabindex="-1">
   <section class="hero">
-    <p class="eyebrow">QUATRE UNIVERS. UNE MÊME ÉNERGIE.</p>
+    <p class="eyebrow">CINQ UNIVERS. UNE MÊME ÉNERGIE.</p>
     <h1>Tout l'univers Jack.<br><em>Un seul endroit.</em></h1>
-    <p class="lead">J-DJ, JACK22 Studio, Jack Radio et NEW DUC réunis ici. Mixe, compose, écoute et découvre. Gratuit, dans ton navigateur, sans compte.</p>
+    <p class="lead">J-DJ, JACK22 Studio, Jack Radio, Jack Blabla et NEW DUC réunis ici. Mixe, compose, écoute, apprends et découvre. Gratuit, dans ton navigateur, sans compte.</p>
   </section>
 
   <section class="grid" aria-label="Les projets Jack">
@@ -139,6 +141,16 @@ footer .wrap{display:flex;flex-direction:column;gap:6px}
       </div>
     </article>
 
+    <article class="card" id="blabla">
+      <div class="visual jungle-art" aria-hidden="true"><span class="visual-label">JACK BLABLA / LA JUNGLE DES LANGUES</span><span class="bulle-jack">Hello! ¡Hola! Hallo!</span><span class="visual-foot">ANGLAIS · ESPAGNOL · ALLEMAND</span></div>
+      <div class="card-body">
+        <span class="tag">APPRENDRE LES LANGUES</span>
+        <h2>Jack Blabla</h2>
+        <p>Apprends l’anglais, l’espagnol ou l’allemand avec Jack, le perroquet : leçons, quiz, conjugaison et conversations, sur trois niveaux.</p>
+        <div class="actions"><a class="btn" href="blabla/app/index.html">Ouvrir Jack Blabla <span aria-hidden="true">→</span></a><a class="btn ghost" href="blabla/index.html">Découvrir le site Jack Blabla</a></div>
+      </div>
+    </article>
+
     <article class="card" id="newduc">
       <div class="visual house-art" aria-hidden="true"><span class="visual-label">NEW DUC / LA MAISON MÈRE</span><div class="wordmark">NEW<span>DUC.</span></div><span class="visual-foot">UN UNIVERS EN MOUVEMENT.</span></div>
       <div class="card-body">
@@ -153,7 +165,7 @@ footer .wrap{display:flex;flex-direction:column;gap:6px}
 </main>
 
 <footer><div class="wrap">
-  <span>JACK WORLD · 2026 · J-DJ · JACK22 Studio · Jack Radio · NEW DUC</span>
+  <span>JACK WORLD · 2026 · J-DJ · JACK22 Studio · Jack Radio · Jack Blabla · NEW DUC</span>
   <span>Les radios de Jack Radio appartiennent à leurs diffuseurs. Leur disponibilité peut varier selon le pays.</span>
 </div></footer>
 </body>

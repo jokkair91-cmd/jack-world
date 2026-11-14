@@ -9,6 +9,8 @@ J-DJ, JACK22 Studio, Jack Radio et NEW DUC réunis sur un seul site.
 | `j-dj/` | Site vitrine J-DJ | `NEW DUC - travail/J-DJ-VITRINE` |
 | `j-dj/console.html` | J-DJ Club Graphite (l'appli) | M6 (`J-DJ/J-DJ-CLUB-GRAPHITE-M6.html`), aussi copiée dans `j-dj/downloads/` |
 | `radio/` | Jack Radio | `Jack Radio/jack-radio/dist` (13 nov. 2026) |
+| `blabla/` | Site vitrine Jack Blabla | créé le 14 nov. 2026 (couleurs et polices de l'appli) |
+| `blabla/app/` | Jack Blabla (l'appli) | copie de `Jack Blabla/` du 14 nov. 2026, + icônes et bouton « Changer de site » |
 | `newduc/` | Site NEW DUC | V6 (`NEW DUC - travail/NEWDUKE-V6`) |
 
 ## Mettre à jour une appli

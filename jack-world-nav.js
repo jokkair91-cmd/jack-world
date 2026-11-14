@@ -3,9 +3,9 @@
   const script = document.currentScript;
   const base = new URL('.', script.src);
   const relative = decodeURIComponent(location.pathname.slice(base.pathname.length));
-  const current = relative.startsWith('newduc/') ? 'nd' : relative.startsWith('studio/') ? 'studio' : relative.startsWith('j-dj/') ? 'dj' : relative.startsWith('radio/') ? 'radio' : 'home';
-  const preserve = /^(studio\/studio\/|j-dj\/console\.html|radio\/studio\.html)/.test(relative);
-  const destinations = [['home','Accueil Jack World','index.html'],['nd','NEW DUC','newduc/index.html'],['studio','JACK22 Studio','studio/studio/index.html'],['dj','J-DJ','j-dj/console.html'],['radio','Jack Radio','radio/studio.html']];
+  const current = relative.startsWith('newduc/') ? 'nd' : relative.startsWith('studio/') ? 'studio' : relative.startsWith('j-dj/') ? 'dj' : relative.startsWith('radio/') ? 'radio' : relative.startsWith('blabla/') ? 'blabla' : 'home';
+  const preserve = /^(studio\/studio\/|j-dj\/console\.html|radio\/studio\.html|blabla\/app\/)/.test(relative);
+  const destinations = [['home','Accueil Jack World','index.html'],['nd','NEW DUC','newduc/index.html'],['studio','JACK22 Studio','studio/studio/index.html'],['dj','J-DJ','j-dj/console.html'],['radio','Jack Radio','radio/studio.html'],['blabla','Jack Blabla','blabla/app/index.html']];
   const host = document.createElement('div');
   host.id = 'jack-world-navigation';
   host.style.cssText = 'position:fixed!important;left:12px!important;bottom:12px!important;z-index:2147483000!important;width:auto!important;height:auto!important;display:block!important;';

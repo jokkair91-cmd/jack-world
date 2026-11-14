@@ -1,0 +1,208 @@
+/* =========================================================
+   Habillage « Jungle de Jack » — chargé APRÈS styles.css.
+   Pour revenir à l'ancien look : retirer la ligne habillage.css dans index.html.
+   ========================================================= */
+
+/* Palette tirée de l'illustration : vert jungle, rouge ara, jaune, turquoise.
+   Le sélecteur :root:not(...) l'emporte aussi sur le mode sombre de styles.css. */
+:root:not([data-habillage="off"]) {
+  --bg: #0b2621;
+  --card: #12352e;
+  --ink: #f2f7ef;
+  --muted: #a9c3b6;
+  --line: #245146;
+  --brand: #ef4b2f;       /* rouge ara */
+  --brand-dark: #b4321c;
+  --jaune: #ffc83d;       /* ailes */
+  --turquoise: #2fc4b2;   /* plumes bleu-vert */
+  --green: #3cc47c;
+  --green-bg: #164a34;
+  --red: #ff6b5e;
+  --red-bg: #4b2125;
+  --blue: #3fd0de;
+  --bubble-jack: #3a3216;
+  --bubble-toi: #163f48;
+  --shadow: 0 4px 0 rgba(0, 0, 0, .35);
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--bg);
+  overflow-x: clip;
+}
+/* La jungle de Jack en arrière-plan de toutes les pages, assombrie pour garder le texte lisible */
+body::before { /* la jungle floutée : une ambiance, pas un 2e perroquet */
+  content: ""; position: fixed; inset: -40px; z-index: -2; pointer-events: none;
+  background: url("images/jack-jungle.webp") right center / cover no-repeat, var(--bg);
+  filter: blur(14px) saturate(1.15) brightness(.5);
+}
+body::after { /* voile sombre + lucioles */
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(255, 214, 90, .45) 0 2px, transparent 3px),
+    radial-gradient(circle at 86% 30%, rgba(255, 214, 90, .38) 0 2px, transparent 3px),
+    radial-gradient(circle at 40% 76%, rgba(255, 214, 90, .32) 0 2px, transparent 3px),
+    radial-gradient(circle at 66% 58%, rgba(255, 214, 90, .28) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 24% 52%, rgba(255, 214, 90, .25) 0 1.5px, transparent 2.5px),
+    linear-gradient(90deg, rgba(9, 32, 28, .80) 0%, rgba(9, 32, 28, .55) 60%, rgba(9, 32, 28, .35) 100%);
+}
+
+/* ---------- Barre du haut ---------- */
+.topbar {
+  background: rgba(11, 38, 33, .82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.logo b { color: var(--jaune); }
+.country-brand { display: inline-flex; margin-left: 4px; }
+.country-brand[hidden] { display: none; }
+.pastille { background: rgba(255, 200, 61, .16); color: var(--jaune); }
+.pastille.ok { background: var(--green-bg); color: #9ff0c2; }
+
+/* ---------- Avatar de Jack (découpé dans l'illustration) ---------- */
+.avatar-jack {
+  display: inline-block; flex: 0 0 auto; border-radius: 50%;
+  width: 64px; height: 64px;
+  background: url("images/jack-jungle.webp") no-repeat;
+  background-size: 320px auto;          /* l'image fait 1536 px de large */
+  background-position: -199px -16px;    /* centré sur la tête */
+  box-shadow: 0 0 0 3px var(--jaune), 0 6px 18px rgba(0, 0, 0, .4);
+  background-color: #1d4a3f;
+}
+.avatar-jack.mini {
+  width: 30px; height: 30px;
+  background-size: 150px auto;
+  background-position: -93px -7px;
+  box-shadow: 0 0 0 2px var(--jaune);
+}
+.logo-bulle .avatar-jack.mini { vertical-align: middle; }
+
+/* ---------- Accueil plein écran ---------- */
+.accueil-jungle {
+  position: relative;
+  margin: -20px calc(50% - 50vw) 28px;
+  min-height: clamp(480px, 84vh, 860px);
+  display: flex; align-items: center;
+}
+/* L'image est sur un calque à part : elle garde toute sa hauteur (Jack entier, de la tête à la queue)
+   et se fond doucement dans la jungle floutée en bas, sans toucher au texte. */
+.accueil-jungle::before {
+  content: ""; position: absolute; inset: 0;
+  --img: url("images/jack-jungle.webp") no-repeat right center / auto 100%;
+  background:
+    linear-gradient(90deg, rgba(8, 30, 26, .97) 0%, rgba(8, 30, 26, .85) 34%, rgba(8, 30, 26, .2) 62%, transparent 75%),
+    var(--img), #0c3a33;
+  -webkit-mask-image: linear-gradient(180deg, #000 80%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 80%, transparent 100%);
+}
+.accueil-texte {
+  position: relative; z-index: 1;
+  width: min(720px, 100%); margin: 0 auto; padding: 40px 16px;
+}
+.accueil-texte > * { max-width: 440px; }
+.accueil-jungle h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); color: #fff; text-shadow: 0 3px 12px rgba(0, 0, 0, .5); }
+.accueil-jungle h1 span { color: var(--jaune); }
+.accueil-jungle .bulle { display: inline-block; font-size: 1.1rem; margin: 10px 0 14px; }
+.accueil-jungle .accroche { color: #d8eadf; font-size: 1.05rem; margin: 0 0 22px; }
+.accueil-jungle .btn { font-size: 1.1rem; padding: 14px 24px; }
+
+.bulle { background: var(--bubble-jack); color: var(--ink); border: 1px solid rgba(255, 200, 61, .35); }
+
+/* ---------- Petit en-tête avec Jack (pages intérieures) ---------- */
+.hero .perroquet { display: none; }
+.titre-jack { display: flex; align-items: center; gap: 12px; }
+.titre-jack h1 { margin: 0; }
+
+/* ---------- Cartes, tuiles, boutons ---------- */
+.card, .tile, .ligne, .niveau, .choix button, .onglet, .puce, .hp, .accents button {
+  border-color: var(--line);
+}
+.tile, .card { background: linear-gradient(180deg, #153d35, var(--card)); }
+.tile:hover, .ligne:hover { border-color: var(--jaune); }
+.tile .big .drapeau { width: 1.6em; height: 1.07em; }
+.niveau.actif { border-color: var(--jaune); background: #2a3a1c; }
+.ligne .num { background: var(--turquoise); color: #06231f; }
+.onglet.actif, .puce.actif { background: var(--jaune); color: #2a1d00; border-color: var(--jaune); }
+.btn.secondaire { background: #1a463d; color: var(--ink); }
+.hp:hover { border-color: var(--turquoise); }
+.barre { background: #0a221d; }
+.barre > div { background: linear-gradient(90deg, var(--turquoise), var(--green)); }
+.explication i { color: var(--jaune); }
+.trou { background: rgba(47, 196, 178, .18); color: var(--turquoise); }
+.saisie { background: #0a221d; }
+.micro { box-shadow: 0 5px 0 var(--brand-dark), 0 0 0 6px rgba(239, 75, 47, .18); }
+.toast { background: var(--jaune); color: #2a1d00; }
+.retour { color: var(--muted); }
+.retour:hover { color: var(--jaune); }
+.msg .qui { color: var(--jaune); }
+
+/* ---------- Badges des pays ---------- */
+.badge-pays { position: relative; display: inline-block; flex: 0 0 auto; width: 84px; height: 84px; }
+.badge-drapeau {
+  position: absolute; inset: 0; border-radius: 50%; overflow: hidden;
+  box-shadow: 0 0 0 4px #fff, 0 0 0 7px var(--pays, var(--jaune)), 0 10px 22px rgba(0, 0, 0, .45);
+}
+.badge-drapeau .drapeau { width: 100%; height: 100%; border-radius: 0; box-shadow: none; display: block; }
+.badge-drapeau::after { /* reflet brillant */
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  background: radial-gradient(circle at 32% 24%, rgba(255, 255, 255, .55), rgba(255, 255, 255, 0) 45%),
+              radial-gradient(circle at 70% 85%, rgba(0, 0, 0, .25), transparent 55%);
+}
+.badge-perso {
+  position: absolute; right: -10px; bottom: -8px; width: 42px; height: 42px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 1.55rem; line-height: 1;
+  background: #fff8e6; box-shadow: 0 0 0 3px var(--pays, var(--jaune)), 0 4px 10px rgba(0, 0, 0, .4);
+}
+.badge-pays.petit { width: 40px; height: 40px; vertical-align: -6px; margin-right: 4px; }
+.badge-pays.petit .badge-drapeau { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--pays, var(--jaune)); }
+.badge-pays.petit .badge-perso { width: 22px; height: 22px; font-size: .8rem; right: -7px; bottom: -5px; box-shadow: 0 0 0 2px var(--pays, var(--jaune)); }
+.badge-pays.mini { width: 24px; height: 24px; }
+.badge-pays.mini .badge-drapeau { box-shadow: 0 0 0 2px #fff; }
+.badge-pays.mini .badge-perso { display: none; }
+.titre-pays { display: flex; align-items: center; gap: 12px; }
+
+.tile-pays { align-items: center; text-align: center; padding: 26px 18px 20px; gap: 10px; border-width: 2px; }
+.tile-pays:hover { border-color: var(--pays); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pays) 35%, transparent), var(--shadow); }
+.tile-pays:hover .badge-pays { animation: hop 1.2s ease-in-out infinite; }
+.tile-pays .titre { font-size: 1.4rem; }
+.nom-local { display: block; font-family: "Nunito", sans-serif; font-size: .85rem; font-weight: 700; color: var(--muted); }
+.bulle-pays {
+  background: var(--bubble-jack); border: 1px solid rgba(255, 200, 61, .35); border-radius: 14px;
+  padding: 4px 12px; font-weight: 800; color: var(--jaune);
+}
+.country-brand { align-items: center; }
+
+/* ---------- Aide pour le son ---------- */
+.lien-son {
+  background: rgba(255, 200, 61, .12); border: 1px solid rgba(255, 200, 61, .4); color: var(--jaune);
+  border-radius: 999px; padding: 6px 12px; font-weight: 800; font-size: .9rem;
+}
+.lien-son:hover { background: rgba(255, 200, 61, .22); }
+.aide-son {
+  position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 16px;
+  background: rgba(4, 16, 14, .72); backdrop-filter: blur(4px);
+}
+.aide-son .card { max-width: 480px; width: 100%; max-height: 90vh; overflow: auto; }
+.aide-son .card h2 { margin-top: 0; }
+.aide-son .btn { margin: 4px 8px 4px 0; }
+
+/* ---------- Téléphone ---------- */
+@media (max-width: 640px) {
+  .accueil-jungle {
+    align-items: flex-end;
+    min-height: 92vh;
+  }
+  .accueil-jungle::before { /* Jack entier dans le haut de l'écran, le texte en dessous */
+    background:
+      linear-gradient(0deg, rgba(8, 30, 26, .95) 30%, rgba(8, 30, 26, .4) 48%, transparent 60%),
+      url("images/jack-jungle.webp") no-repeat 74% 0 / auto 62%, #0c3a33;
+  }
+  .accueil-texte { padding: 0 16px 28px; }
+  .accueil-texte > * { max-width: none; }
+}
+
+/* Moins d'animations si demandé par le système */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
