@@ -82,6 +82,9 @@
   filter:brightness(1.25);
   text-shadow:0 0 18px currentColor;
 }
+/* NEW DUC, écrans moyens : le menu en police large reste sur une ligne. */
+.site-nd #navigation a{white-space:nowrap}
+@media (min-width:761px) and (max-width:1180px){.site-nd #navigation{gap:1rem}.site-nd #navigation a{font-size:12.5px!important}.site-nd .top{gap:1.2rem}}
 /* Jack World, petits téléphones : le menu passe sur deux lignes, les cartes s'arrêtent sous l'en-tête. */
 @media (max-width:400px){.site-jw .card{scroll-margin-top:160px}}
 /* Boutons du menu (fond rouge ou coloré) : la police du site seulement. */
