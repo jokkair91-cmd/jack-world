@@ -13,14 +13,14 @@
     : relative.startsWith('blabla/') ? 'blabla' : 'home';
   if (actuel === 'home') return; // Jack World, le big boss : pas de pub
 
-  // [id, nom, phrase, site, logo, appli (facultatif)]
+  // [id, nom, phrase, site, logo] — chaque pub mène au SITE ; c'est le site qui ouvre l'appli.
   // Pour ajouter un projet (Jack Fusion, Jack Bourse, Jack Finance…) : une ligne ici, et le bandeau suit tout seul.
   const sites = [
     ['nd', 'NEW DUC', 'Des idées aux nouveaux possibles.', 'newduc/index.html', 'newduc/assets/nd/nd-sillage.png'],
-    ['studio', 'JACK22 STUDIO', 'Crée ton univers sonore.', 'studio/index.html', 'newduc/assets/nd/j22-logo-jack.png', 'studio/studio/index.html'],
-    ['dj', 'J-DJ', 'Tes platines. Ton mix.', 'j-dj/index.html', 'newduc/assets/nd/jdj-bot.png', 'j-dj/console.html'],
-    ['radio', 'JACK RADIO', 'La fréquence du bloc.', 'radio/studio.html', 'radio/radio-192.png'],
-    ['blabla', 'JACK BLABLA', 'Apprends une langue avec Jack.', 'blabla/index.html', 'blabla/icon-192.png', 'blabla/app/index.html'],
+    ['studio', 'JACK22 STUDIO', 'Crée ton univers sonore.', 'studio/index.html', 'newduc/assets/nd/j22-logo-jack.png'],
+    ['dj', 'J-DJ', 'Tes platines. Ton mix.', 'j-dj/index.html', 'newduc/assets/nd/jdj-bot.png'],
+    ['radio', 'JACK RADIO', 'La fréquence du bloc.', 'radio/index.html', 'radio/radio-192.png'],
+    ['blabla', 'JACK BLABLA', 'Apprends une langue avec Jack.', 'blabla/index.html', 'blabla/icon-192.png'],
   ].filter(([id]) => id !== actuel);
 
   const n = sites.length;
@@ -36,28 +36,26 @@
 .jw-pub-reel{display:flex;animation:jw-pub-tour ${n * 4.5}s ease-in-out infinite}
 .jw-pub-slide{flex:0 0 100%;min-width:0;display:flex;align-items:center;justify-content:center;gap:14px;height:52px;padding:6px 70px 6px 20px}
 .jw-pub-site{display:flex;align-items:center;gap:12px;min-width:0;color:inherit;text-decoration:none}
-.jw-pub-app{flex:none;padding:4px 10px;border-radius:999px;border:1px solid color-mix(in srgb,var(--c1,#a4ff00) 45%,transparent);color:var(--c1,#a4ff00);font:700 11px/1.2 Inter,"Segoe UI",Arial,sans-serif;text-decoration:none;white-space:nowrap}
-.jw-pub-app:hover,.jw-pub-app:focus-visible{background:color-mix(in srgb,var(--c1,#a4ff00) 16%,transparent)}
 .jw-pub-slide img{width:32px;height:32px;object-fit:contain;filter:drop-shadow(0 0 5px color-mix(in srgb,var(--c1,#a4ff00) 20%,transparent));margin:0;display:block}
 .jw-pub-site>span{display:flex;align-items:center;gap:14px;min-width:0}
 .jw-pub-slide b{font:900 16px/1 "Barlow Condensed","Arial Narrow",Arial,sans-serif;letter-spacing:.6px;color:#d8ddce;white-space:nowrap}
 .jw-pub-slide i{font-style:normal;font-size:11px;color:#a8b59a}
 .jw-pub-site:hover b,.jw-pub-site:focus-visible b{color:var(--c1,#a4ff00)}
-.jw-pub-site:focus-visible,.jw-pub-app:focus-visible{outline:2px solid var(--c1,#a4ff00);outline-offset:2px}
+.jw-pub-site:focus-visible{outline:2px solid var(--c1,#a4ff00);outline-offset:2px}
 .jw-pub:hover .jw-pub-reel,.jw-pub:focus-within .jw-pub-reel,.jw-pub.paused .jw-pub-reel{animation-play-state:paused}
 .jw-pub-pause{position:absolute;bottom:14px;right:16px;padding:3px 7px;font:10px Inter,Arial,sans-serif;border:1px solid #52613c55;border-radius:20px;background:transparent;color:#abb99a;cursor:pointer}
 @keyframes jw-pub-tour{${etapes}}
-@media(max-width:600px){.jw-pub-slide{padding:6px 64px 6px 10px;gap:8px}.jw-pub-site{gap:8px}.jw-pub-site>span{gap:2px 7px;flex-wrap:wrap}.jw-pub-slide b{font-size:14px}.jw-pub-slide i{font-size:10px}.jw-pub-slide img{width:28px;height:28px}.jw-pub-app{padding:3px 8px;font-size:10px}}
+@media(max-width:600px){.jw-pub-slide{padding:6px 64px 6px 10px;gap:8px}.jw-pub-site{gap:8px}.jw-pub-site>span{gap:2px 7px;flex-wrap:wrap}.jw-pub-slide b{font-size:14px}.jw-pub-slide i{font-size:10px}.jw-pub-slide img{width:28px;height:28px}}
 @media(max-width:400px){.jw-pub-slide i{display:none}}
 @media(prefers-reduced-motion:reduce){.jw-pub-reel{animation:none;overflow-x:auto;scroll-snap-type:x mandatory}.jw-pub-slide{scroll-snap-align:start}.jw-pub-pause{display:none}}`;
   document.head.append(style);
 
   const bandeau = document.createElement('section');
   bandeau.className = 'jw-pub';
-  bandeau.setAttribute('aria-label', 'Nos autres sites et applis');
+  bandeau.setAttribute('aria-label', 'Nos autres sites');
   const reel = document.createElement('div');
   reel.className = 'jw-pub-reel';
-  sites.forEach(([, nom, phrase, url, logo, appli]) => {
+  sites.forEach(([, nom, phrase, url, logo]) => {
     const slide = document.createElement('div');
     slide.className = 'jw-pub-slide';
     // Le site : logo, nom, phrase
@@ -72,15 +70,6 @@
     texte.append(b, i);
     a.append(img, texte);
     slide.append(a);
-    // L'appli, en accès direct
-    if (appli) {
-      const app = document.createElement('a');
-      app.className = 'jw-pub-app';
-      app.href = new URL(appli, base).href;
-      app.textContent = '▶ L’appli';
-      app.setAttribute('aria-label', 'Ouvrir l’appli ' + nom);
-      slide.append(app);
-    }
     reel.append(slide);
   });
   const pause = document.createElement('button');

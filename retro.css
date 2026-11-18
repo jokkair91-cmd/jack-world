@@ -63,7 +63,7 @@
 .site-nd #navigation a,
 .site-studio #navigation a,
 .site-jdj #navigation a,
-.site-radio .project-links a,
+.site-radio header nav a,
 .site-blabla header nav a{
   font-family:var(--site-font)!important;
   font-weight:600;
@@ -74,11 +74,11 @@
   text-shadow:0 0 14px color-mix(in srgb,currentColor 35%,transparent);
   transition:filter .2s,text-shadow .2s;
 }
-.site-jw header nav a:nth-child(5n+2),.site-nd #navigation a:nth-child(5n+2),.site-studio #navigation a:nth-child(5n+2),.site-jdj #navigation a:nth-child(5n+2),.site-blabla header nav a:nth-child(5n+2){color:var(--c2)!important}
-.site-jw header nav a:nth-child(5n+3),.site-nd #navigation a:nth-child(5n+3),.site-studio #navigation a:nth-child(5n+3),.site-jdj #navigation a:nth-child(5n+3),.site-blabla header nav a:nth-child(5n+3){color:var(--c3)!important}
-.site-jw header nav a:nth-child(5n+4),.site-nd #navigation a:nth-child(5n+4),.site-studio #navigation a:nth-child(5n+4),.site-jdj #navigation a:nth-child(5n+4),.site-blabla header nav a:nth-child(5n+4){color:var(--c4)!important}
+.site-jw header nav a:nth-child(5n+2),.site-nd #navigation a:nth-child(5n+2),.site-studio #navigation a:nth-child(5n+2),.site-jdj #navigation a:nth-child(5n+2),.site-blabla header nav a:nth-child(5n+2),.site-radio header nav a:nth-child(5n+2){color:var(--c2)!important}
+.site-jw header nav a:nth-child(5n+3),.site-nd #navigation a:nth-child(5n+3),.site-studio #navigation a:nth-child(5n+3),.site-jdj #navigation a:nth-child(5n+3),.site-blabla header nav a:nth-child(5n+3),.site-radio header nav a:nth-child(5n+3){color:var(--c3)!important}
+.site-jw header nav a:nth-child(5n+4),.site-nd #navigation a:nth-child(5n+4),.site-studio #navigation a:nth-child(5n+4),.site-jdj #navigation a:nth-child(5n+4),.site-blabla header nav a:nth-child(5n+4),.site-radio header nav a:nth-child(5n+4){color:var(--c4)!important}
 .site-jw header nav a:nth-child(5n+5),.site-nd #navigation a:nth-child(5n+5),.site-studio #navigation a:nth-child(5n+5),.site-jdj #navigation a:nth-child(5n+5){color:var(--c5)!important}
-.site-jw header nav a:hover,.site-nd #navigation a:hover,.site-studio #navigation a:hover,.site-jdj #navigation a:hover,.site-radio .project-links a:hover,.site-blabla header nav a:hover{
+.site-jw header nav a:hover,.site-nd #navigation a:hover,.site-studio #navigation a:hover,.site-jdj #navigation a:hover,.site-radio header nav a:hover,.site-blabla header nav a:hover{
   filter:brightness(1.25);
   text-shadow:0 0 18px currentColor;
 }
@@ -97,6 +97,7 @@
 .site-studio .intro,.site-studio .hero-note,.site-studio .beginner-intro,.site-studio .real-note,
 .site-jdj .intro,.site-jdj .hero-note,.site-jdj .beginner-intro,.site-jdj .real-note,
 .site-radio .availability,
+.site-radio .hero .lead,
 .site-blabla .hero .lead{
   font-family:var(--site-font)!important;
   font-weight:500;
@@ -110,7 +111,7 @@
 .site-studio .hero-note,.site-studio .beginner-intro,.site-studio .real-note,
 .site-jdj .hero-note,.site-jdj .beginner-intro,.site-jdj .real-note,.site-radio .availability{font-size:max(14px,.88rem)!important}
 /* Un trait multicolore à gauche des grands textes d'intro, façon cassette. */
-.site-jw .hero .lead,.site-nd .hero .lead,.site-studio .intro,.site-jdj .intro,.site-blabla .hero .lead{
+.site-jw .hero .lead,.site-nd .hero .lead,.site-studio .intro,.site-jdj .intro,.site-blabla .hero .lead,.site-radio .hero .lead{
   padding-left:14px;
   border-left:3px solid;
   border-image:linear-gradient(180deg,var(--c1),var(--c3),var(--c5)) 1;

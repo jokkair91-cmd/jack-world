@@ -1,61 +1,121 @@
 <!doctype html>
-<html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Jack 22 — La fréquence du bloc. Sélection de radios rap et urbaines." />
-    <meta http-equiv="refresh" content="0; url=studio.html" />
-    <title>Jack 22 — La fréquence du bloc</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <main>
-      <nav class="nav">
-        <a class="brand" href="#top">JACK <span>22</span></a>
-        <a href="#programmes">PROGRAMMES</a>
-        <a href="#le-92">LE 92</a>
-        <button class="nav-live" data-listen>● EN DIRECT</button>
-      </nav>
+<html class="site-radio" lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080808">
+<meta name="description" content="Jack Radio, la fréquence du bloc : 47 programmes de rap, R&B, shatta, dancehall, afro et reggaeton en direct, dans 8 destinations. On écoute directement sur le site, sans compte.">
+<title>Jack Radio — La fréquence du bloc</title>
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@800;900&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="../retro.css">
+</head>
+<body>
+<a class="skip" href="#contenu">Aller au contenu</a>
+<header>
+  <div class="wrap">
+    <a class="logo" href="index.html" aria-label="Jack Radio, accueil"><img src="radio-logo.svg" alt="" width="41" height="30"><span>JACK <b>22</b> <small>RADIO</small></span></a>
+    <nav aria-label="Navigation principale"><a href="#principe">Le principe</a><a href="#destinations">Les destinations</a><a href="#fonctions">Les fonctions</a><a href="#questions">Questions</a></nav>
+    <a class="cta" href="studio.html" target="_blank" rel="noopener">Écouter <span aria-hidden="true">↗</span></a>
+  </div>
+</header>
 
-      <section class="hero" id="top">
-        <div class="glow glow-red"></div><div class="glow glow-green"></div>
-        <div class="hero-copy">
-          <p class="eyebrow">92 / HAUTS-DE-SEINE / RAP RADIO</p>
-          <h1>LA<br /><em>FRÉQUENCE</em><br />DU BLOC.</h1>
-          <p class="intro">Rap français, drill, R&amp;B et les artistes qui font bouger le Deux.</p>
-          <button class="listen" data-listen><span class="play">▶</span> ÉCOUTER JACK 22 <small>EN DIRECT</small></button>
-        </div>
-        <div class="cassette-wrap" aria-label="Cassette Jack 22">
-          <div class="orbit orbit-red"></div><div class="orbit orbit-green"></div>
-          <div class="cassette">
-            <div class="cassette-top"><i></i><i></i></div>
-            <div class="label"><b>JACK</b><strong>22</strong><span>VOL. 001 • 92 FM*</span></div>
-            <div class="window"><div class="reel"></div><div class="tape"></div><div class="reel right"></div></div>
-            <div class="cassette-bottom"><i></i><i></i><i></i><i></i></div>
-          </div>
-          <div class="wave wave-left"></div><div class="wave wave-right"></div>
-        </div>
-        <p class="fineprint">* Radio en ligne — bientôt en direct.</p>
-      </section>
+<main id="contenu" tabindex="-1">
+  <section class="hero" aria-labelledby="titre">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">JACK RADIO · EN DIRECT</p>
+        <h1 id="titre">La <em>fréquence</em><br>du bloc.</h1>
+        <p class="lead">Rap, R&amp;B, shatta, dancehall, afro et reggaeton en direct, du monde entier. Tourne la roulette, la station arrive au centre, appuie et écoute : directement sur le site, sans passer par les sites des radios.</p>
+        <div class="actions"><a class="btn" href="studio.html" target="_blank" rel="noopener">▶ Écouter Jack Radio <span aria-hidden="true">↗</span></a><a class="btn ghost" href="#principe">Comment ça marche <span aria-hidden="true">↓</span></a></div>
+        <p class="petit">Gratuit, dans ton navigateur, sans compte. Il faut une connexion Internet pour écouter.</p>
+      </div>
+      <div class="cassette">
+        <span class="onair" aria-hidden="true">ON AIR</span>
+        <img src="jack22-cassette.jpg" alt="La cassette Jack 22, chrome, rouge et vert fluo" width="1254" height="1254">
+      </div>
+    </div>
+  </section>
 
-      <section class="ticker" aria-label="actualité"><span>JACK 22</span><b>•</b> LE RAP PARLE 92 <b>•</b> NOUVEAUTÉS / FREESTYLES / DÉDICACES <b>•</b> JACK 22 <b>•</b> LE RAP PARLE 92</section>
+  <div class="ticker" aria-hidden="true"><div>RAP <span>✦</span> R&amp;B <span>✦</span> SHATTA <span>✦</span> DANCEHALL <span>✦</span> AFRO <span>✦</span> REGGAETON <span>✦</span> DRILL <span>✦</span> LA FRÉQUENCE DU BLOC <span>✦</span> RAP <span>✦</span> R&amp;B <span>✦</span> SHATTA <span>✦</span> DANCEHALL <span>✦</span> AFRO <span>✦</span> REGGAETON <span>✦</span> DRILL <span>✦</span> LA FRÉQUENCE DU BLOC <span>✦</span></div></div>
 
-      <section class="programmes" id="programmes">
-        <div class="section-head"><p class="eyebrow">AU PROGRAMME</p><h2>LE SON NE<br />DORT JAMAIS.</h2></div>
-        <div class="shows">
-          <article><span>07:00 — 10:00</span><h3>LE RÉVEIL<br />DU BLOC</h3><p>Les sons qui réveillent le 92.</p></article>
-          <article class="featured"><span>18:00 — 20:00</span><h3>92<br />CONNEXION</h3><p>Nouveautés, dédicaces et artistes locaux.</p><b>EN DIRECT</b></article>
-          <article><span>22:00 — 02:00</span><h3>LA<br />NUIT 22</h3><p>Drill, trap et R&amp;B après minuit.</p></article>
-        </div>
-      </section>
+  <section class="section" id="principe" aria-labelledby="t-principe">
+    <div class="wrap">
+      <ul class="chiffres" aria-label="Jack Radio en chiffres">
+        <li><b>47</b><span>programmes en direct</span></li>
+        <li><b>33</b><span>radios dans la roulette, une par marque</span></li>
+        <li><b>8</b><span>destinations dans le monde</span></li>
+      </ul>
+      <div class="head" style="margin-top:3rem"><p class="eyebrow">LE PRINCIPE</p><h2 id="t-principe">Trois gestes,<br><em>et ça joue.</em></h2></div>
+      <ol class="etapes">
+        <li><h3>Choisis</h3><p>Une destination, un style (rap, R&amp;B, afro…) ou cherche une radio par son nom.</p></li>
+        <li><h3>Tourne</h3><p>Fais tourner la roulette : la station choisie arrive au centre, dans son décor.</p></li>
+        <li><h3>Écoute</h3><p>Appuie et écoute en direct, sans quitter Jack Radio. Change de station quand tu veux.</p></li>
+      </ol>
+    </div>
+  </section>
 
-      <section class="local" id="le-92">
-        <div><p class="eyebrow">ICI C'EST LE DEUX</p><h2>LE 92<br />A SA RADIO.</h2></div>
-        <p>Jack 22 donne le micro aux artistes émergents, aux collectifs et à tous ceux qui font vivre la culture rap dans les Hauts-de-Seine.</p>
-      </section>
-    </main>
-    <footer><div class="brand">JACK <span>22</span></div><p>LA FRÉQUENCE DU BLOC — 92</p><p>© 2026 JACK 22</p></footer>
-    <div class="modal" id="modal" aria-hidden="true"><div class="modal-box"><button class="close" aria-label="Fermer">×</button><p class="eyebrow">JACK 22</p><h2>LE DIRECT<br />ARRIVE BIENTÔT.</h2><p>La fréquence du bloc est en préparation. Suis Jack 22 pour ne pas rater le lancement.</p><button class="listen close-modal">OK, J'AI COMPRIS</button></div></div>
-    <script src="script.js"></script>
-  </body>
+  <section class="section" id="destinations" aria-labelledby="t-destinations">
+    <div class="wrap">
+      <div class="head"><p class="eyebrow">LES DESTINATIONS</p><h2 id="t-destinations">Huit destinations,<br><em>un seul bloc.</em></h2><p>Chaque destination a son décor : Paris, New York, Los Angeles, Londres, les Antilles, l'Afrique, le Maghreb, l'Espagne et l'Allemagne.</p></div>
+      <div class="destinations">
+        <article class="dest"><h3>France</h3><p>Rap français, R&amp;B, les grandes radios urbaines.</p></article>
+        <article class="dest"><h3>USA</h3><p>Hip-hop de New York et de Los Angeles.</p></article>
+        <article class="dest"><h3>UK</h3><p>Londres : hip-hop et R&amp;B.</p></article>
+        <article class="dest"><h3>Caraïbes / DOM</h3><p>Guadeloupe, Martinique, Guyane, Haïti : shatta, dancehall et sons des îles.</p></article>
+        <article class="dest"><img src="scene-afrique.svg" alt="" loading="lazy"><h3>Afrique francophone</h3><p>Côte d'Ivoire, Cameroun, Congo, Mali, Ghana.</p></article>
+        <article class="dest"><img src="scene-maghreb.svg" alt="" loading="lazy"><h3>Maghreb</h3><p>Maroc, Algérie, Tunisie.</p></article>
+        <article class="dest"><img src="scene-espagne.svg" alt="" loading="lazy"><h3>Espagne</h3><p>Rap et reggaeton en espagnol.</p></article>
+        <article class="dest"><img src="scene-allemagne.svg" alt="" loading="lazy"><h3>Allemagne</h3><p>Deutschrap et sons urbains.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="fonctions" aria-labelledby="t-fonctions">
+    <div class="wrap">
+      <div class="head"><p class="eyebrow">LES FONCTIONS</p><h2 id="t-fonctions">Tout pour<br><em>rester branché.</em></h2></div>
+      <div class="fonctions">
+        <article class="fonction"><span class="ic" aria-hidden="true">🎚️</span><h3>Filtres par style</h3><p>Rap, R&amp;B, shatta, dancehall, afro, reggaeton : la roulette ne garde que ce que tu veux écouter.</p></article>
+        <article class="fonction"><span class="ic" aria-hidden="true">⭐</span><h3>Favoris et recherche</h3><p>Garde tes radios préférées et retrouve une station par son nom.</p></article>
+        <article class="fonction"><span class="ic" aria-hidden="true">🔗</span><h3>Partage</h3><p>Envoie à un ami un lien direct vers la radio que tu écoutes.</p></article>
+        <article class="fonction"><span class="ic" aria-hidden="true">🛟</span><h3>Radio de secours</h3><p>Si un flux coupe, Jack Radio bascule tout seul sur une radio du même style ou du même pays.</p></article>
+        <article class="fonction"><span class="ic" aria-hidden="true">🎧</span><h3>Écran verrouillé</h3><p>Sur téléphone, change de radio ou mets en pause depuis l'écran verrouillé et tes écouteurs.</p></article>
+        <article class="fonction"><span class="ic" aria-hidden="true">📲</span><h3>Comme une appli</h3><p>Une fois le site en ligne, tu peux l'installer sur ton écran d'accueil.</p></article>
+      </div>
+      <p class="note">Les radios appartiennent à leurs diffuseurs. Leur disponibilité peut varier selon le pays et le moment.</p>
+    </div>
+  </section>
+
+  <section class="section faq" id="questions" aria-labelledby="t-questions">
+    <div class="wrap">
+      <div class="head"><p class="eyebrow">QUESTIONS</p><h2 id="t-questions">Tu te demandes…</h2></div>
+      <details><summary>Faut-il un compte ?</summary><p>Non. Tu ouvres Jack Radio et tu écoutes. Tes favoris sont gardés dans ton navigateur, sur cet appareil.</p></details>
+      <details><summary>Pourquoi une radio ne marche pas ?</summary><p>Chaque radio est diffusée par sa station : son flux peut être coupé ou bloqué dans certains pays. Dans ce cas, la radio de secours prend le relais avec une station du même style.</p></details>
+      <details><summary>Ça marche sur téléphone ?</summary><p>Oui, dans le navigateur du téléphone. Tu peux aussi contrôler la lecture depuis l'écran verrouillé.</p></details>
+      <details><summary>C'est quoi, « la fréquence du bloc » ?</summary><p>Le slogan de Jack Radio : les sons des quartiers du monde entier, réunis sur une seule fréquence.</p></details>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="t-fin">
+    <div class="wrap">
+      <div class="fin">
+        <img src="jack22-cassette.jpg" alt="" width="1254" height="1254" loading="lazy">
+        <div><h2 id="t-fin">Monte <em>le son.</em></h2><p>La roulette t'attend. Choisis ta destination et appuie sur play.</p>
+          <div class="actions"><a class="btn" href="studio.html" target="_blank" rel="noopener">▶ Écouter Jack Radio <span aria-hidden="true">↗</span></a></div></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">
+  <span>JACK RADIO · 2026 · Une création NEW DUC</span>
+  <span>Les radios appartiennent à leurs diffuseurs.</span>
+</div></footer>
+<script data-jack-world-nav src="../jack-world-nav.js" defer></script>
+<script data-jack-pub src="../jack-pub.js" defer></script>
+</body>
 </html>
