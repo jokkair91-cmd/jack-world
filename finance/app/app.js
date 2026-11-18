@@ -8,19 +8,6 @@ let filtreOps = { q: '', compte: '', categorie: '', type: '', tout: false };
 let analysePeriode = 12;
 let compteOuvert = null;
 
-const THEMES = [
-  { id: 'vert', nom: 'Vert sapin', fond: '#0f4533', point: '#c9a96e' },
-  { id: 'bleu', nom: 'Bleu Jack', fond: '#142a62', point: '#8fb0ff' },
-  { id: 'bordeaux', nom: 'Bordeaux', fond: '#761630', point: '#e7b89d' },
-  { id: 'prune', nom: 'Prune', fond: '#4a1c44', point: '#f1b48d' },
-  { id: 'ardoise', nom: 'Ardoise', fond: '#262d36', point: '#d6b67a' },
-];
-function appliquerTheme() {
-  const t = etat.profil?.theme || 'vert';
-  if (t === 'vert') delete document.documentElement.dataset.theme;
-  else document.documentElement.dataset.theme = t;
-}
-
 const PAGES = [
   { id: 'tableau', nom: 'Tableau de bord', icone: 'accueil' },
   { id: 'comptes', nom: 'Comptes', icone: 'carte' },
@@ -41,6 +28,30 @@ function enregistrer(msg) {
   if (!sauver()) toast("Attention : impossible d'enregistrer dans ce navigateur.");
   else if (msg) toast(msg);
   rendre();
+}
+// Montant qui « compte » jusqu'à sa valeur à l'ouverture de l'écran
+function nb(v, rond = false) { return `<span data-compte="${v}"${rond ? ' data-rond="1"' : ''}>${euros(v, rond)}</span>`; }
+function animerCompteurs() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.querySelectorAll('[data-compte]').forEach(el => {
+    if (el.dataset.fait) return; el.dataset.fait = '1';
+    const cible = Number(el.dataset.compte), rond = !!el.dataset.rond, duree = 1300, delai = Number(el.dataset.delai || 0);
+    let debut = null;
+    el.textContent = euros(0, rond);
+    const pas = t => {
+      if (debut === null) debut = t;
+      const k = Math.min(1, (t - debut) / duree), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = euros(k < 1 ? cible * e : cible, rond);
+      if (k < 1) requestAnimationFrame(pas);
+    };
+    setTimeout(() => requestAnimationFrame(pas), delai);
+  });
+}
+/* Onglets : chaque écran peut être découpé en plusieurs vues */
+const ongletsEtat = { tableau: 'synthese', comptes: 'tous', budgets: 'categories', analyses: 'ensemble' };
+let animerProchain = false;
+function onglets(page, liste) {
+  return `<nav class="onglets" role="tablist">${liste.map(([id, nom, icone, n]) => `<button role="tab" aria-selected="${ongletsEtat[page] === id}" class="${ongletsEtat[page] === id ? 'actif' : ''}" data-action="onglet" data-page="${page}" data-v="${id}">${ic(icone)}${nom}${n ? `<span class="nb">${n}</span>` : ''}</button>`).join('')}</nav>`;
 }
 function tete(titre, droite = '') { return `<div class="carte-tete"><h2>${titre}</h2>${droite}</div>`; }
 function progres(pct, classe = '') {
@@ -78,7 +89,7 @@ function alertes() {
 function rendreMenu(page) {
   const nbCharges = etat.charges.filter(c => !chargeRegleeCeMois(c, moisSel)).length;
   $('#menu').innerHTML = PAGES.map(p => `<a href="#/${p.id}" class="${p.id === page ? 'actif' : ''}">${ic(p.icone)}<span>${p.nom}</span>${p.id === 'charges' && nbCharges ? `<span class="compteur" title="Charges à régler ce mois">${nbCharges}</span>` : ''}</a>`).join('');
-  $('#menu-bas').innerHTML = `<a href="#/parametres" class="${page === 'parametres' ? 'actif' : ''}">${ic('reglages')}<span>Paramètres</span></a>`;
+  $('#menu-bas').innerHTML = `<a href="#" data-action="presentation">${ic('etoile')}<span>Présentation</span></a><a href="#/parametres" class="${page === 'parametres' ? 'actif' : ''}">${ic('reglages')}<span>Paramètres</span></a>`;
 }
 function rendreEntete(titre, sousTitre) {
   $('#entete-titre').innerHTML = `<h1>${titre}</h1>${sousTitre ? `<p>${sousTitre}</p>` : ''}`;
@@ -112,23 +123,28 @@ function vueTableau() {
   // Tuiles
   const tuiles = `<div class="grille g-tuiles">
     <div class="carte tuile vedette">
-      <span class="ic-tuile">${ic('pieces')}</span>
-      <div><div class="etiquette">Patrimoine net <span data-tip="Somme de tous vos comptes à la fin du mois (courants, épargne, placements).">${ic('info')}</span></div><div class="valeur">${euros(pat)}</div></div>
-      <div class="variation"><strong>${eurosSigne(arrondi(pat - patPrec))}</strong>vs mois précédent<br><span style="opacity:.85">${evol12 >= 0 ? '+' : '−'} ${Math.abs(evol12).toLocaleString('fr-FR', { maximumFractionDigits: 1 })} % sur 12 mois</span></div>
+      <div class="vedette-corps">
+        <div class="etiquette">${ic('pieces')} Patrimoine net <span data-tip="Somme de tous vos comptes à la fin du mois (courants, épargne, placements).">${ic('info')}</span></div>
+        <div class="valeur">${nb(pat)}</div>
+        <div class="vedette-pied">
+          <div style="display:grid;gap:6px"><span class="pastille-var">${ic(pat >= patPrec ? 'tendance' : 'chevron_b')} ${eurosSigne(arrondi(pat - patPrec))}</span><small style="white-space:nowrap">${evol12 >= 0 ? '+' : '−'} ${Math.abs(evol12).toLocaleString('fr-FR', { maximumFractionDigits: 1 })} % sur 12 mois</small></div>
+          ${grapheEtincelle(Array.from({ length: 12 }, (_, i) => patrimoine(finDeMois(decalerMois(m, i - 11)))))}
+        </div>
+      </div>
     </div>
-    <div class="carte tuile"><span class="ic-tuile positif">${ic('telecharger')}</span><div><div class="etiquette">Revenus (mois)</div><div class="valeur">${euros(t.revenus)}</div><small class="discret">${comparaison(t.revenus, tPrec.revenus, true)}</small></div></div>
-    <div class="carte tuile"><span class="ic-tuile negatif">${ic('importer')}</span><div><div class="etiquette">Dépenses (mois)</div><div class="valeur">${euros(t.depenses)}</div><small class="discret">${comparaison(t.depenses, tPrec.depenses, false)}</small></div></div>
-    <div class="carte tuile"><span class="ic-tuile">${ic('tirelire')}</span><div><div class="etiquette">Épargne du mois</div><div class="valeur ${t.solde < 0 ? 'negatif' : ''}">${euros(t.solde)}</div><small class="discret">${t.revenus ? `${taux} % des revenus` : '—'}</small></div></div>
+    <div class="carte tuile"><span class="ic-tuile positif">${ic('telecharger')}</span><div><div class="etiquette">Revenus (mois)</div><div class="valeur">${nb(t.revenus)}</div><small class="discret">${comparaison(t.revenus, tPrec.revenus, true)}</small></div></div>
+    <div class="carte tuile"><span class="ic-tuile negatif">${ic('importer')}</span><div><div class="etiquette">Dépenses (mois)</div><div class="valeur">${nb(t.depenses)}</div><small class="discret">${comparaison(t.depenses, tPrec.depenses, false)}</small></div></div>
+    <div class="carte tuile"><span class="ic-tuile">${ic('tirelire')}</span><div><div class="etiquette">Épargne du mois</div><div class="valeur ${t.solde < 0 ? 'negatif' : ''}">${nb(t.solde)}</div><small class="discret">${t.revenus ? `${taux} % des revenus` : '—'}</small></div></div>
   </div>`;
 
   // Budget mensuel (vedette)
   const budget = `<div class="carte budget-vedette">
     ${tete('Budget mensuel', `<a class="lien" href="#/budgets">${ic('crayon')} Modifier</a>`)}
-    <div class="gros">${euros(t.depenses, true)} <small>/ ${euros(bt, true)}</small></div>
+    <div class="gros">${nb(t.depenses, true)} <small>/ ${euros(bt, true)}</small></div>
     <div class="ligne-pct">${progres(pb, 'clair')}<strong>${pb} %</strong></div>
     <div class="synthese-ligne"><span class="lib">Revenus</span><span class="mt">${euros(t.revenus)}</span></div>
     <div class="synthese-ligne"><span class="lib">Dépenses</span><span class="mt">${euros(t.depenses)}</span></div>
-    <div class="reste"><span>Reste à dépenser</span><span>${euros(arrondi(bt - t.depenses))}</span></div>
+    <div class="reste"><span>Reste à dépenser</span><span>${nb(arrondi(bt - t.depenses))}</span></div>
   </div>`;
 
   // Comptes
@@ -187,10 +203,20 @@ function vueTableau() {
     ${grapheEvolution()}
   </div>`;
 
-  return `${bandeau}${tuiles}
-    <div class="grille g-3">${budget}${comptes}${charges}</div>
-    <div class="grille g-rep">${repartition}${objectifs}${bilan}</div>
-    <div class="grille g-bas">${dernieres}${evolution}</div>`;
+  const aRegler = etat.charges.length - reglees;
+  const barre = onglets('tableau', [['synthese', 'Synthèse', 'accueil'], ['mois', 'Mon mois', 'calendrier', aRegler], ['tendances', 'Tendances', 'tendance']]);
+  const o = ongletsEtat.tableau;
+  if (o === 'mois') return `${barre}
+    <div class="grille g-2">${repartition}${charges}</div>
+    ${dernieres}`;
+  if (o === 'tendances') {
+    const points = [];
+    for (let i = 11; i >= 0; i--) { const mm = decalerMois(m, -i), v = patrimoine(finDeMois(mm)); points.push({ libelle: moisCourt(mm), valeur: v, tip: `${libelleMois(mm)} : ${euros(v)}` }); }
+    return `${barre}${evolution.replace(grapheEvolution(), grapheEvolution(1000))}
+    <div class="grille g-2"><div class="carte">${tete('Patrimoine sur 12 mois', `<span class="note">${evol12 >= 0 ? '+' : '−'} ${Math.abs(evol12).toLocaleString('fr-FR', { maximumFractionDigits: 1 })} %</span>`)}${grapheCourbe(points, { largeur: 640, hauteur: 240 })}</div>${objectifs}</div>`;
+  }
+  return `${barre}${bandeau}${tuiles}
+    <div class="grille g-3">${budget}${comptes}${bilan}</div>`;
 }
 function comparaison(v, avant, hausseBonne) {
   if (!avant) return 'vs mois précédent : —';
@@ -202,8 +228,8 @@ function valeurSerie(m) {
   const t = totauxMois(m);
   return evo.serie === 'depenses' ? t.depenses : evo.serie === 'revenus' ? t.revenus : t.solde;
 }
-function grapheEvolution() {
-  const m = moisSel, base = varCss('--vert'), fonce = varCss('--vert-nuit');
+function grapheEvolution(largeur = 520) {
+  const m = moisSel;
   let donnees = [];
   if (evo.periode === 'mois') {
     for (let i = 5; i >= 0; i--) { const mm = decalerMois(m, -i); const v = valeurSerie(mm); donnees.push({ libelle: moisCourt(mm), valeurs: [v], tips: [`${libelleMois(mm)} : ${euros(v)}`] }); }
@@ -222,7 +248,7 @@ function grapheEvolution() {
     }
   }
   const der = donnees.length - 1;
-  return grapheBarres(donnees, [melange(base, '#ffffff', .25)], { surligne: der, couleurSurligne: fonce, bulle: euros(donnees[der]?.valeurs[0] || 0, true), hauteur: 220 });
+  return grapheBarres(donnees, ['url(#g-barre-doux)'], { surligne: der, couleurSurligne: 'url(#g-barre)', bulle: euros(donnees[der]?.valeurs[0] || 0, true), hauteur: 220, largeur });
 }
 
 /* Lignes réutilisées */
@@ -234,20 +260,23 @@ function ligneCharge(c) {
   const op = chargeRegleeCeMois(c, moisSel);
   return `<div class="charge ${op ? 'reglee' : ''}"><button class="case ${op ? 'cochee' : ''}" data-action="charge-basculer" data-id="${c.id}" aria-pressed="${!!op}" aria-label="${op ? 'Marquer comme non réglée' : 'Marquer comme réglée'} : ${echapper(c.nom)}">${op ? ic('coche') : ''}</button>
     <span class="ic-ligne" style="color:var(--texte-2)">${ic(c.icone)}</span>
-    <div class="lib" style="flex:1"><strong style="font-weight:500">${echapper(c.nom)}</strong> <small class="discret">— le ${c.jour} ${op ? '(réglée)' : '(à régler)'}</small></div>
+    <div class="lib" style="flex:1"><strong style="font-weight:500;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${echapper(c.nom)}</strong><small class="${op ? 'discret' : ''}" style="display:block;font-size:12px;${op ? '' : 'color:var(--alerte)'}">Le ${c.jour} · ${op ? 'réglée' : 'à régler'}</small></div>
     <span class="mt">${euros(c.montant)}</span></div>`;
 }
 function ligneObjectif(o) {
   const p = pct(o.actuel, o.cible);
-  return `<div class="objectif"><span class="ic-ligne">${ic(o.icone)}</span><span class="nom">${echapper(o.nom)}</span><span class="chiffres">${euros(o.actuel)} / ${euros(o.cible)}</span>
-    <div class="barre-ligne">${progres(p, p >= 100 ? '' : 'normal')}<span class="pct">${p} %</span></div></div>`;
+  return `<div class="objectif"><span class="ic-ligne">${ic(o.icone)}</span><span class="nom">${echapper(o.nom)}</span><span class="pct">${p} %</span>
+    <div class="barre-ligne">${progres(p, p >= 100 ? '' : 'normal')}</div><span class="chiffres">${euros(o.actuel, true)} sur ${euros(o.cible, true)}</span></div>`;
 }
 
 /* ---------- Comptes ---------- */
 function vueComptes(id) {
   rendreEntete('Mes comptes', 'Tous vos comptes et leur solde à la fin du mois choisi.');
   const fin = finDeMois(moisSel);
-  const groupes = Object.entries(TYPES_COMPTE).map(([type, nom]) => {
+  const filtreType = ongletsEtat.comptes;
+  const nbType = t => etat.comptes.filter(c => c.type === t).length;
+  const barre = onglets('comptes', [['tous', 'Tous', 'carte', etat.comptes.length], ['courant', 'Courants', 'banque', nbType('courant')], ['epargne', 'Épargne', 'tirelire', nbType('epargne')], ['placement', 'Placements', 'tendance', nbType('placement')]]);
+  const groupes = Object.entries(TYPES_COMPTE).filter(([type]) => filtreType === 'tous' || filtreType === type).map(([type, nom]) => {
     const cs = etat.comptes.filter(c => c.type === type);
     if (!cs.length) return '';
     const tot = cs.reduce((s, c) => s + soldeCompte(c, fin), 0);
@@ -255,7 +284,7 @@ function vueComptes(id) {
       <div class="grille g-3">${cs.map(c => `<div class="carte compte-carte ${c.id === id ? 'actif' : ''}" data-action="ouvrir-compte" data-id="${c.id}">
         <div class="haut">${badgeBanque(c)}<div class="lib" style="flex:1"><strong>${echapper(c.nom)}</strong><br><small class="discret">${echapper(c.banque || '')}</small></div>
         <div class="actions-ligne"><button class="bouton-icone" data-action="modifier-compte" data-id="${c.id}" aria-label="Modifier ${echapper(c.nom)}">${ic('crayon')}</button></div></div>
-        <div class="solde">${euros(soldeCompte(c, fin))}</div>
+        <div class="solde">${nb(soldeCompte(c, fin))}</div>
         <small class="discret">${eurosSigne(arrondi(soldeCompte(c, fin) - soldeCompte(c, finDeMois(decalerMois(moisSel, -1)))))} ce mois-ci</small>
       </div>`).join('')}</div></div>`;
   }).join('');
@@ -272,8 +301,8 @@ function vueComptes(id) {
         ${ops.length ? `<ul class="liste cliquable">${ops.map(ligneOperation).join('')}</ul>` : '<div class="vide">Aucune opération ce mois-ci sur ce compte.</div>'}</div>
     </div>`;
   }
-  return `<div class="barre-outils"><span class="discret">Total : <strong style="color:var(--texte)">${euros(patrimoine(fin))}</strong> sur ${etat.comptes.length} compte${etat.comptes.length > 1 ? 's' : ''}</span><span class="espace"></span><button class="btn principal" data-action="nouveau-compte">${ic('plus')} Ajouter un compte</button></div>
-    ${groupes || '<div class="carte vide">Aucun compte. Ajoutez votre compte courant pour commencer.</div>'}${detail}`;
+  return `${barre}<div class="barre-outils"><span class="discret">Total : <strong style="color:var(--texte)">${euros(patrimoine(fin))}</strong> sur ${etat.comptes.length} compte${etat.comptes.length > 1 ? 's' : ''}</span><span class="espace"></span><button class="btn principal" data-action="nouveau-compte">${ic('plus')} Ajouter un compte</button></div>
+    ${groupes || '<div class="carte vide">Aucun compte dans cette catégorie.</div>'}${detail}`;
 }
 
 /* ---------- Opérations (journal) ---------- */
@@ -324,9 +353,19 @@ function vueBudgets() {
   const t = totauxMois(moisSel), bt = budgetTotal(), pb = pct(t.depenses, bt);
   const dep = Object.fromEntries(depensesParCategorie(moisSel).map(x => [x.cat.id, x.montant]));
   const cats = categoriesDepense();
-  return `<div class="grille g-1-2">
+  const horsBudget = cats.filter(c => c.budget && (dep[c.id] || 0) > c.budget).length;
+  const barre = onglets('budgets', [['categories', 'Par catégorie', 'camembert'], ['detail', 'Tableau détaillé', 'livre', horsBudget ? `${horsBudget} hors budget` : '']]);
+  if (ongletsEtat.budgets === 'detail') return `${barre}<div class="carte">${tete('Détail', '<span class="note">Moyenne sur les 3 mois précédents</span>')}
+    <div class="tableau-wrap"><table class="tableau"><thead><tr><th>Catégorie</th><th class="num">Budget</th><th class="num">Dépensé</th><th class="num">Reste</th><th class="num">Moy. 3 mois</th><th style="width:28%">Progression</th></tr></thead><tbody>
+    ${cats.map(c => {
+      const d = dep[c.id] || 0;
+      let moy = 0; for (let k = 1; k <= 3; k++) moy += (depensesParCategorie(decalerMois(moisSel, -k)).find(x => x.cat.id === c.id)?.montant || 0);
+      return `<tr><td>${puceCategorie(c)}</td><td class="num">${c.budget ? euros(c.budget) : '—'}</td><td class="num">${euros(d)}</td><td class="num ${c.budget && d > c.budget ? 'negatif' : ''}">${c.budget ? euros(c.budget - d) : '—'}</td><td class="num discret">${euros(moy / 3)}</td><td>${c.budget ? progres(pct(d, c.budget)) : ''}</td></tr>`;
+    }).join('')}
+    </tbody></table></div></div>`;
+  return `${barre}<div class="grille g-1-2">
     <div class="carte budget-vedette">${tete('Budget mensuel')}
-      <div class="gros">${euros(t.depenses, true)} <small>/ ${euros(bt, true)}</small></div>
+      <div class="gros">${nb(t.depenses, true)} <small>/ ${euros(bt, true)}</small></div>
       <div class="ligne-pct">${progres(pb, 'clair')}<strong>${pb} %</strong></div>
       <div class="synthese-ligne"><span class="lib">Revenus</span><span class="mt">${euros(t.revenus)}</span></div>
       <div class="synthese-ligne"><span class="lib">Dépenses</span><span class="mt">${euros(t.depenses)}</span></div>
@@ -342,15 +381,7 @@ function vueBudgets() {
       }).join('')}
       <button class="cat-tuile" data-action="nouvelle-categorie" style="place-content:center;justify-items:center;color:var(--texte-2)">${ic('plus')}<span>Nouvelle catégorie</span></button></div>
     </div>
-  </div>
-  <div class="carte">${tete('Détail', '<span class="note">Moyenne sur les 3 mois précédents</span>')}
-    <div class="tableau-wrap"><table class="tableau"><thead><tr><th>Catégorie</th><th class="num">Budget</th><th class="num">Dépensé</th><th class="num">Reste</th><th class="num">Moy. 3 mois</th><th style="width:28%">Progression</th></tr></thead><tbody>
-    ${cats.map(c => {
-      const d = dep[c.id] || 0;
-      let moy = 0; for (let k = 1; k <= 3; k++) moy += (depensesParCategorie(decalerMois(moisSel, -k)).find(x => x.cat.id === c.id)?.montant || 0);
-      return `<tr><td>${puceCategorie(c)}</td><td class="num">${c.budget ? euros(c.budget) : '—'}</td><td class="num">${euros(d)}</td><td class="num ${c.budget && d > c.budget ? 'negatif' : ''}">${c.budget ? euros(c.budget - d) : '—'}</td><td class="num discret">${euros(moy / 3)}</td><td>${c.budget ? progres(pct(d, c.budget)) : ''}</td></tr>`;
-    }).join('')}
-    </tbody></table></div></div>`;
+  </div>`;
 }
 
 /* ---------- Objectifs ---------- */
@@ -369,7 +400,7 @@ function vueObjectifs() {
     return `<div class="carte" style="display:grid;gap:10px">
       <div style="display:flex;gap:12px;align-items:center"><span class="logo-banque" style="background:var(--vert-clair);color:var(--vert)">${ic(o.icone)}</span><strong style="flex:1;font-size:16px">${echapper(o.nom)}</strong>
       <div class="actions-ligne"><button class="bouton-icone" data-action="modifier-objectif" data-id="${o.id}" aria-label="Modifier">${ic('crayon')}</button></div></div>
-      <div style="font-family:var(--serif);font-size:22px">${euros(o.actuel)} <span class="discret" style="font-size:15px">/ ${euros(o.cible)}</span></div>
+      <div style="font-family:var(--chiffres);font-weight:700;font-size:22px;letter-spacing:-.02em">${nb(o.actuel)} <span class="discret" style="font-size:14px;font-weight:500">/ ${euros(o.cible)}</span></div>
       <div style="display:flex;align-items:center;gap:10px">${progres(p, 'normal')}<strong>${p} %</strong></div>
       ${p >= 100 ? '<small class="positif">Objectif atteint, bravo !</small>' : `<small class="discret">Il reste ${euros(reste)}</small>`}${rythme}
       <div style="display:flex;gap:8px;margin-top:4px"><button class="btn petit principal" data-action="verser" data-id="${o.id}" data-sens="1">${ic('plus')} Verser</button><button class="btn petit" data-action="verser" data-id="${o.id}" data-sens="-1">Retirer</button></div>
@@ -403,8 +434,8 @@ function vueAnalyses() {
   const pal = paletteCategories();
   const patDebut = patrimoine(finDeMois(decalerMois(moisSel, -n))), patFin = patrimoine(finDeMois(moisSel));
 
-  const revDep = grapheBarres(mois.map((m, i) => ({ libelle: moisCourt(m), valeurs: [tots[i].revenus, tots[i].depenses], tips: [`Revenus ${libelleMois(m).toLowerCase()} : ${euros(tots[i].revenus)}`, `Dépenses ${libelleMois(m).toLowerCase()} : ${euros(tots[i].depenses)}`] })), [varCss('--vert'), varCss('--or')], { hauteur: 230, largeur: 640 });
-  const epargne = grapheBarres(mois.map((m, i) => ({ libelle: moisCourt(m), valeurs: [tots[i].solde], tips: [`Épargne ${libelleMois(m).toLowerCase()} : ${euros(tots[i].solde)}`] })), [melange(varCss('--vert'), '#ffffff', .3)], { hauteur: 230, largeur: 640, surligne: n - 1, couleurSurligne: varCss('--vert-nuit') });
+  const revDep = grapheBarres(mois.map((m, i) => ({ libelle: moisCourt(m), valeurs: [tots[i].revenus, tots[i].depenses], tips: [`Revenus ${libelleMois(m).toLowerCase()} : ${euros(tots[i].revenus)}`, `Dépenses ${libelleMois(m).toLowerCase()} : ${euros(tots[i].depenses)}`] })), ['#16c486', '#2f6bff'], { hauteur: 230, largeur: 640 });
+  const epargne = grapheBarres(mois.map((m, i) => ({ libelle: moisCourt(m), valeurs: [tots[i].solde], tips: [`Épargne ${libelleMois(m).toLowerCase()} : ${euros(tots[i].solde)}`] })), ['url(#g-barre-doux)'], { hauteur: 230, largeur: 640, surligne: n - 1, couleurSurligne: 'url(#g-barre)' });
   const courbe = grapheCourbe(mois.map(m => { const v = patrimoine(finDeMois(m)); return { libelle: moisCourt(m), valeur: v, tip: `${libelleMois(m)} : ${euros(v)}` }; }), { largeur: 640, hauteur: 230 });
 
   const parCat = {};
@@ -415,41 +446,65 @@ function vueAnalyses() {
   const grosses = opsTriees(etat.operations.filter(o => mois.includes(moisDe(o.date)) && o.montant < 0 && !estVirement(o) && !o.chargeId)).sort((a, b) => a.montant - b.montant).slice(0, 6);
   const leg = l => `<span style="display:inline-flex;gap:14px;font-size:13.5px">${l.map(([c, t]) => `<span style="display:inline-flex;gap:6px;align-items:center"><span class="pastille" style="width:12px;height:12px;border-radius:3px;background:${c}"></span>${t}</span>`).join('')}</span>`;
 
-  return `<div class="barre-outils"><div class="segments">${[6, 12].map(v => `<button data-action="analyse-periode" data-v="${v}" class="${analysePeriode === v ? 'actif' : ''}">${v} mois</button>`).join('')}</div></div>
-    <div class="grille g-tuiles" style="grid-template-columns:repeat(4,minmax(0,1fr))">
-      <div class="carte tuile vedette"><span class="ic-tuile">${ic('tendance')}</span><div><div class="etiquette">Évolution du patrimoine</div><div class="valeur">${eurosSigne(arrondi(patFin - patDebut))}</div><small style="opacity:.8">${patDebut ? (((patFin - patDebut) / Math.abs(patDebut)) * 100).toLocaleString('fr-FR', { maximumFractionDigits: 1 }) + ' %' : ''}</small></div></div>
-      <div class="carte tuile"><span class="ic-tuile">${ic('salaire')}</span><div><div class="etiquette">Revenus moyens / mois</div><div class="valeur">${euros(sRev / n)}</div></div></div>
-      <div class="carte tuile"><span class="ic-tuile">${ic('panier')}</span><div><div class="etiquette">Dépenses moyennes / mois</div><div class="valeur">${euros(sDep / n)}</div></div></div>
-      <div class="carte tuile"><span class="ic-tuile">${ic('tirelire')}</span><div><div class="etiquette">Taux d'épargne</div><div class="valeur">${pct(sRev - sDep, sRev)} %</div></div></div>
-    </div>
+  const barre = `<div class="barre-outils">${onglets('analyses', [['ensemble', "Vue d'ensemble", 'barres'], ['depenses', 'Dépenses', 'panier'], ['epargne', 'Épargne', 'tirelire']])}<span class="espace"></span><div class="segments">${[6, 12].map(v => `<button data-action="analyse-periode" data-v="${v}" class="${analysePeriode === v ? 'actif' : ''}">${v} mois</button>`).join('')}</div></div>`;
+  const o = ongletsEtat.analyses;
+
+  if (o === 'depenses') return `${barre}
     <div class="grille g-2">
-      <div class="carte">${tete('Revenus et dépenses', leg([[varCss('--vert'), 'Revenus'], [varCss('--or'), 'Dépenses']]))}${revDep}</div>
-      <div class="carte">${tete('Évolution du patrimoine')}${courbe}</div>
-    </div>
-    <div class="grille g-2">
-      <div class="carte">${tete('Évolution de votre épargne', '<span class="note">Revenus − dépenses</span>')}${epargne}</div>
-      <div class="carte">${tete('Où part votre argent', `<span class="note">${euros(totCat)}</span>`)}
+      <div class="carte">${tete('Où part votre argent', `<span class="note">${euros(totCat)} en ${n} mois</span>`)}
         <div class="donut-bloc">${grapheAnneau(segs.map((s, i) => ({ valeur: s.montant, couleur: pal[i], libelle: s.cat.nom })), euros(totCat / n, true), 'par mois', 190)}
         <ul class="legende">${segs.map((s, i) => `<li><span class="pastille" style="background:${pal[i]}"></span><span class="lib">${echapper(s.cat.nom)}</span><span class="mt">${euros(s.montant / n, true)}/mois</span><span class="pct">${pct(s.montant, totCat)} %</span></li>`).join('')}</ul></div>
       </div>
+      <div class="carte">${tete('Plus grosses dépenses', '<span class="note">hors charges fixes</span>')}
+        ${grosses.length ? `<ul class="liste cliquable">${grosses.map(op => ligneOperation(op).replace('<span class="date">', '<span class="date" style="width:84px">').replace(dateCourte(op.date), dateCourte(op.date) + ' ' + op.date.slice(2, 4))).join('')}</ul>` : '<div class="vide">Rien à afficher.</div>'}
+      </div>
     </div>
-    <div class="carte">${tete('Plus grosses dépenses (hors charges fixes)')}
-      ${grosses.length ? `<ul class="liste cliquable">${grosses.map(o => ligneOperation(o).replace('<span class="date">', '<span class="date" style="width:96px">').replace(dateCourte(o.date), dateCourte(o.date) + ' ' + o.date.slice(0, 4))).join('')}</ul>` : '<div class="vide">Rien à afficher.</div>'}
+    <div class="carte">${tete('Dépenses mois par mois')}${grapheBarres(mois.map((m, i) => ({ libelle: moisCourt(m), valeurs: [tots[i].depenses], tips: [`${libelleMois(m)} : ${euros(tots[i].depenses)}`] })), ['url(#g-barre-doux)'], { hauteur: 220, largeur: 1000, surligne: n - 1, couleurSurligne: 'url(#g-barre)' })}</div>`;
+
+  if (o === 'epargne') {
+    const meilleurs = mois.map((m, i) => ({ m, v: tots[i].solde, r: tots[i].revenus })).sort((a, b) => b.v - a.v).slice(0, 3);
+    return `${barre}
+    <div class="grille g-tuiles" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+      <div class="carte tuile vedette"><span class="ic-tuile">${ic('tirelire')}</span><div><div class="etiquette">Épargné en ${n} mois</div><div class="valeur">${nb(arrondi(sRev - sDep))}</div></div></div>
+      <div class="carte tuile"><span class="ic-tuile">${ic('pieces')}</span><div><div class="etiquette">En moyenne par mois</div><div class="valeur">${nb((sRev - sDep) / n)}</div></div></div>
+      <div class="carte tuile"><span class="ic-tuile bleu">${ic('tendance')}</span><div><div class="etiquette">Taux d'épargne</div><div class="valeur">${pct(sRev - sDep, sRev)} %</div></div></div>
+    </div>
+    <div class="grille g-2-1">
+      <div class="carte">${tete('Évolution de votre épargne', '<span class="note">Revenus − dépenses</span>')}${epargne}</div>
+      <div class="carte">${tete('Vos meilleurs mois')}
+        <ul class="liste">${meilleurs.map((x, i) => `<li><span class="ic-ligne" style="font-family:var(--chiffres);font-weight:700;color:var(--or-fonce)">${i + 1}</span><div class="lib"><strong>${libelleMois(x.m)}</strong><small>${pct(x.v, x.r)} % des revenus mis de côté</small></div><span class="mt positif">${euros(x.v)}</span></li>`).join('')}</ul>
+      </div>
+    </div>`;
+  }
+
+  return `${barre}
+    <div class="grille g-tuiles" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+      <div class="carte tuile vedette"><span class="ic-tuile">${ic('tendance')}</span><div><div class="etiquette">Évolution du patrimoine</div><div class="valeur">${eurosSigne(arrondi(patFin - patDebut))}</div><small style="opacity:.8">${patDebut ? (((patFin - patDebut) / Math.abs(patDebut)) * 100).toLocaleString('fr-FR', { maximumFractionDigits: 1 }) + ' %' : ''}</small></div></div>
+      <div class="carte tuile"><span class="ic-tuile">${ic('salaire')}</span><div><div class="etiquette">Revenus moyens / mois</div><div class="valeur">${nb(sRev / n)}</div></div></div>
+      <div class="carte tuile"><span class="ic-tuile bleu">${ic('panier')}</span><div><div class="etiquette">Dépenses moyennes / mois</div><div class="valeur">${nb(sDep / n)}</div></div></div>
+      <div class="carte tuile"><span class="ic-tuile">${ic('tirelire')}</span><div><div class="etiquette">Taux d'épargne</div><div class="valeur">${pct(sRev - sDep, sRev)} %</div></div></div>
+    </div>
+    <div class="grille g-2">
+      <div class="carte">${tete('Revenus et dépenses', leg([['#16c486', 'Revenus'], ['#2f6bff', 'Dépenses']]))}${revDep}</div>
+      <div class="carte">${tete('Évolution du patrimoine')}${courbe}</div>
     </div>`;
 }
 
 /* ---------- Paramètres ---------- */
 function vueParametres() {
-  rendreEntete('Paramètres', 'Votre profil, les couleurs et vos données.');
-  const theme = etat.profil?.theme || 'vert';
+  rendreEntete('Paramètres', 'Votre profil, vos catégories et vos données.');
+  const premiere = etat.operations.reduce((p, o) => (!p || o.date < p ? o.date : p), '');
   return `<div class="grille g-2">
     <div class="carte">${tete('Mon profil')}
       <form id="form-profil"><div class="champ"><label for="p-prenom">Prénom (pour « Bonjour … »)</label><input id="p-prenom" name="prenom" value="${echapper(etat.profil?.prenom || '')}" placeholder="Votre prénom" autocomplete="given-name"></div>
       <button class="btn principal" type="submit">Enregistrer</button></form>
     </div>
-    <div class="carte">${tete('Couleurs')}
-      <p class="discret" style="margin-top:0">Choisissez l'ambiance de Jack Finance. Le changement est immédiat.</p>
-      <div class="themes">${THEMES.map(t => `<button class="theme-choix ${t.id === theme ? 'actif' : ''}" data-action="theme" data-v="${t.id}" aria-pressed="${t.id === theme}"><span class="rond" style="background:${t.fond}"><span style="background:${t.point}"></span></span>${t.nom}</button>`).join('')}</div>
+    <div class="carte">${tete('En bref')}
+      <ul class="liste">
+        <li><span class="ic-ligne">${ic('banque')}</span><div class="lib"><strong>Comptes suivis</strong></div><span class="mt">${etat.comptes.length}</span></li>
+        <li><span class="ic-ligne">${ic('fleches')}</span><div class="lib"><strong>Opérations enregistrées</strong></div><span class="mt">${etat.operations.length.toLocaleString('fr-FR')}</span></li>
+        <li><span class="ic-ligne">${ic('calendrier')}</span><div class="lib"><strong>Depuis le</strong></div><span class="mt">${premiere ? dateLongue(premiere) : '—'}</span></li>
+      </ul>
     </div>
   </div>
   <div class="grille g-2">
@@ -539,7 +594,7 @@ function formOperation(op = null, compteDefaut = null) {
 }
 
 function formCompte(c = null) {
-  const couleurs = ['#1d4f91', '#1d6447', '#7a4a12', '#8c1c37', '#4a1c44', '#0e7490', '#374151', '#b45309'];
+  const couleurs = ['#2456e6', '#0e9f6e', '#1a3fc4', '#0b7d5a', '#0f7f8c', '#0a2a6b', '#16c486', '#475569'];
   ouvrirModale(c ? 'Modifier le compte' : 'Nouveau compte', `
     ${champ('Nom du compte', 'nom', c?.nom || '', 'text', 'placeholder="Compte courant, Livret A…" required')}
     <div class="champs-2">${champ('Banque', 'banque', c?.banque || '', 'text', 'placeholder="Ma banque"')}${selectHtml('Type', 'type', Object.entries(TYPES_COMPTE), c?.type || 'courant')}</div>
@@ -634,7 +689,7 @@ function exporterCsv(ops, nom) {
 
 /* ---------- Actions ---------- */
 const ACTIONS = {
-  'mois': b => { const n = moisSel; moisSel = decalerMois(moisSel, Number(b.dataset.n)); if (moisSel > moisCourant()) moisSel = n; rendre(); },
+  'mois': b => { const n = moisSel; moisSel = decalerMois(moisSel, Number(b.dataset.n)); if (moisSel > moisCourant()) moisSel = n; animerProchain = true; rendre(); },
   'nouvelle-op': b => formOperation(null, b.dataset.compte),
   'modifier-op': b => formOperation(etat.operations.find(o => o.id === b.dataset.id)),
   'supprimer-op': b => {
@@ -680,7 +735,6 @@ const ACTIONS = {
   'evo-serie': b => { evo.serie = b.dataset.v; rendre(); },
   'evo-periode': b => { evo.periode = b.dataset.v; rendre(); },
   'analyse-periode': b => { analysePeriode = Number(b.dataset.v); rendre(); },
-  'theme': b => { etat.profil.theme = b.dataset.v; appliquerTheme(); enregistrer('Couleurs changées.'); },
   'export-csv': () => exporterCsv(opsFiltrees(), `jack-finance-operations-${filtreOps.tout ? 'toutes' : moisSel}.csv`),
   'export-csv-tout': () => exporterCsv(etat.operations, `jack-finance-operations-${aujourdhui()}.csv`),
   'sauvegarde': () => { telecharger(`jack-finance-sauvegarde-${aujourdhui()}.json`, JSON.stringify(etat, null, 2), 'application/json'); toast('Sauvegarde téléchargée.'); },
@@ -695,6 +749,8 @@ const ACTIONS = {
     b.parentElement.appendChild(p);
   },
   'fermer': () => fermerModale(),
+  'onglet': b => { ongletsEtat[b.dataset.page] = b.dataset.v; animerProchain = true; rendre(); },
+  'presentation': (b, e) => { e.preventDefault(); fermerMenu(); ouvrirPresentation(); },
 };
 
 document.addEventListener('click', e => {
@@ -746,8 +802,8 @@ function importer(input) {
       const d = JSON.parse(r.result);
       if (!Array.isArray(d.comptes) || !Array.isArray(d.operations) || !Array.isArray(d.categories)) throw new Error();
       if (!confirm(`Restaurer cette sauvegarde (${d.comptes.length} comptes, ${d.operations.length} opérations) ? Vos données actuelles seront remplacées.`)) return;
-      etat = Object.assign({ objectifs: [], charges: [], profil: { prenom: '', theme: 'vert' } }, d);
-      appliquerTheme(); moisSel = moisCourant(); enregistrer('Sauvegarde restaurée.');
+      etat = Object.assign({ objectifs: [], charges: [], profil: { prenom: '' } }, d);
+      moisSel = moisCourant(); enregistrer('Sauvegarde restaurée.');
     } catch (_) { toast("Ce fichier n'est pas une sauvegarde Jack Finance."); }
     input.value = '';
   };
@@ -761,14 +817,95 @@ $('#fond-menu').addEventListener('click', fermerMenu);
 function fermerMenu() { $('#barre').classList.remove('ouverte'); $('#fond-menu').classList.remove('visible'); }
 
 /* ---------- Navigation ---------- */
+let derniereRoute = null, minuteurAnim;
 function rendre() {
   const [page = 'tableau', param] = location.hash.replace(/^#\/?/, '').split('/');
   const vues = { tableau: vueTableau, comptes: () => vueComptes(param), operations: vueOperations, budgets: vueBudgets, objectifs: vueObjectifs, charges: vueCharges, analyses: vueAnalyses, parametres: vueParametres };
   const vue = vues[page] || vueTableau;
   rendreMenu(vues[page] ? page : 'tableau');
-  $('#vue').innerHTML = vue();
+  const route = `${page}/${param || ''}`, el = $('#vue');
+  // On anime à chaque changement d'écran, d'onglet ou de mois (pas quand on tape dans une recherche)
+  const anim = animerProchain || route !== derniereRoute;
+  animerProchain = false; derniereRoute = route;
+  el.classList.remove('anim');
+  document.querySelector('.info-bulle')?.setAttribute('hidden', '');
+  el.innerHTML = vue();
+  if (anim) {
+    void el.offsetWidth; el.classList.add('anim');
+    clearTimeout(minuteurAnim); minuteurAnim = setTimeout(() => el.classList.remove('anim'), 1800);
+    animerCompteurs();
+  } else el.querySelectorAll('[data-compte]').forEach(x => x.dataset.fait = '1');
   document.title = `Jack Finance — ${(PAGES.find(p => p.id === page) || { nom: page === 'parametres' ? 'Paramètres' : 'Tableau de bord' }).nom}`;
 }
 window.addEventListener('hashchange', () => { fermerMenu(); rendre(); window.scrollTo(0, 0); });
-appliquerTheme();
+
+/* ---------- Présentation ---------- */
+function ouvrirPresentation() {
+  const pr = $('#presentation'), m = moisCourant();
+  const pat = patrimoine(finDeMois(m)), t = totauxMois(m);
+  const histo = Array.from({ length: 12 }, (_, i) => patrimoine(finDeMois(decalerMois(m, i - 11))));
+  const epargne6 = Array.from({ length: 6 }, (_, i) => { const mm = decalerMois(m, i - 5); return { libelle: moisCourt(mm), valeurs: [Math.max(0, totauxMois(mm).solde)], tips: [`${libelleMois(mm)} : ${euros(totauxMois(mm).solde)}`] }; });
+  const totObj = etat.objectifs.reduce((s, o) => s + o.actuel, 0), cibObj = etat.objectifs.reduce((s, o) => s + o.cible, 0);
+  const nbP = (v, delai, rond = false) => `<span data-compte="${v}" data-delai="${delai}"${rond ? ' data-rond="1"' : ''}>${euros(v, rond)}</span>`;
+  const atouts = [
+    ['comptes', 'carte', 'Comptes', 'Courants, épargne, placements : tous vos soldes et leur courbe sur 12 mois.'],
+    ['budgets', 'camembert', 'Budgets', 'Un budget par catégorie et le reste à dépenser, en direct.'],
+    ['objectifs', 'cible', 'Objectifs', 'Voyage, apport, voiture : suivez chaque projet jusqu\'au bout.'],
+    ['analyses', 'barres', 'Analyses', 'Revenus, dépenses, épargne : vos tendances, mois après mois.'],
+  ];
+  pr.innerHTML = `
+    <div class="pr-orbes"><span></span><span></span><span></span></div>
+    <svg class="pr-lignes" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+      <defs><linearGradient id="pr-or-ligne" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d6b066" stop-opacity="0"/><stop offset=".5" stop-color="#f2dca5"/><stop offset="1" stop-color="#d6b066" stop-opacity="0"/></linearGradient></defs>
+      <path pathLength="1" d="M-60 720 C 320 520, 760 860, 1500 360"/>
+      <path pathLength="1" d="M-60 800 C 420 640, 900 900, 1500 470"/>
+      <path pathLength="1" d="M-60 180 C 380 300, 1000 40, 1500 220"/>
+    </svg>
+    <div class="pr-contenu">
+      <div class="pr-haut"><div class="pr-mini">${logoSvg('pm')}<span>JACK FINANCE</span></div><button class="pr-passer" data-pr="entrer">Passer ${'›'}</button></div>
+      <div class="pr-hero">
+        <div class="pr-logo">${logoSvg('pl', true)}</div>
+        <h1 class="pr-titre"><span style="animation-delay:.9s">Jack</span> <span class="or" style="animation-delay:1.05s">Finance</span></h1>
+        <p class="pr-sous">Votre argent, en clair. Vos projets, en marche.<br>Comptes, budgets, objectifs et analyses — au même endroit, rien qu'à vous.</p>
+        <div class="pr-boutons"><button class="btn-or" data-pr="entrer">Entrer dans Jack Finance ${ic('chevron_d')}</button><button class="btn-verre" data-pr="decouvrir">${ic('etoile')} Découvrir</button></div>
+      </div>
+      <div class="pr-cartes">
+        <div class="pr-carte"><div class="eti">${ic('pieces')} Patrimoine net</div><div class="val">${nbP(pat, 1700)}</div>${grapheEtincelle(histo).replace('class="etincelle"', 'class="etincelle" style="width:100%;height:70px"')}</div>
+        <div class="pr-carte"><div class="eti">${ic('tirelire')} Épargne de ${NOMS_MOIS[Number(m.slice(5)) - 1].toLowerCase()}</div><div class="val">${nbP(t.solde, 1850)}</div>${grapheBarres(epargne6, ['url(#g-barre)'], { hauteur: 110, largeur: 320 })}</div>
+        <div class="pr-carte"><div class="eti">${ic('cible')} Objectifs d'épargne</div><div class="val">${pct(totObj, cibObj)} %</div>
+          ${etat.objectifs.slice(0, 3).map(o => `<div class="ligne-obj"><span>${echapper(o.nom)}</span><span>${pct(o.actuel, o.cible)} %</span></div>${progres(pct(o.actuel, o.cible), 'normal')}`).join('') || '<p style="color:#9fb5b1">Créez votre premier objectif.</p>'}
+        </div>
+      </div>
+      <h2 class="pr-section-titre pr-revele" id="pr-decouvrir">Chaque chose à sa place</h2>
+      <p class="pr-section-sous pr-revele">Un onglet par sujet, pas tout entassé sur un seul écran. Cliquez pour y aller.</p>
+      <div class="pr-atouts">${atouts.map(([id, icone, titre, texte], i) => `<button class="pr-atout pr-revele" style="transition-delay:${i * .1}s" data-pr-aller="${id}"><span class="rond">${ic(icone)}</span><h3>${titre}</h3><p>${texte}</p></button>`).join('')}</div>
+      <div class="pr-pied pr-revele"><span style="display:inline-flex;gap:8px;align-items:center">${ic('bouclier')} Vos données restent sur cet ordinateur.</span>
+        <label><input type="checkbox" id="pr-auto" ${etat.profil?.intro === false ? '' : 'checked'}> Afficher cette présentation au démarrage</label></div>
+    </div>`;
+  pr.hidden = false; pr.scrollTop = 0; document.body.style.overflow = 'hidden';
+  animerCompteurs();
+  const obs = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vu'); obs.unobserve(e.target); } }), { root: pr, threshold: .15 });
+  pr.querySelectorAll('.pr-revele').forEach(x => obs.observe(x));
+  setTimeout(() => pr.querySelector('.btn-or')?.focus({ preventScroll: true }), 50);
+}
+function fermerPresentation(dest) {
+  const pr = $('#presentation'); if (pr.hidden || pr.classList.contains('sortie')) return;
+  pr.classList.add('sortie');
+  if (dest) { location.hash = '#/' + dest; }
+  animerProchain = true; rendre();
+  setTimeout(() => { pr.hidden = true; pr.classList.remove('sortie'); pr.innerHTML = ''; document.body.style.overflow = ''; }, 680);
+}
+$('#presentation').addEventListener('click', e => {
+  const b = e.target.closest('[data-pr], [data-pr-aller]'); if (!b) return;
+  if (b.dataset.prAller) return fermerPresentation(b.dataset.prAller);
+  if (b.dataset.pr === 'entrer') fermerPresentation();
+  if (b.dataset.pr === 'decouvrir') $('#pr-decouvrir').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+$('#presentation').addEventListener('change', e => {
+  if (e.target.id === 'pr-auto') { etat.profil.intro = e.target.checked; sauver(); }
+});
+document.addEventListener('keydown', e => { if (!$('#presentation').hidden && (e.key === 'Escape')) fermerPresentation(); });
+
+$('#marque-logo').innerHTML = logoSvg('m');
 rendre();
+if (etat.profil?.intro !== false) ouvrirPresentation();

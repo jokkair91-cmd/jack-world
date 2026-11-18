@@ -49,12 +49,12 @@ function creerDonneesExemple() {
     { id: 'autres-revenus', nom: 'Autres revenus', icone: 'cadeau', type: 'revenu', budget: 0 },
   ];
   const comptes = [
-    { id: 'courant', nom: 'Compte courant', banque: 'Banque principale', type: 'courant', icone: 'banque', couleur: '#1d4f91', cible: 4320 },
-    { id: 'joint', nom: 'Compte joint', banque: 'Banque principale', type: 'courant', icone: 'carte', couleur: '#1d4f91', cible: 6780 },
-    { id: 'livret-a', nom: 'Livret A', banque: 'Banque principale', type: 'epargne', icone: 'pieces', couleur: '#1d6447', cible: 18000 },
-    { id: 'ldds', nom: 'LDDS', banque: 'Banque principale', type: 'epargne', icone: 'pieces', couleur: '#1d6447', cible: 6100 },
-    { id: 'pea', nom: 'PEA', banque: 'Courtier en ligne', type: 'placement', icone: 'tendance', couleur: '#7a4a12', cible: 8950 },
-    { id: 'assurance-vie', nom: 'Assurance vie', banque: 'Assureur', type: 'placement', icone: 'bouclier', couleur: '#4a1c44', cible: 26400 },
+    { id: 'courant', nom: 'Compte courant', banque: 'Banque principale', type: 'courant', icone: 'banque', couleur: '#2456e6', cible: 4320 },
+    { id: 'joint', nom: 'Compte joint', banque: 'Banque principale', type: 'courant', icone: 'carte', couleur: '#1a3fc4', cible: 6780 },
+    { id: 'livret-a', nom: 'Livret A', banque: 'Banque principale', type: 'epargne', icone: 'pieces', couleur: '#0e9f6e', cible: 18000 },
+    { id: 'ldds', nom: 'LDDS', banque: 'Banque principale', type: 'epargne', icone: 'pieces', couleur: '#0b7d5a', cible: 6100 },
+    { id: 'pea', nom: 'PEA', banque: 'Courtier en ligne', type: 'placement', icone: 'tendance', couleur: '#0f7f8c', cible: 8950 },
+    { id: 'assurance-vie', nom: 'Assurance vie', banque: 'Assureur', type: 'placement', icone: 'bouclier', couleur: '#0a2a6b', cible: 26400 },
   ];
   const charges = [
     { id: 'loyer', nom: 'Loyer', icone: 'maison', montant: 780, jour: 5, compteId: 'courant', categorieId: 'logement' },
@@ -110,7 +110,7 @@ function creerDonneesExemple() {
     delete c.cible;
   });
 
-  return { version: 1, profil: { prenom: '', theme: 'vert' }, comptes, categories, operations: ops, objectifs, charges, exemple: true };
+  return { version: 1, profil: { prenom: '' }, comptes, categories, operations: ops, objectifs, charges, exemple: true };
 }
 
 /* ---------- Chargement / sauvegarde ---------- */
@@ -129,7 +129,7 @@ function sauver() {
 }
 function etatVide() {
   const ex = creerDonneesExemple();
-  return { version: 1, profil: { prenom: etat?.profil?.prenom || '', theme: etat?.profil?.theme || 'vert' }, comptes: [], categories: ex.categories, operations: [], objectifs: [], charges: [], exemple: false };
+  return { version: 1, profil: { prenom: etat?.profil?.prenom || '' }, comptes: [], categories: ex.categories, operations: [], objectifs: [], charges: [], exemple: false };
 }
 
 /* ---------- Accès ---------- */

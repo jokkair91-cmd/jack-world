@@ -37,6 +37,7 @@ const ICONES = {
   enfant: '<circle cx="12" cy="6" r="3"/><path d="M6 21v-2a6 6 0 0 1 12 0v2"/>',
   animal: '<circle cx="5" cy="10" r="2"/><circle cx="9" cy="5.5" r="2"/><circle cx="15" cy="5.5" r="2"/><circle cx="19" cy="10" r="2"/><path d="M8 18.5c0-2.5 1.8-5.5 4-5.5s4 3 4 5.5c0 1.5-1.2 2.5-2.5 2.5-.8 0-1-.5-1.5-.5s-.7.5-1.5.5C9.2 21 8 20 8 18.5z"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
+  etoile: '<path d="M12 2.5l1.9 5.6 5.6 1.9-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.9z"/><path d="M19 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/>',
   crayon: '<path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/>',
   poubelle: '<path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/>',
   chevron_d: '<path d="m9 6 6 6-6 6"/>',
