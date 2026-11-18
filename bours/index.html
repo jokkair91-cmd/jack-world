@@ -1,0 +1,152 @@
+<!doctype html>
+<html class="site-bours" lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jack Bours — Apprends la Bourse sans risquer un centime</title>
+  <meta name="description" content="Apprends la Bourse avec Jack : 5 niveaux de leçons, des quiz, des cartes mémoire et un simulateur avec 10 000 € fictifs.">
+  <meta name="theme-color" content="#0d1117">
+  <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="app/images/icone.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app/styles.css">
+  <link rel="stylesheet" href="../retro.css">
+  <style>
+    .v-hero .eyebrow{position:relative;z-index:1;margin:0 auto 14px;font-size:max(14px,.9rem)!important}
+    .v-pied a{color:inherit}
+  </style>
+  <script>
+    try { var t = (JSON.parse(localStorage.getItem("jackbours-progression-v1")) || {}).reglages; t = t && t.theme;
+      document.documentElement.dataset.theme = (t === "clair" || (t === "auto" && matchMedia("(prefers-color-scheme: light)").matches)) ? "light" : "dark";
+    } catch (e) { document.documentElement.dataset.theme = "dark"; }
+  </script>
+</head>
+<body class="vitrine">
+  <header class="v-haut">
+    <img src="app/images/icone.svg" alt="" style="height:44px;border-radius:10px">
+    <a class="btn" href="app/index.html" target="_blank" rel="noopener">Ouvrir l'app <span aria-hidden="true">↗</span></a>
+  </header>
+
+  <main>
+  <section class="v-hero">
+    <canvas id="fond-bougies" aria-hidden="true"></canvas>
+    <img src="app/images/logo-jackbours.svg" alt="Jackbours" class="v-logo logo-sombre">
+    <img src="app/images/logo-jackbours-clair.svg" alt="Jackbours" class="v-logo logo-clair">
+    <p class="eyebrow">JACK BOURS · APPRENDRE LA BOURSE</p>
+    <h1>Apprends la Bourse avec Jack,<br><em>sans risquer un centime.</em></h1>
+    <p class="chapo">Des leçons courtes, des quiz, des cartes mémoire et un vrai simulateur de marché avec 10 000 € fictifs. Pour comprendre avant d'y aller pour de vrai.</p>
+    <div class="v-cta">
+      <a class="btn principal" href="app/index.html#/apprendre" target="_blank" rel="noopener">📚 Commencer la 1re leçon</a>
+      <a class="btn" href="app/index.html#/simulateur" target="_blank" rel="noopener">📈 Essayer le simulateur</a>
+    </div>
+  </section>
+
+  <section class="v-section">
+    <h2>Tout pour apprendre, au même endroit</h2>
+    <p class="doux">Pensé pour les grands débutants : on part de « c'est quoi une action ? » jusqu'aux stop-loss et au PER.</p>
+    <div class="v-atouts">
+      <div class="v-atout"><span class="em">📚</span><h3>25 leçons en 5 niveaux</h3><p>Des explications simples, des exemples chiffrés et un « à retenir » à la fin de chaque leçon.</p></div>
+      <div class="v-atout"><span class="em">🔊</span><h3>Jack t'explique</h3><p>Il lit les leçons à voix haute et t'explique chaque erreur dans les quiz.</p></div>
+      <div class="v-atout"><span class="em">✏️</span><h3>Quiz et tests de passage</h3><p>Valide chaque leçon, puis réussis le test (7/10) pour débloquer le niveau suivant.</p></div>
+      <div class="v-atout"><span class="em">🃏</span><h3>Cartes mémoire</h3><p>Le vocabulaire revient au bon moment (1, 3, 7, 15, 30 jours) pour ne plus l'oublier.</p></div>
+      <div class="v-atout"><span class="em">📈</span><h3>Simulateur de Bourse</h3><p>10 entreprises inventées, un indice, un ETF, des dividendes, des actualités… et parfois un krach.</p></div>
+      <div class="v-atout"><span class="em">🏅</span><h3>Missions</h3><p>Premier achat, stop-loss, diversification, battre l'indice : 11 défis qui relient la théorie à la pratique.</p></div>
+    </div>
+  </section>
+
+  <section class="v-section">
+    <h2>Ta progression</h2>
+    <p class="doux">Chaque niveau s'appuie sur le précédent.</p>
+    <div class="v-niveaux">
+      <div class="v-niveau"><span class="em">🌱</span><b>Débutant</b><small>Les bases</small></div><span class="v-fleche">→</span>
+      <div class="v-niveau"><span class="em">🌿</span><b>Initié</b><small>Lire un graphique</small></div><span class="v-fleche">→</span>
+      <div class="v-niveau"><span class="em">🌳</span><b>Confirmé</b><small>Ordres et risque</small></div><span class="v-fleche">→</span>
+      <div class="v-niveau"><span class="em">💼</span><b>Avancé</b><small>Analyser une entreprise</small></div><span class="v-fleche">→</span>
+      <div class="v-niveau"><span class="em">🏆</span><b>Expert</b><small>Psychologie, crises, fiscalité</small></div>
+    </div>
+  </section>
+
+  <section class="v-section">
+    <div class="v-demo">
+      <canvas id="demo" aria-label="Graphique en bougies d'Ara Tech, une entreprise fictive du simulateur"></canvas>
+      <div>
+        <h2>Un marché qui vit, avec de l'argent fictif</h2>
+        <ul>
+          <li>🛒 Ordres <b>au marché</b>, <b>à cours limité</b> et <b>stop-loss</b>, avec des frais réalistes.</li>
+          <li>🕯️ Bougies japonaises, <b>moyennes mobiles</b> MM20 / MM50 et volume.</li>
+          <li>💶 Dividendes versés, PER et rendement de chaque entreprise.</li>
+          <li>📊 Ta performance comparée à l'indice JUNGLE 10.</li>
+          <li>⏩ Avance d'un jour, de cinq, ou laisse le temps défiler.</li>
+        </ul>
+        <a class="btn principal" href="app/index.html#/simulateur" target="_blank" rel="noopener">Lancer le simulateur <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="v-section">
+    <h2>Comment ça marche</h2>
+    <p class="doux">Pas d'inscription, rien à installer : tout reste dans ton navigateur.</p>
+    <div class="v-etapes">
+      <div class="v-etape"><h3>Apprends</h3><p>Une leçon de 3 minutes, Jack la lit pour toi si tu veux.</p></div>
+      <div class="v-etape"><h3>Vérifie</h3><p>Un quiz, puis les cartes mémoire pour ancrer le vocabulaire.</p></div>
+      <div class="v-etape"><h3>Pratique</h3><p>Teste dans le simulateur ce que tu viens d'apprendre, sans risque.</p></div>
+    </div>
+  </section>
+
+  <section class="v-section">
+    <div class="v-final">
+      <h2>Prêt à ouvrir le livre ?</h2>
+      <p class="doux">10 000 € fictifs t'attendent.</p>
+      <a class="btn principal" href="app/index.html" target="_blank" rel="noopener">Commencer maintenant <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+  </main>
+
+  <footer class="v-pied">
+    JACK BOURS · 2026 · Une création NEW DUC.<br>
+    Jack Bours est un outil d'apprentissage. Le marché, les entreprises et l'argent du simulateur sont fictifs.
+    Rien ici n'est un conseil en investissement : en Bourse, on peut perdre tout ou partie de son argent.
+  </footer>
+
+  <script src="app/marche.js"></script>
+  <script src="app/graphiques.js"></script>
+  <script>
+  (function () {
+    // Bougies qui défilent en fond
+    var cv = document.getElementById("fond-bougies"), ctx = cv.getContext("2d"), bougies = [], prix = 100, decal = 0;
+    var calme = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function nouvelle() { var o = prix, c = o * (1 + (Math.random() - 0.47) * 0.05); prix = c; return { o: o, c: c, h: Math.max(o, c) * (1 + Math.random() * 0.02), l: Math.min(o, c) * (1 - Math.random() * 0.02) }; }
+    for (var i = 0; i < 80; i++) bougies.push(nouvelle());
+    function dessiner() {
+      var dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
+      if (cv.width !== Math.round(w * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+      var s = getComputedStyle(document.documentElement), vert = s.getPropertyValue("--vert"), rouge = s.getPropertyValue("--rouge");
+      var larg = 22, n = Math.ceil(w / larg) + 2, vis = bougies.slice(-n);
+      var min = Math.min.apply(null, vis.map(function (b) { return b.l; })), max = Math.max.apply(null, vis.map(function (b) { return b.h; }));
+      var y = function (p) { return h * 0.12 + (max - p) / (max - min) * h * 0.76; };
+      vis.forEach(function (b, i) {
+        var x = i * larg - decal; ctx.strokeStyle = ctx.fillStyle = b.c >= b.o ? vert : rouge;
+        ctx.beginPath(); ctx.moveTo(x + 7, y(b.h)); ctx.lineTo(x + 7, y(b.l)); ctx.stroke();
+        var y1 = y(Math.max(b.o, b.c)), y2 = y(Math.min(b.o, b.c)); ctx.fillRect(x, y1, 14, Math.max(2, y2 - y1));
+      });
+    }
+    function anim() { decal += 0.35; if (decal >= 22) { decal = 0; bougies.push(nouvelle()); if (bougies.length > 400) bougies.shift(); } dessiner(); requestAnimationFrame(anim); }
+    if (calme) dessiner(); else anim();
+    window.addEventListener("resize", dessiner);
+
+    // Démo : le vrai moteur du simulateur, qui avance d'un jour toutes les 1,5 seconde
+    var M = window.JB_MARCHE, m = M.creer(), g = window.JB_GRAPH.creerBougies(document.getElementById("demo"));
+    function maj() { g.maj(M.bougies(m, "ARA"), { n: 50, mm20: true, volume: true, libelleJour: function (i) { return M.date(i).toLocaleDateString("fr-FR", { day: "numeric", month: "short" }); } }); }
+    maj();
+    if (!calme) setInterval(function () { M.avancer(m); maj(); }, 1500);
+    window.addEventListener("resize", maj);
+  })();
+  </script>
+  <script data-jack-world-nav src="../jack-world-nav.js" defer></script>
+  <script data-jack-pub src="../jack-pub.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Jackbours">
+  <defs>
+    <pattern id="grille" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M20 0V20M0 20H20" fill="none" stroke="#b6c3d4" stroke-width="1.2"/>
+    </pattern>
+    <clipPath id="pages">
+      <path d="M95 85Q190 60 295 88V285Q190 255 95 270Z"/>
+      <path d="M305 88Q410 60 505 85V270Q410 255 305 285Z"/>
+    </clipPath>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#0d1117"/>
+  <g transform="translate(256 228) scale(0.86) translate(-300 -180)">
+    <path d="M70 95Q70 70 100 62Q200 40 300 70Q400 40 500 62Q530 70 530 95V280Q420 255 300 300Q180 255 70 280Z" fill="#6b7a8c"/>
+    <path d="M95 85Q190 60 295 88V285Q190 255 95 270Z" fill="#e4e8ee"/>
+    <path d="M305 88Q410 60 505 85V270Q410 255 305 285Z" fill="#e4e8ee"/>
+    <rect x="90" y="50" width="420" height="250" fill="url(#grille)" clip-path="url(#pages)"/>
+    <path d="M300 80V292" stroke="#6b7a8c" stroke-width="4"/>
+    <g stroke-width="4" stroke-linecap="round">
+      <g stroke="#16a34a" fill="#16a34a">
+        <path d="M130 185V240"/><rect x="118" y="200" width="24" height="22"/>
+        <path d="M230 135V200"/><rect x="218" y="150" width="24" height="38"/>
+        <path d="M340 100V170"/><rect x="328" y="115" width="24" height="42"/>
+        <path d="M450 120V180"/><rect x="438" y="135" width="24" height="28"/>
+      </g>
+      <g stroke="#ef4444" fill="#ef4444">
+        <path d="M180 165V215"/><rect x="168" y="178" width="24" height="20"/>
+        <path d="M395 125V190"/><rect x="383" y="140" width="24" height="32"/>
+      </g>
+    </g>
+  </g>
+  <g transform="translate(256 410)">
+    <circle r="50" fill="#ffffff"/>
+    <g stroke="#ffffff" stroke-width="4" stroke-linejoin="round">
+      <path d="M0 0L0 -37A37 37 0 0 1 32.04 18.5Z" fill="#ef4444"/>
+      <path d="M0 0L32.04 18.5A37 37 0 0 1 -32.04 18.5Z" fill="#16a34a"/>
+      <path d="M0 0L-32.04 18.5A37 37 0 0 1 0 -37Z" fill="#facc15"/>
+    </g>
+  </g>
+</svg>

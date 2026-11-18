@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jack Bours</title>
+  <meta name="description" content="Apprendre la Bourse avec Jack : leçons, quiz, cartes mémoire et simulateur avec de l'argent fictif.">
+  <meta name="theme-color" content="#0d1117">
+  <link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="images/icone.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="app">
+  <header class="entete">
+    <a href="#/accueil" class="logo-lien" aria-label="Jack Bours, accueil">
+      <img src="images/logo-jackbours.svg" alt="Jackbours" class="logo logo-sombre">
+      <img src="images/logo-jackbours-clair.svg" alt="Jackbours" class="logo logo-clair">
+    </a>
+    <nav class="nav" id="nav" aria-label="Navigation principale"></nav>
+  </header>
+  <main id="vue" class="vue"></main>
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+  <script src="contenu.js"></script>
+  <script src="marche.js"></script>
+  <script src="graphiques.js"></script>
+  <script src="app.js"></script>
+  <script data-jack-world-nav src="../../jack-world-nav.js" defer></script>
+</body>
+</html>

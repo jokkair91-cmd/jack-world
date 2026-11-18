@@ -1,6 +1,6 @@
 # Jack World
 
-J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance et NEW DUC réunis sur un seul site.
+J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance, Jack Bours et NEW DUC réunis sur un seul site.
 
 | Dossier | Appli | Version source |
 |---|---|---|
@@ -16,6 +16,8 @@ J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance et NEW D
 | `fusion/app/` | Jack Fusion (l'appli) | v0.8 « Atelier » bêta (`Documents/Codex/…/JACK-FUSION`, 18 nov. 2026), sans les .exe ni les tests, + icônes et bouton « Changer de site » |
 | `finance/index.html` | Site vitrine Jack Finance | créé le 18 nov. 2026 (vert nuit, or et monogramme JF de l'appli) |
 | `finance/app/` | Jack Finance (l'appli) | copie de `Bureau/Jack Finance` du 18 nov. 2026 (sans serveur.ps1), + icônes et bouton « Changer de site » |
+| `bours/index.html` | Site vitrine Jack Bours | page de présentation d'origine de `Bureau/Jack Bours`, adaptée (liens vers `app/`, police multicolore, « Changer de site », pub) |
+| `bours/app/` | Jack Bours (l'appli) | copie de `Bureau/Jack Bours` du 18 nov. 2026 (`app.html` devenu `index.html`, sans serveur.ps1), + icônes et bouton « Changer de site ». Outil d'apprentissage, argent fictif, pas un conseil en investissement |
 | `newduc/` | Site NEW DUC | V6 (`NEW DUC - travail/NEWDUKE-V6`) |
 
 ## Mettre à jour une appli

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#07070a">
-<meta name="description" content="Jack World : J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance et NEW DUC réunis au même endroit.">
+<meta name="description" content="Jack World : J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance, Jack Bours et NEW DUC réunis au même endroit.">
 <title>Jack World</title>
 <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -73,6 +73,8 @@ h1 em{font-style:normal;color:var(--red)}
 .film-art .bande{display:flex;gap:6px;position:relative;z-index:1}.film-art .bande i{height:22px;border-radius:4px;background:linear-gradient(#ff9a45,#e2700a)}.film-art .bande i:nth-child(2){background:linear-gradient(#46d3e2,#1f9ea9)}.film-art .bande i:nth-child(3){background:repeating-linear-gradient(90deg,#8b7bff 0 3px,#6a4fd0 3px 6px)}
 .finance-art{background:radial-gradient(circle at 80% 30%,#2f6bff33,transparent 45%),linear-gradient(150deg,#0c3a2b,#08251c)}
 .finance-art .jf{align-self:center;width:84px;height:84px;border-radius:20px;background:#fff;padding:8px;box-shadow:0 10px 30px #0008}.finance-art .barres{display:flex;align-items:flex-end;gap:7px;height:46px;align-self:center}.finance-art .barres i{width:14px;border-radius:3px 3px 0 0;background:#c9a96e}.finance-art .barres i:last-child{background:#3ccf8e}
+.bours-art{background:radial-gradient(circle at 75% 25%,#22c55e22,transparent 50%),linear-gradient(150deg,#161b22,#0d1117)}
+.bours-art .bougies{display:flex;align-items:center;gap:9px;height:96px;align-self:center}.bours-art .bougies i{position:relative;width:14px;height:var(--h);margin-top:var(--y);border-radius:2px;background:#22c55e}.bours-art .bougies i.r{background:#ef4444}.bours-art .bougies i::before{content:"";position:absolute;left:6px;top:-10px;bottom:-10px;width:2px;background:inherit}
 .wordmark{font-weight:950;line-height:.8;letter-spacing:-.07em;font-size:68px;color:#e8c9a1;transform:rotate(-5deg);align-self:center}.wordmark span{display:block;margin-left:65px;color:#fff2df}
 
 /* Pied de page */
@@ -102,15 +104,15 @@ footer .wrap{display:flex;flex-direction:column;gap:6px}
 <header>
   <div class="wrap">
     <a class="jw-logo" href="index.html" aria-label="Jack World, accueil"><img src="jack-world-logo.svg" alt="" width="40" height="40"><span class="brand">JACK <b>WORLD</b></span></a>
-    <nav aria-label="Projets"><a href="#jdj">J-DJ</a><a href="#studio">JACK22 Studio</a><a href="#radio">Jack Radio</a><a href="#blabla">Jack Blabla</a><a href="#fusion">Jack Fusion</a><a href="#finance">Jack Finance</a><a href="#newduc">NEW DUC</a></nav>
+    <nav aria-label="Projets"><a href="#jdj">J-DJ</a><a href="#studio">JACK22 Studio</a><a href="#radio">Jack Radio</a><a href="#blabla">Jack Blabla</a><a href="#fusion">Jack Fusion</a><a href="#finance">Jack Finance</a><a href="#bours">Jack Bours</a><a href="#newduc">NEW DUC</a></nav>
   </div>
 </header>
 
 <main class="wrap" id="contenu" tabindex="-1">
   <section class="hero">
-    <p class="eyebrow">SEPT UNIVERS. UNE MÊME ÉNERGIE.</p>
+    <p class="eyebrow">HUIT UNIVERS. UNE MÊME ÉNERGIE.</p>
     <h1>Tout l'univers Jack.<br><em>Un seul endroit.</em></h1>
-    <p class="lead">J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance et NEW DUC réunis ici. Mixe, compose, écoute, apprends, monte tes vidéos, gère ton budget et découvre. Gratuit, dans ton navigateur, sans compte.</p>
+    <p class="lead">J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance, Jack Bours et NEW DUC réunis ici. Mixe, compose, écoute, apprends, monte tes vidéos, gère ton budget, découvre la Bourse et bien plus. Gratuit, dans ton navigateur, sans compte.</p>
   </section>
 
   <section class="grid" aria-label="Les projets Jack">
@@ -175,6 +177,16 @@ footer .wrap{display:flex;flex-direction:column;gap:6px}
       </div>
     </article>
 
+    <article class="card" id="bours">
+      <div class="visual bours-art" aria-hidden="true"><span class="visual-label">JACK BOURS / APPRENDRE LA BOURSE</span><div class="bougies"><i style="--h:22px;--y:30px"></i><i class="r" style="--h:18px;--y:24px"></i><i style="--h:34px;--y:6px"></i><i style="--h:26px;--y:-14px"></i><i class="r" style="--h:20px;--y:-8px"></i><i style="--h:38px;--y:-30px"></i><i style="--h:28px;--y:-48px"></i></div><span class="visual-foot">LEÇONS · QUIZ · SIMULATEUR</span></div>
+      <div class="card-body">
+        <span class="tag">APPRENDRE LA BOURSE</span>
+        <h2>Jack Bours</h2>
+        <p>25 leçons en 5 niveaux, des quiz, des cartes mémoire et un simulateur avec 10 000 € fictifs. Pour apprendre, pas un conseil en investissement.</p>
+        <div class="actions"><a class="btn" href="bours/app/index.html">Ouvrir Jack Bours <span aria-hidden="true">→</span></a><a class="btn ghost" href="bours/index.html">Découvrir le site Jack Bours</a></div>
+      </div>
+    </article>
+
     <article class="card" id="newduc">
       <div class="visual house-art" aria-hidden="true"><span class="visual-label">NEW DUC / LA MAISON MÈRE</span><div class="wordmark">NEW<span>DUC.</span></div><span class="visual-foot">UN UNIVERS EN MOUVEMENT.</span></div>
       <div class="card-body">
@@ -189,7 +201,7 @@ footer .wrap{display:flex;flex-direction:column;gap:6px}
 </main>
 
 <footer><div class="wrap">
-  <span>JACK WORLD · 2026 · J-DJ · JACK22 Studio · Jack Radio · Jack Blabla · Jack Fusion · Jack Finance · NEW DUC</span>
+  <span>JACK WORLD · 2026 · J-DJ · JACK22 Studio · Jack Radio · Jack Blabla · Jack Fusion · Jack Finance · Jack Bours · NEW DUC</span>
   <span>Les radios de Jack Radio appartiennent à leurs diffuseurs. Leur disponibilité peut varier selon le pays.</span>
 </div></footer>
 </body>
