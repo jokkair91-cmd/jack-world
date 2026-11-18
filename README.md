@@ -1,6 +1,6 @@
 # Jack World
 
-J-DJ, JACK22 Studio, Jack Radio et NEW DUC réunis sur un seul site.
+J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion et NEW DUC réunis sur un seul site.
 
 | Dossier | Appli | Version source |
 |---|---|---|
@@ -12,6 +12,8 @@ J-DJ, JACK22 Studio, Jack Radio et NEW DUC réunis sur un seul site.
 | `radio/studio.html` | Jack Radio (l'appli) | `Jack Radio/jack-radio/dist` (13 nov. 2026) |
 | `blabla/` | Site vitrine Jack Blabla | créé le 14 nov. 2026 (couleurs et polices de l'appli) |
 | `blabla/app/` | Jack Blabla (l'appli) | copie de `Jack Blabla/` du 14 nov. 2026, + icônes et bouton « Changer de site » |
+| `fusion/index.html` | Site vitrine Jack Fusion | créé le 18 nov. 2026 (logo et couleurs de l'appli) |
+| `fusion/app/` | Jack Fusion (l'appli) | v0.8 « Atelier » bêta (`Documents/Codex/…/JACK-FUSION`, 18 nov. 2026), sans les .exe ni les tests, + icônes et bouton « Changer de site » |
 | `newduc/` | Site NEW DUC | V6 (`NEW DUC - travail/NEWDUKE-V6`) |
 
 ## Mettre à jour une appli

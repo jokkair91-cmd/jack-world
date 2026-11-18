@@ -10,17 +10,18 @@
   const relative = decodeURIComponent(location.pathname.slice(base.pathname.length));
   const actuel = relative.startsWith('newduc/') ? 'nd' : relative.startsWith('studio/') ? 'studio'
     : relative.startsWith('j-dj/') ? 'dj' : relative.startsWith('radio/') ? 'radio'
-    : relative.startsWith('blabla/') ? 'blabla' : 'home';
+    : relative.startsWith('blabla/') ? 'blabla' : relative.startsWith('fusion/') ? 'fusion' : 'home';
   if (actuel === 'home') return; // Jack World, le big boss : pas de pub
 
   // [id, nom, phrase, site, logo] — chaque pub mène au SITE ; c'est le site qui ouvre l'appli.
-  // Pour ajouter un projet (Jack Fusion, Jack Bourse, Jack Finance…) : une ligne ici, et le bandeau suit tout seul.
+  // Pour ajouter un projet (Jack Bourse, Jack Finance…) : une ligne ici + son dossier dans « actuel », et le bandeau suit tout seul.
   const sites = [
     ['nd', 'NEW DUC', 'Des idées aux nouveaux possibles.', 'newduc/index.html', 'newduc/assets/nd/nd-sillage.png'],
     ['studio', 'JACK22 STUDIO', 'Crée ton univers sonore.', 'studio/index.html', 'newduc/assets/nd/j22-logo-jack.png'],
     ['dj', 'J-DJ', 'Tes platines. Ton mix.', 'j-dj/index.html', 'newduc/assets/nd/jdj-bot.png'],
     ['radio', 'JACK RADIO', 'La fréquence du bloc.', 'radio/index.html', 'radio/radio-192.png'],
     ['blabla', 'JACK BLABLA', 'Apprends une langue avec Jack.', 'blabla/index.html', 'blabla/icon-192.png'],
+    ['fusion', 'JACK FUSION', 'Monte. Mixe. Fusionne.', 'fusion/index.html', 'fusion/apple-touch-icon.png'],
   ].filter(([id]) => id !== actuel);
 
   const n = sites.length;
