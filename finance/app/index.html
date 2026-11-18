@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jack Finance</title>
+  <link rel="icon" href="images/logo-jf.svg" type="image/svg+xml">
+  <link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside class="barre" id="barre">
+    <a class="marque" href="#/tableau">
+      <img src="images/logo-jf.svg" alt="" class="marque-logo">
+      <span class="marque-nom">JACK FINANCE</span>
+    </a>
+    <nav class="menu" id="menu"></nav>
+    <div class="menu-bas" id="menu-bas"></div>
+  </aside>
+  <div class="fond-menu" id="fond-menu"></div>
+
+  <main class="page">
+    <header class="entete">
+      <button class="bouton-icone bouton-menu" id="bouton-menu" aria-label="Ouvrir le menu"></button>
+      <div class="entete-titre" id="entete-titre"></div>
+      <div class="entete-actions">
+        <div class="selecteur-mois" id="selecteur-mois"></div>
+      </div>
+    </header>
+    <div id="vue" class="vue"></div>
+  </main>
+
+  <div class="modale-fond" id="modale" hidden>
+    <div class="modale" role="dialog" aria-modal="true" aria-labelledby="modale-titre">
+      <div class="modale-tete">
+        <h2 id="modale-titre"></h2>
+        <button class="bouton-icone" id="modale-fermer" aria-label="Fermer"></button>
+      </div>
+      <div id="modale-corps"></div>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="icones.js"></script>
+  <script src="donnees.js"></script>
+  <script src="graphiques.js"></script>
+  <script src="app.js"></script>
+  <script data-jack-world-nav src="../../jack-world-nav.js" defer></script>
+</body>
+</html>

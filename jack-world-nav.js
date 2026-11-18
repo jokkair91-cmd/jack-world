@@ -5,11 +5,11 @@
   const script = document.currentScript;
   const base = new URL('.', script.src);
   const relative = decodeURIComponent(location.pathname.slice(base.pathname.length));
-  const current = relative.startsWith('newduc/') ? 'nd' : relative.startsWith('studio/') ? 'studio' : relative.startsWith('j-dj/') ? 'dj' : relative.startsWith('radio/') ? 'radio' : relative.startsWith('blabla/') ? 'blabla' : relative.startsWith('fusion/') ? 'fusion' : 'home';
+  const current = relative.startsWith('newduc/') ? 'nd' : relative.startsWith('studio/') ? 'studio' : relative.startsWith('j-dj/') ? 'dj' : relative.startsWith('radio/') ? 'radio' : relative.startsWith('blabla/') ? 'blabla' : relative.startsWith('fusion/') ? 'fusion' : relative.startsWith('finance/') ? 'finance' : 'home';
   // Pages d'appli : les sites s'ouvrent dans un nouvel onglet pour ne pas fermer l'appli
-  const preserve = /^(studio\/studio\/|j-dj\/console\.html|radio\/studio\.html|blabla\/app\/|fusion\/app\/)/.test(relative);
+  const preserve = /^(studio\/studio\/|j-dj\/console\.html|radio\/studio\.html|blabla\/app\/|fusion\/app\/|finance\/app\/)/.test(relative);
   // Pour ajouter un projet (Jack Bourse, Jack Finance…) : une ligne [id, nom, site], + son dossier dans « current » et « preserve »
-  const destinations = [['home','Accueil Jack World','index.html'],['nd','NEW DUC','newduc/index.html'],['studio','JACK22 Studio','studio/index.html'],['dj','J-DJ','j-dj/index.html'],['radio','Jack Radio','radio/index.html'],['blabla','Jack Blabla','blabla/index.html'],['fusion','Jack Fusion','fusion/index.html']];
+  const destinations = [['home','Accueil Jack World','index.html'],['nd','NEW DUC','newduc/index.html'],['studio','JACK22 Studio','studio/index.html'],['dj','J-DJ','j-dj/index.html'],['radio','Jack Radio','radio/index.html'],['blabla','Jack Blabla','blabla/index.html'],['fusion','Jack Fusion','fusion/index.html'],['finance','Jack Finance','finance/index.html']];
   const host = document.createElement('div');
   host.id = 'jack-world-navigation';
   host.style.cssText = 'position:fixed!important;left:12px!important;bottom:12px!important;z-index:2147483000!important;width:auto!important;height:auto!important;display:block!important;';

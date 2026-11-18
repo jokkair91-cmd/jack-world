@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#07070a">
-<meta name="description" content="Jack World : J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion et NEW DUC réunis au même endroit.">
+<meta name="description" content="Jack World : J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance et NEW DUC réunis au même endroit.">
 <title>Jack World</title>
 <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -69,7 +69,11 @@ h1 em{font-style:normal;color:var(--red)}
 .house-art{background:linear-gradient(135deg,#30241b,#161412)}
 .jungle-art{background:linear-gradient(90deg,#0b2621 0%,#0b2621cc 38%,#0b262100 70%),url("blabla/app/images/jack-jungle.webp") right 30%/cover no-repeat,#0b2621}
 .jungle-art .bulle-jack{align-self:flex-start;position:relative;z-index:1;font-weight:800;font-size:15px;color:#ffc83d;background:#3a3216;border:1px solid #ffc83d59;border-radius:14px 14px 14px 4px;padding:6px 12px}
-.film-art{background:linear-gradient(90deg,#0d0f13 0%,#0d0f13cc 40%,#0d0f1300 75%),url("fusion/evasion.jpg") center/cover no-repeat,#0d0f13}font-weight:950;line-height:.8;letter-spacing:-.07em;font-size:68px;color:#e8c9a1;transform:rotate(-5deg);align-self:center}.wordmark span{display:block;margin-left:65px;color:#fff2df}
+.film-art{background:linear-gradient(90deg,#0d0f13 0%,#0d0f13cc 40%,#0d0f1300 75%),url("fusion/evasion.jpg") center/cover no-repeat,#0d0f13}
+.film-art .bande{display:flex;gap:6px;position:relative;z-index:1}.film-art .bande i{height:22px;border-radius:4px;background:linear-gradient(#ff9a45,#e2700a)}.film-art .bande i:nth-child(2){background:linear-gradient(#46d3e2,#1f9ea9)}.film-art .bande i:nth-child(3){background:repeating-linear-gradient(90deg,#8b7bff 0 3px,#6a4fd0 3px 6px)}
+.finance-art{background:radial-gradient(circle at 80% 30%,#2f6bff33,transparent 45%),linear-gradient(150deg,#0c3a2b,#08251c)}
+.finance-art .jf{align-self:center;width:84px;height:84px;border-radius:20px;background:#fff;padding:8px;box-shadow:0 10px 30px #0008}.finance-art .barres{display:flex;align-items:flex-end;gap:7px;height:46px;align-self:center}.finance-art .barres i{width:14px;border-radius:3px 3px 0 0;background:#c9a96e}.finance-art .barres i:last-child{background:#3ccf8e}
+.wordmark{font-weight:950;line-height:.8;letter-spacing:-.07em;font-size:68px;color:#e8c9a1;transform:rotate(-5deg);align-self:center}.wordmark span{display:block;margin-left:65px;color:#fff2df}
 
 /* Pied de page */
 footer{border-top:1px solid var(--line);padding:24px 0;color:var(--muted);font-size:13px}
@@ -98,15 +102,15 @@ footer .wrap{display:flex;flex-direction:column;gap:6px}
 <header>
   <div class="wrap">
     <a class="jw-logo" href="index.html" aria-label="Jack World, accueil"><img src="jack-world-logo.svg" alt="" width="40" height="40"><span class="brand">JACK <b>WORLD</b></span></a>
-    <nav aria-label="Projets"><a href="#jdj">J-DJ</a><a href="#studio">JACK22 Studio</a><a href="#radio">Jack Radio</a><a href="#blabla">Jack Blabla</a><a href="#fusion">Jack Fusion</a><a href="#newduc">NEW DUC</a></nav>
+    <nav aria-label="Projets"><a href="#jdj">J-DJ</a><a href="#studio">JACK22 Studio</a><a href="#radio">Jack Radio</a><a href="#blabla">Jack Blabla</a><a href="#fusion">Jack Fusion</a><a href="#finance">Jack Finance</a><a href="#newduc">NEW DUC</a></nav>
   </div>
 </header>
 
 <main class="wrap" id="contenu" tabindex="-1">
   <section class="hero">
-    <p class="eyebrow">SIX UNIVERS. UNE MÊME ÉNERGIE.</p>
+    <p class="eyebrow">SEPT UNIVERS. UNE MÊME ÉNERGIE.</p>
     <h1>Tout l'univers Jack.<br><em>Un seul endroit.</em></h1>
-    <p class="lead">J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion et NEW DUC réunis ici. Mixe, compose, écoute, apprends, monte tes vidéos et découvre. Gratuit, dans ton navigateur, sans compte.</p>
+    <p class="lead">J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance et NEW DUC réunis ici. Mixe, compose, écoute, apprends, monte tes vidéos, gère ton budget et découvre. Gratuit, dans ton navigateur, sans compte.</p>
   </section>
 
   <section class="grid" aria-label="Les projets Jack">
@@ -161,6 +165,16 @@ footer .wrap{display:flex;flex-direction:column;gap:6px}
       </div>
     </article>
 
+    <article class="card" id="finance">
+      <div class="visual finance-art" aria-hidden="true"><span class="visual-label">JACK FINANCE / TON ARGENT, ENFIN CLAIR</span><img class="jf" src="finance/favicon.svg" alt=""><div class="barres"><i style="height:40%"></i><i style="height:55%"></i><i style="height:45%"></i><i style="height:70%"></i><i style="height:65%"></i><i style="height:95%"></i></div><span class="visual-foot">COMPTES · BUDGET · ÉPARGNE</span></div>
+      <div class="card-body">
+        <span class="tag">FINANCES PERSONNELLES</span>
+        <h2>Jack Finance</h2>
+        <p>Tes comptes, ton budget, tes objectifs d'épargne et tes charges fixes au même endroit. Tes chiffres restent dans ton navigateur.</p>
+        <div class="actions"><a class="btn" href="finance/app/index.html">Ouvrir Jack Finance <span aria-hidden="true">→</span></a><a class="btn ghost" href="finance/index.html">Découvrir le site Jack Finance</a></div>
+      </div>
+    </article>
+
     <article class="card" id="newduc">
       <div class="visual house-art" aria-hidden="true"><span class="visual-label">NEW DUC / LA MAISON MÈRE</span><div class="wordmark">NEW<span>DUC.</span></div><span class="visual-foot">UN UNIVERS EN MOUVEMENT.</span></div>
       <div class="card-body">
@@ -175,7 +189,7 @@ footer .wrap{display:flex;flex-direction:column;gap:6px}
 </main>
 
 <footer><div class="wrap">
-  <span>JACK WORLD · 2026 · J-DJ · JACK22 Studio · Jack Radio · Jack Blabla · Jack Fusion · NEW DUC</span>
+  <span>JACK WORLD · 2026 · J-DJ · JACK22 Studio · Jack Radio · Jack Blabla · Jack Fusion · Jack Finance · NEW DUC</span>
   <span>Les radios de Jack Radio appartiennent à leurs diffuseurs. Leur disponibilité peut varier selon le pays.</span>
 </div></footer>
 </body>

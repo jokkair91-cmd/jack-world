@@ -10,7 +10,7 @@
   const relative = decodeURIComponent(location.pathname.slice(base.pathname.length));
   const actuel = relative.startsWith('newduc/') ? 'nd' : relative.startsWith('studio/') ? 'studio'
     : relative.startsWith('j-dj/') ? 'dj' : relative.startsWith('radio/') ? 'radio'
-    : relative.startsWith('blabla/') ? 'blabla' : relative.startsWith('fusion/') ? 'fusion' : 'home';
+    : relative.startsWith('blabla/') ? 'blabla' : relative.startsWith('fusion/') ? 'fusion' : relative.startsWith('finance/') ? 'finance' : 'home';
   if (actuel === 'home') return; // Jack World, le big boss : pas de pub
 
   // [id, nom, phrase, site, logo] — chaque pub mène au SITE ; c'est le site qui ouvre l'appli.
@@ -22,6 +22,7 @@
     ['radio', 'JACK RADIO', 'La fréquence du bloc.', 'radio/index.html', 'radio/radio-192.png'],
     ['blabla', 'JACK BLABLA', 'Apprends une langue avec Jack.', 'blabla/index.html', 'blabla/icon-192.png'],
     ['fusion', 'JACK FUSION', 'Monte. Mixe. Fusionne.', 'fusion/index.html', 'fusion/apple-touch-icon.png'],
+    ['finance', 'JACK FINANCE', 'Ton argent, enfin clair.', 'finance/index.html', 'finance/favicon.svg'],
   ].filter(([id]) => id !== actuel);
 
   const n = sites.length;
