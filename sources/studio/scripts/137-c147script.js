@@ -39,6 +39,6 @@
  };
  const build0 = tlBuild; tlBuild = function () { const r = build0.apply(this, arguments); try { deco(); } catch (e) {} return r; };
  document.addEventListener('close', e => { if (e.target?.id === 'j100Dialog' || e.target?.id === 'j101Dialog') setTimeout(() => { try { tlBuild(); } catch (x) {} }, 50); }, true);
- setTimeout(deco, 800);
+ document.addEventListener('DOMContentLoaded', () => { try { deco(); } catch (e) {} }); setTimeout(deco, 800); // prêt dès l'ouverture (Jack World)
  window.JACK22_CONSOLE147 = { version: '11.5-claude-7.6-console-pistes', has, channels: window.J22AudioChannels };
 })();

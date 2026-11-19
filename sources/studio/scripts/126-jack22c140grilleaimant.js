@@ -33,6 +33,6 @@
  StudioSettings.capture = function () { const o = cap.apply(this, arguments); o.snap140 = { ...snap }; return o; };
  StudioSettings.parse = function (b) { const o = parse.apply(this, arguments); if (o && b && b.snap140 !== undefined) { if (!valid(b.snap140)) return false; o.snap140 = { on: b.snap140.on, grid: b.snap140.grid }; } return o; };
  StudioSettings.apply = function (st) { const r = apply.apply(this, arguments); snap = st && valid(st.snap140) ? { ...st.snap140 } : { on: true, grid: '16' }; sync(); return r; };
- build(); setTimeout(build, 1500);
+ build(); document.addEventListener('DOMContentLoaded', build); setTimeout(build, 1500); // prêt dès l'ouverture (Jack World)
  window.JACK22_SNAP140 = { version: '11.5-claude-7.0-grille-aimant', get state() { return { ...snap }; }, set: s => { if (!valid({ ...snap, ...s })) throw Error('Réglage d’aimant invalide.'); set(s); } };
 })();

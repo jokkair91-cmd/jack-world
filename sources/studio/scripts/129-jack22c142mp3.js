@@ -59,6 +59,6 @@
   box.append(b, s); after.after(box);
  }
  const baseUi = uiExp; uiExp = function () { const r = baseUi.apply(this, arguments); const b = document.getElementById('j142Mp3Btn'); if (b) b.disabled = exporting || persistBusy; return r; };
- build(); setTimeout(build, 1500);
+ build(); document.addEventListener('DOMContentLoaded', build); setTimeout(build, 1500); // prêt dès l'ouverture (Jack World)
  window.JACK22_MP3142 = { version: '11.5-claude-7.2-mp3', exportMp3, wavToMp3, kbps: KBPS };
 })();
