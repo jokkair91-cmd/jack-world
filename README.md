@@ -1,6 +1,6 @@
 # Jack World
 
-J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance, Jack Bours et NEW DUC réunis sur un seul site.
+J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance, Jack Bours, Jack Bâtiment et NEW DUC réunis sur un seul site.
 
 | Dossier | Appli | Version source |
 |---|---|---|
@@ -18,6 +18,8 @@ J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance, Jack Bo
 | `finance/app/` | Jack Finance (l'appli) | copie de `Bureau/Jack Finance` du 18 nov. 2026 à 23 h 56 (logo JF doré, sans serveur.ps1), + icônes et bouton « Changer de site » |
 | `bours/index.html` | Site vitrine Jack Bours | page de présentation d'origine de `Bureau/Jack Bours`, adaptée (liens vers `app/`, police multicolore, « Changer de site », pub) |
 | `bours/app/` | Jack Bours (l'appli) | copie de `Bureau/Jack Bours` du 19 nov. 2026, avec l'espace Jack World (`app.html` devenu `index.html`, sans serveur.ps1 ; lien « page de présentation » vers `../index.html`), + icônes et bouton « Changer de site ». Outil d'apprentissage, argent fictif, pas un conseil en investissement |
+| `batiment/index.html` | Site vitrine Jack Bâtiment | créé le 19 nov. 2026 (thème chantier de l'appli, David le castor) |
+| `batiment/app/` | Jack Bâtiment (l'appli) | copie de `Bureau/Jack Batiment` du 19 nov. 2026 (sans serveur.ps1 ni l'image jack-jungle inutilisée), + icônes et bouton « Changer de site ». Formation d'auto-apprentissage, ne remplace pas les formations obligatoires |
 | `newduc/` | Site NEW DUC | V6 (`NEW DUC - travail/NEWDUKE-V6`) |
 
 ## Mettre à jour une appli

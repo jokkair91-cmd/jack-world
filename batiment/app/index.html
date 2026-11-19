@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#16181b">
+  <title>Jack Bâtiment</title>
+  <link rel="icon" href="images/castor.svg" type="image/svg+xml">
+  <link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="logo" href="#/" aria-label="Accueil Jack Bâtiment">
+      <span class="avatar-jack mini" aria-hidden="true"></span>
+      <span>Jack <b>Bâtiment</b></span>
+    </a>
+    <nav class="nav-haut" aria-label="Rubriques">
+      <a href="#/">Parcours</a>
+      <a href="#/autocad">AutoCAD</a>
+      <a href="#/outils">Outils</a>
+      <a href="#/glossaire">Glossaire</a>
+    </nav>
+  </header>
+  <main id="app"></main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="contenu/manoeuvre.js"></script>
+  <script src="contenu/chef-equipe.js"></script>
+  <script src="contenu/chef-chantier.js"></script>
+  <script src="contenu/conducteur.js"></script>
+  <script src="contenu/autocad.js"></script>
+  <script src="contenu/outils.js"></script>
+  <script src="simulateur.js"></script>
+  <script src="app.js"></script>
+  <script data-jack-world-nav src="../../jack-world-nav.js" defer></script>
+</body>
+</html>

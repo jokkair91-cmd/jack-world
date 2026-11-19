@@ -1,0 +1,208 @@
+/* =========================================================
+   Jack Bâtiment — thème « chantier » (sombre)
+   jaune sécurité, orange balisage, gris béton
+   ========================================================= */
+:root {
+  --bg: #16181b;
+  --bg2: #1e2125;
+  --card: #24282d;
+  --card2: #2c3137;
+  --ink: #f3f1ea;
+  --muted: #a9aeb5;
+  --line: #3a4048;
+  --jaune: #ffc420;
+  --jaune-fonce: #c99600;
+  --orange: #ff7a1a;
+  --beton: #8d939b;
+  --vert: #3cc47c;
+  --vert-bg: #173a29;
+  --rouge: #ff5d52;
+  --rouge-bg: #45201f;
+  --bleu: #4fb3ff;
+  --ombre: 0 4px 0 rgba(0, 0, 0, .35);
+  --rayures: repeating-linear-gradient(-45deg, var(--jaune) 0 14px, #1b1b1b 14px 28px);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.55 "Nunito", system-ui, sans-serif;
+  overflow-x: clip;
+}
+body::before { /* béton discret */
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(255, 196, 32, .06), transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(255, 122, 26, .05), transparent 45%);
+}
+h1, h2, h3 { font-family: "Baloo 2", "Nunito", sans-serif; line-height: 1.15; margin: 0 0 .4em; }
+h1 { font-size: clamp(1.7rem, 5vw, 2.5rem); }
+h2 { font-size: clamp(1.3rem, 3.6vw, 1.7rem); }
+h3 { font-size: 1.15rem; }
+a { color: var(--jaune); }
+p { margin: 0 0 .8em; }
+button, input, select, textarea { font: inherit; color: inherit; }
+
+/* ---------- Barre du haut ---------- */
+.topbar {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+  padding: 8px 16px; background: rgba(22, 24, 27, .92); backdrop-filter: blur(8px);
+  border-bottom: 4px solid transparent; border-image: var(--rayures) 4;
+}
+.logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink);
+  font: 800 1.25rem "Baloo 2", sans-serif; }
+.logo b { color: var(--jaune); }
+.nav-haut { display: flex; gap: 4px; flex-wrap: wrap; }
+.nav-haut a { text-decoration: none; color: var(--muted); padding: 6px 10px; border-radius: 8px; font-weight: 700; font-size: .95rem; }
+.nav-haut a:hover, .nav-haut a.actif { color: #1b1b1b; background: var(--jaune); }
+
+main { max-width: 1040px; margin: 0 auto; padding: 18px 16px 80px; }
+
+/* ---------- David le castor (casque dessiné dans images/castor.svg) ---------- */
+.avatar-jack {
+  display: inline-block; flex: 0 0 auto; border-radius: 50%;
+  width: 72px; height: 72px;
+  background: #1e2125 url("images/castor.svg") center / cover no-repeat;
+  box-shadow: 0 0 0 3px var(--jaune), 0 6px 18px rgba(0, 0, 0, .45);
+}
+.avatar-jack.mini { width: 34px; height: 34px; box-shadow: 0 0 0 2px var(--jaune); }
+
+/* ---------- Blocs ---------- */
+.carte { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; box-shadow: var(--ombre); }
+.grille { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); }
+.grille.large { grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+.pile > * + * { margin-top: 14px; }
+.muted { color: var(--muted); }
+.petit { font-size: .9rem; }
+.ligne { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.espace { justify-content: space-between; }
+
+.hero { display: flex; gap: 18px; align-items: center; padding: 20px; border-radius: 18px;
+  background: linear-gradient(135deg, #2b2f35, #1e2125); border: 1px solid var(--line); margin-bottom: 20px; }
+.hero .avatar-jack { width: 110px; height: 110px; }
+.bulle { background: #3a3216; border: 1px solid #5a4b1c; border-radius: 14px; padding: 10px 14px; position: relative; }
+
+/* ---------- Échelle des métiers ---------- */
+.echelle { display: grid; gap: 12px; }
+.metier { display: grid; grid-template-columns: 64px 1fr auto; gap: 14px; align-items: center; text-decoration: none; color: inherit;
+  background: var(--card); border: 1px solid var(--line); border-left: 8px solid var(--jaune); border-radius: 14px; padding: 14px; box-shadow: var(--ombre);
+  transition: transform .12s; }
+.metier:hover { transform: translateY(-2px); border-color: var(--jaune); }
+.metier .emoji { font-size: 2.4rem; text-align: center; }
+.metier .marche { font: 800 .8rem "Baloo 2"; color: #1b1b1b; background: var(--jaune); border-radius: 6px; padding: 1px 7px; }
+.barre { height: 8px; background: var(--bg2); border-radius: 99px; overflow: hidden; margin-top: 6px; }
+.barre > i { display: block; height: 100%; background: linear-gradient(90deg, var(--orange), var(--jaune)); border-radius: 99px; }
+.tuile { display: block; text-decoration: none; color: inherit; }
+.tuile:hover { border-color: var(--jaune); }
+.tuile .emoji { font-size: 2rem; }
+
+/* ---------- Boutons ---------- */
+.btn { display: inline-flex; align-items: center; gap: 8px; justify-content: center; cursor: pointer; text-decoration: none;
+  padding: 10px 16px; border-radius: 12px; border: 0; font-weight: 800; background: var(--jaune); color: #1b1b1b; box-shadow: 0 3px 0 var(--jaune-fonce); }
+.btn:hover { filter: brightness(1.06); }
+.btn:active { transform: translateY(2px); box-shadow: none; }
+.btn.sec { background: var(--card2); color: var(--ink); box-shadow: 0 3px 0 #111; border: 1px solid var(--line); }
+.btn.orange { background: var(--orange); color: #1b1b1b; box-shadow: 0 3px 0 #a84a05; }
+.btn[disabled] { opacity: .5; cursor: not-allowed; }
+.retour { display: inline-block; margin-bottom: 12px; color: var(--muted); text-decoration: none; font-weight: 700; }
+.retour:hover { color: var(--jaune); }
+
+/* ---------- Modules ---------- */
+.module { display: grid; grid-template-columns: 46px 1fr auto; gap: 12px; align-items: center; text-decoration: none; color: inherit; }
+.module .num { width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; font-size: 1.4rem; background: var(--card2); }
+.etat { font-size: .85rem; font-weight: 800; padding: 3px 9px; border-radius: 99px; background: var(--card2); color: var(--muted); white-space: nowrap; }
+.etat.ok { background: var(--vert-bg); color: #9ff0c2; }
+
+/* ---------- Leçon ---------- */
+.lecon h2 { border-left: 5px solid var(--jaune); padding-left: 10px; margin-top: 8px; }
+.lecon ul { margin: 0 0 .8em; padding-left: 1.2em; }
+.lecon li { margin: .25em 0; }
+.encadre { border-radius: 14px; padding: 14px 16px; }
+.encadre.retenir { background: #3a3216; border: 1px solid #6b5716; }
+.encadre.terrain { background: #1d2f3d; border: 1px solid #2f5470; }
+.encadre.danger { background: var(--rouge-bg); border: 1px solid #7a3532; }
+.encadre h3 { margin-bottom: .3em; }
+
+/* ---------- Quiz ---------- */
+.choix { display: grid; gap: 10px; margin: 14px 0; }
+.choix button { text-align: left; padding: 12px 14px; border-radius: 12px; border: 2px solid var(--line); background: var(--card2); cursor: pointer; font-weight: 700; }
+.choix button:hover:not([disabled]) { border-color: var(--jaune); }
+.choix button.bon { border-color: var(--vert); background: var(--vert-bg); }
+.choix button.faux { border-color: var(--rouge); background: var(--rouge-bg); }
+.explication { margin-top: 10px; }
+.score { font: 800 3rem "Baloo 2"; color: var(--jaune); }
+
+/* ---------- Tableaux / recherche ---------- */
+.champ { width: 100%; padding: 11px 14px; border-radius: 12px; border: 2px solid var(--line); background: var(--bg2); }
+.champ:focus { outline: none; border-color: var(--jaune); }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--jaune); font-family: "Baloo 2"; }
+code, kbd { font-family: ui-monospace, Consolas, monospace; background: var(--bg2); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; font-size: .9em; }
+kbd { color: var(--jaune); }
+
+.onglets { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.onglets a { text-decoration: none; padding: 8px 12px; border-radius: 10px; background: var(--card); border: 1px solid var(--line); color: var(--ink); font-weight: 700; }
+.onglets a.actif { background: var(--jaune); color: #1b1b1b; border-color: var(--jaune); }
+
+/* ---------- Formulaires des calculateurs ---------- */
+.form { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr)); }
+.form label { display: grid; gap: 4px; font-size: .9rem; color: var(--muted); font-weight: 700; }
+.form input, .form select { padding: 9px 10px; border-radius: 10px; border: 2px solid var(--line); background: var(--bg2); width: 100%; }
+.resultat { margin-top: 12px; padding: 12px 14px; border-radius: 12px; background: var(--bg2); border: 1px dashed var(--jaune); }
+.resultat b { color: var(--jaune); }
+
+/* ---------- Check-lists ---------- */
+.checklist { list-style: none; padding: 0; margin: 0; }
+.checklist li { padding: 8px 4px; border-bottom: 1px solid var(--line); }
+.checklist label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+.checklist input { width: 20px; height: 20px; accent-color: var(--jaune); flex: 0 0 auto; margin-top: 3px; }
+.zone-notes { width: 100%; min-height: 90px; margin-top: 10px; padding: 10px; border-radius: 10px; border: 2px solid var(--line); background: var(--bg2); }
+
+/* ---------- Simulateur AutoCAD ---------- */
+.simu { display: grid; gap: 10px; }
+.simu canvas { width: 100%; height: auto; aspect-ratio: 16 / 10; background: #212830; border-radius: 12px; border: 1px solid var(--line); display: block; touch-action: none; }
+.console { background: #0f1114; border: 1px solid var(--line); border-radius: 12px; font-family: ui-monospace, Consolas, monospace; font-size: .88rem; }
+.console .hist { max-height: 140px; overflow-y: auto; padding: 8px 10px; white-space: pre-wrap; color: #c8ccd2; }
+.console .hist .err { color: var(--rouge); }
+.console .hist .ok { color: var(--vert); }
+.console .saisie { display: flex; align-items: center; gap: 6px; border-top: 1px solid var(--line); padding: 6px 10px; }
+.console .saisie span { color: var(--jaune); white-space: nowrap; }
+.console input { flex: 1; min-width: 0; background: transparent; border: 0; outline: none; color: var(--ink); font-family: inherit; padding: 6px 0; }
+.mission { border-left: 5px solid var(--orange); }
+.mission.reussie { border-left-color: var(--vert); }
+
+/* ---------- Attestation ---------- */
+.attestation { background: #fbf8ef; color: #1b1b1b; border-radius: 10px; padding: 30px; text-align: center; border: 10px solid transparent; border-image: var(--rayures) 10; }
+.attestation h1 { color: #1b1b1b; }
+.attestation .nom { font: 800 2rem "Baloo 2"; border-bottom: 2px solid #1b1b1b; display: inline-block; min-width: 60%; }
+
+/* ---------- Toast ---------- */
+.toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) translateY(150%); background: var(--jaune); color: #1b1b1b;
+  font-weight: 800; padding: 10px 18px; border-radius: 12px; transition: transform .25s, opacity .25s; z-index: 20; max-width: calc(100% - 32px);
+  opacity: 0; pointer-events: none; }
+.toast.vu { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+@media (max-width: 600px) {
+  .topbar { padding: 6px 12px; }
+  .nav-haut a { padding: 5px 8px; font-size: .88rem; }
+  .hero { flex-direction: column; text-align: center; padding: 16px; }
+  .metier { grid-template-columns: 44px 1fr; }
+  .metier .emoji { font-size: 1.9rem; }
+  .metier .etat { grid-column: 1 / -1; justify-self: start; }
+  .module { grid-template-columns: 40px 1fr; }
+  .module .etat { grid-column: 2; justify-self: start; }
+}
+
+@media print {
+  .topbar, .nav-haut, .btn, .retour, .no-print, .toast { display: none !important; }
+  body { background: #fff; color: #000; }
+  body::before { display: none; }
+  .carte { box-shadow: none; border-color: #999; background: #fff; color: #000; }
+  .checklist li { border-color: #ccc; }
+  main { padding: 0; }
+}

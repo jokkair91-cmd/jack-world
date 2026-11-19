@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- David le castor, avec son casque de chantier -->
+  <defs>
+    <radialGradient id="fond" cx="50%" cy="40%" r="70%">
+      <stop offset="0" stop-color="#3b4249"/>
+      <stop offset="1" stop-color="#1e2125"/>
+    </radialGradient>
+    <radialGradient id="poil" cx="45%" cy="40%" r="65%">
+      <stop offset="0" stop-color="#b27744"/>
+      <stop offset="1" stop-color="#7a4a24"/>
+    </radialGradient>
+    <linearGradient id="casque" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe27a"/>
+      <stop offset=".55" stop-color="#ffc420"/>
+      <stop offset="1" stop-color="#c99600"/>
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="100" fill="url(#fond)"/>
+  <!-- oreilles -->
+  <circle cx="48" cy="78" r="16" fill="#6b3f1e"/>
+  <circle cx="48" cy="78" r="8" fill="#3d2410"/>
+  <circle cx="152" cy="78" r="16" fill="#6b3f1e"/>
+  <circle cx="152" cy="78" r="8" fill="#3d2410"/>
+  <!-- tête -->
+  <ellipse cx="100" cy="118" rx="60" ry="64" fill="url(#poil)"/>
+  <!-- museau -->
+  <ellipse cx="100" cy="142" rx="36" ry="28" fill="#d9a774"/>
+  <!-- yeux -->
+  <ellipse cx="76" cy="108" rx="11" ry="12" fill="#fff"/>
+  <ellipse cx="124" cy="108" rx="11" ry="12" fill="#fff"/>
+  <circle cx="78" cy="110" r="6.5" fill="#1b1b1b"/>
+  <circle cx="122" cy="110" r="6.5" fill="#1b1b1b"/>
+  <circle cx="80" cy="107.5" r="2.2" fill="#fff"/>
+  <circle cx="124" cy="107.5" r="2.2" fill="#fff"/>
+  <!-- sourcils -->
+  <path d="M64 93 q12 -7 23 -1" stroke="#3d2410" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M113 92 q11 -6 23 1" stroke="#3d2410" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <!-- truffe -->
+  <ellipse cx="100" cy="129" rx="13" ry="9" fill="#2a1a10"/>
+  <ellipse cx="96" cy="126" rx="4" ry="2.2" fill="#6b5446"/>
+  <!-- bouche -->
+  <path d="M100 138 v6 M86 145 q14 10 28 0" stroke="#3d2410" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+  <!-- grandes dents -->
+  <rect x="90" y="148" width="9.5" height="17" rx="2.5" fill="#fffdf4" stroke="#c8b9a0" stroke-width="1.4"/>
+  <rect x="100.5" y="148" width="9.5" height="17" rx="2.5" fill="#fffdf4" stroke="#c8b9a0" stroke-width="1.4"/>
+  <!-- moustaches -->
+  <g stroke="#3d2410" stroke-width="1.8" stroke-linecap="round">
+    <path d="M70 138 l-20 -4 M70 144 l-21 2"/>
+    <path d="M130 138 l20 -4 M130 144 l21 2"/>
+  </g>
+  <!-- joues -->
+  <circle cx="66" cy="130" r="7" fill="#e07a5f" opacity=".35"/>
+  <circle cx="134" cy="130" r="7" fill="#e07a5f" opacity=".35"/>
+  <!-- casque de chantier -->
+  <path d="M42 74 C42 30 70 14 100 14 C130 14 158 30 158 74 Z" fill="url(#casque)"/>
+  <path d="M93 16 h14 v58 h-14 z" fill="#ffd54a" opacity=".85"/>
+  <path d="M100 16 v58" stroke="#c99600" stroke-width="2"/>
+  <rect x="30" y="70" width="140" height="13" rx="6.5" fill="#e0a800"/>
+  <rect x="30" y="70" width="140" height="5" rx="2.5" fill="#ffd54a"/>
+  <path d="M58 38 q10 -14 26 -18" stroke="#fff4c2" stroke-width="5" fill="none" stroke-linecap="round" opacity=".7"/>
+</svg>

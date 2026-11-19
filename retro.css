@@ -1,9 +1,9 @@
 /* Jack World — style rétro multicolore.
    Partagé par : index.html, newduc/, studio/, j-dj/, radio/studio.html et blabla/.
-   Chaque page porte une classe sur <html> (site-jw, site-nd, site-studio, site-jdj, site-radio, site-blabla, site-fusion, site-finance, site-bours)
+   Chaque page porte une classe sur <html> (site-jw, site-nd, site-studio, site-jdj, site-radio, site-blabla, site-fusion, site-finance, site-bours, site-batiment)
    qui lui donne sa propre police et ses propres couleurs.
    Pour revenir en arrière sur une page : retirer la ligne <link ... retro.css> de son <head>. */
-@import url("https://fonts.googleapis.com/css2?family=Bungee&family=Righteous&family=Audiowide&family=Chakra+Petch:wght@500;600;700&family=Russo+One&family=Fugaz+One&family=Baloo+2:wght@500;700;800&family=Kanit:wght@500;600&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,700&family=Orbitron:wght@500&family=Silkscreen&family=Rubik+Mono+One&family=Permanent+Marker&family=Luckiest+Guy&family=Bebas+Neue&family=Cinzel:wght@600&family=Share+Tech+Mono&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bungee&family=Righteous&family=Audiowide&family=Chakra+Petch:wght@500;600;700&family=Russo+One&family=Fugaz+One&family=Baloo+2:wght@500;700;800&family=Kanit:wght@500;600&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,700&family=Orbitron:wght@500&family=Silkscreen&family=Rubik+Mono+One&family=Permanent+Marker&family=Luckiest+Guy&family=Bebas+Neue&family=Cinzel:wght@600&family=Share+Tech+Mono&family=Black+Ops+One&display=swap");
 
 /* ---------- Identité de chaque site ---------- */
 :root{
@@ -20,6 +20,7 @@
 .site-fusion{--retro-font:"Bebas Neue","Kanit",sans-serif;--site-font:"Kanit","Segoe UI",sans-serif;--c1:#ffc145;--c2:#ff7a1a;--c3:#ef4b3f;--c4:#2bc0d1;--c5:#8b7bff} /* Jack Fusion : orange du boîtier → bleu canard de l'objectif */
 .site-finance{--retro-font:"Cinzel","Cormorant Garamond",serif;--site-font:"Cormorant Garamond",Georgia,serif;--c1:#ecdcb6;--c2:#c9a96e;--c3:#3ccf8e;--c4:#4d8dff;--c5:#8b7bff} /* Jack Finance : or et crème → vert billet → bleu du monogramme JF */
 .site-bours{--retro-font:"Share Tech Mono","Nunito",monospace;--site-font:"Nunito","Segoe UI",sans-serif;--c1:#22c55e;--c2:#facc15;--c3:#ef4444;--c4:#60a5fa;--c5:#c084fc} /* Jack Bours : tableau de cotations, bougie verte → jaune → rouge → bleu */
+.site-batiment{--retro-font:"Black Ops One","Baloo 2",sans-serif;--site-font:"Baloo 2","Segoe UI",sans-serif;--c1:#ffc420;--c2:#ffd54a;--c3:#ff7a1a;--c4:#ff5d52;--c5:#4fb3ff} /* Jack Bâtiment : pochoir de chantier, jaune sécurité → orange balisage → bleu */
 :root{--retro-degrade:linear-gradient(90deg,var(--c1) 0%,var(--c2) 22%,var(--c3) 46%,var(--c4) 72%,var(--c5) 100%)}
 
 /* ---------- 1. Petits titres et étiquettes : police rétro du site (--retro-font) + dégradé multicolore ---------- */
@@ -69,7 +70,8 @@
 .site-radio header nav a,
 .site-blabla header nav a,
 .site-fusion header nav a,
-.site-finance header nav a{
+.site-finance header nav a,
+.site-batiment header nav a{
   font-family:var(--site-font)!important;
   font-weight:600;
   font-size:max(14px,.9rem)!important;
@@ -79,11 +81,11 @@
   text-shadow:0 0 14px color-mix(in srgb,currentColor 35%,transparent);
   transition:filter .2s,text-shadow .2s;
 }
-.site-jw header nav a:nth-child(5n+2),.site-nd #navigation a:nth-child(5n+2),.site-studio #navigation a:nth-child(5n+2),.site-jdj #navigation a:nth-child(5n+2),.site-blabla header nav a:nth-child(5n+2),.site-radio header nav a:nth-child(5n+2),.site-fusion header nav a:nth-child(5n+2),.site-finance header nav a:nth-child(5n+2){color:var(--c2)!important}
-.site-jw header nav a:nth-child(5n+3),.site-nd #navigation a:nth-child(5n+3),.site-studio #navigation a:nth-child(5n+3),.site-jdj #navigation a:nth-child(5n+3),.site-blabla header nav a:nth-child(5n+3),.site-radio header nav a:nth-child(5n+3),.site-fusion header nav a:nth-child(5n+3),.site-finance header nav a:nth-child(5n+3){color:var(--c3)!important}
-.site-jw header nav a:nth-child(5n+4),.site-nd #navigation a:nth-child(5n+4),.site-studio #navigation a:nth-child(5n+4),.site-jdj #navigation a:nth-child(5n+4),.site-blabla header nav a:nth-child(5n+4),.site-radio header nav a:nth-child(5n+4),.site-fusion header nav a:nth-child(5n+4),.site-finance header nav a:nth-child(5n+4){color:var(--c4)!important}
+.site-jw header nav a:nth-child(5n+2),.site-nd #navigation a:nth-child(5n+2),.site-studio #navigation a:nth-child(5n+2),.site-jdj #navigation a:nth-child(5n+2),.site-blabla header nav a:nth-child(5n+2),.site-radio header nav a:nth-child(5n+2),.site-fusion header nav a:nth-child(5n+2),.site-finance header nav a:nth-child(5n+2),.site-batiment header nav a:nth-child(5n+2){color:var(--c2)!important}
+.site-jw header nav a:nth-child(5n+3),.site-nd #navigation a:nth-child(5n+3),.site-studio #navigation a:nth-child(5n+3),.site-jdj #navigation a:nth-child(5n+3),.site-blabla header nav a:nth-child(5n+3),.site-radio header nav a:nth-child(5n+3),.site-fusion header nav a:nth-child(5n+3),.site-finance header nav a:nth-child(5n+3),.site-batiment header nav a:nth-child(5n+3){color:var(--c3)!important}
+.site-jw header nav a:nth-child(5n+4),.site-nd #navigation a:nth-child(5n+4),.site-studio #navigation a:nth-child(5n+4),.site-jdj #navigation a:nth-child(5n+4),.site-blabla header nav a:nth-child(5n+4),.site-radio header nav a:nth-child(5n+4),.site-fusion header nav a:nth-child(5n+4),.site-finance header nav a:nth-child(5n+4),.site-batiment header nav a:nth-child(5n+4){color:var(--c4)!important}
 .site-jw header nav a:nth-child(5n+5),.site-nd #navigation a:nth-child(5n+5),.site-studio #navigation a:nth-child(5n+5),.site-jdj #navigation a:nth-child(5n+5){color:var(--c5)!important}
-.site-jw header nav a:hover,.site-nd #navigation a:hover,.site-studio #navigation a:hover,.site-jdj #navigation a:hover,.site-radio header nav a:hover,.site-blabla header nav a:hover,.site-fusion header nav a:hover,.site-finance header nav a:hover{
+.site-jw header nav a:hover,.site-nd #navigation a:hover,.site-studio #navigation a:hover,.site-jdj #navigation a:hover,.site-radio header nav a:hover,.site-blabla header nav a:hover,.site-fusion header nav a:hover,.site-finance header nav a:hover,.site-batiment header nav a:hover{
   filter:brightness(1.25);
   text-shadow:0 0 18px currentColor;
 }
@@ -105,7 +107,8 @@
 .site-radio .hero .lead,
 .site-blabla .hero .lead,
 .site-fusion .hero .lead,
-.site-finance .hero .lead{
+.site-finance .hero .lead,
+.site-batiment .hero .lead{
   font-family:var(--site-font)!important;
   font-weight:500;
   letter-spacing:.01em;
@@ -118,7 +121,8 @@
 .site-studio .hero-note,.site-studio .beginner-intro,.site-studio .real-note,
 .site-jdj .hero-note,.site-jdj .beginner-intro,.site-jdj .real-note,.site-radio .availability{font-size:max(14px,.88rem)!important}
 /* Un trait multicolore à gauche des grands textes d'intro, façon cassette. */
-.site-jw .hero .lead,.site-nd .hero .lead,.site-studio .intro,.site-jdj .intro,.site-blabla .hero .lead,.site-radio .hero .lead,.site-fusion .hero .lead,.site-finance .hero .lead{
+.site-jw .hero .lead,.site-nd .hero .lead,.site-studio .intro,.site-jdj .intro,.site-blabla .hero .lead,.site-radio .hero .lead,.site-fusion .hero .lead,.site-finance .hero .lead,
+.site-batiment .hero .lead{
   padding-left:14px;
   border-left:3px solid;
   border-image:linear-gradient(180deg,var(--c1),var(--c3),var(--c5)) 1;
