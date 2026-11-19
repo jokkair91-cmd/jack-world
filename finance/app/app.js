@@ -337,6 +337,7 @@ function vueOperations() {
       <select class="filtre" id="f-type" aria-label="Type">${opt('', 'Tout', filtreOps.type)}${opt('depense', 'Dépenses', filtreOps.type)}${opt('revenu', 'Revenus', filtreOps.type)}${opt('virement', 'Virements', filtreOps.type)}</select>
       <label style="display:flex;gap:6px;align-items:center;font-size:14px"><input type="checkbox" id="f-tout" ${filtreOps.tout ? 'checked' : ''}> Toutes les dates</label>
       <span class="espace"></span>
+      <button class="btn" data-action="importer-releve" title="Importer un relevé bancaire (.csv)">${ic('importer')} Relevé</button>
       <button class="btn" data-action="export-csv">${ic('telecharger')} CSV</button>
       <button class="btn principal" data-action="nouvelle-op">${ic('plus')} Nouvelle opération</button>
     </div>
@@ -520,6 +521,7 @@ function vueParametres() {
       <div style="display:grid;gap:10px">
         <button class="btn" data-action="sauvegarde">${ic('telecharger')} Télécharger une sauvegarde (.json)</button>
         <button class="btn" data-action="restaurer">${ic('importer')} Restaurer une sauvegarde</button>
+        <button class="btn" data-action="importer-releve">${ic('importer')} Importer un relevé bancaire (.csv)</button>
         <button class="btn" data-action="export-csv-tout">${ic('telecharger')} Exporter toutes les opérations (.csv, pour Excel)</button>
         <hr style="border:0;border-top:1px solid var(--trait);width:100%">
         <button class="btn" data-action="partir-zero">${ic('plante')} Partir de zéro (garder les catégories)</button>

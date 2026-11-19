@@ -46,8 +46,13 @@ a:hover{background:#30303c}
 a:focus-visible{outline:3px solid #ffd166;outline-offset:1px}
 a[aria-current]{background:#513f16;color:#ffe09a;font-weight:700}
 small{display:block;color:#c0c0cb;font-size:12px;margin:8px 4px 0}
+.sauve{border-top:1px solid #ffffff1f;margin-top:10px;padding-top:10px;display:grid;gap:6px}
+.sauve button{font:inherit;font-size:13px;text-align:left;color:#f4f4f6;background:#ffffff0d;border:1px solid #ffffff22;border-radius:10px;padding:8px 10px;cursor:pointer;min-height:40px}
+.sauve button:hover{background:#30303c}
+.sauve button:focus-visible{outline:3px solid #ffd166;outline-offset:1px}
+.sauve p{margin:2px 4px 0;font-size:12px;color:#c0c0cb}
 @media (prefers-reduced-motion:reduce){.tab{animation:none;transition:none}.panel{animation:none}}
-</style><button class="tab" type="button" aria-expanded="false" aria-controls="destinations" aria-label="Changer de site" title="Changer de site"><img alt=""></button><section class="panel" id="destinations" hidden><h2>Les sites Jack World</h2><nav aria-label="Navigation entre les sites"></nav><small></small></section>`;
+</style><button class="tab" type="button" aria-expanded="false" aria-controls="destinations" aria-label="Changer de site" title="Changer de site"><img alt=""></button><section class="panel" id="destinations" hidden><h2>Les sites Jack World</h2><nav aria-label="Navigation entre les sites"></nav><small></small><div class="sauve"><button type="button" data-act="garder">💾 Sauvegarder ma progression</button><button type="button" data-act="reprendre">📂 Reprendre une sauvegarde</button><input type="file" accept=".json,application/json" hidden><p role="status" aria-live="polite"></p></div></section>`;
   const button = shadow.querySelector('.tab'), panel = shadow.querySelector('.panel'), nav = shadow.querySelector('nav');
   button.querySelector('img').src = new URL(ici[3], base).href;
   destinations.filter(([id]) => id !== 'home' || current === 'home' || current === 'nd').forEach(([id,label,url,logo]) => {
@@ -68,5 +73,42 @@ small{display:block;color:#c0c0cb;font-size:12px;margin:8px 4px 0}
   shadow.addEventListener('keydown',e => {if(e.key==='Escape'){close();button.focus();e.stopPropagation();}});
   nav.addEventListener('click',e => {const a=e.target.closest('a');if(!a)return;if(a.getAttribute('aria-current')){e.preventDefault();}close();});
   document.addEventListener('pointerdown',e => {if(!e.composedPath().includes(host))close();});
+
+  // Sauvegarde de la progression : toutes les applis Jack World de ce navigateur dans un seul fichier,
+  // pour changer d'appareil ou ne rien perdre si le navigateur est vidé. Les projets du Studio
+  // (sons enregistrés) ont leur propre export dans le Studio.
+  const zoneSauve = shadow.querySelector('.sauve'), fichier = zoneSauve.querySelector('input'), info = zoneSauve.querySelector('p');
+  const dire = t => { info.textContent = t; };
+  zoneSauve.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.act === 'garder') {
+      try {
+        const donnees = {};
+        for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); donnees[k] = localStorage.getItem(k); }
+        const n = Object.keys(donnees).length;
+        if (!n) return dire('Rien à sauvegarder pour l’instant dans ce navigateur.');
+        const blob = new Blob([JSON.stringify({ format: 'jack-world-sauvegarde', version: 1, date: new Date().toISOString(), donnees }, null, 1)], { type: 'application/json' });
+        const a = document.createElement('a'), d = new Date();
+        a.href = URL.createObjectURL(blob);
+        a.download = 'jack-world-sauvegarde-' + d.toISOString().slice(0, 10) + '.json';
+        document.body.append(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 20000);
+        dire('Sauvegarde téléchargée (' + n + ' élément' + (n > 1 ? 's' : '') + '). Garde ce fichier précieusement.');
+      } catch (err) { dire('Sauvegarde impossible dans ce navigateur.'); }
+    } else if (b.dataset.act === 'reprendre') { fichier.value = ''; fichier.click(); }
+  });
+  fichier.addEventListener('change', () => {
+    const f = fichier.files && fichier.files[0]; if (!f) return;
+    if (f.size > 20 * 1048576) return dire('Ce fichier est trop gros pour être une sauvegarde Jack World.');
+    f.text().then(t => {
+      const s = JSON.parse(t);
+      if (!s || s.format !== 'jack-world-sauvegarde' || typeof s.donnees !== 'object') throw new Error('format');
+      const cles = Object.keys(s.donnees).filter(k => typeof s.donnees[k] === 'string');
+      if (!confirm('Reprendre la sauvegarde du ' + new Date(s.date).toLocaleDateString('fr-FR') + ' ?\n' + cles.length + ' élément(s) vont remplacer la progression actuelle de ce navigateur.')) return;
+      cles.forEach(k => localStorage.setItem(k, s.donnees[k]));
+      dire('Sauvegarde reprise. La page se recharge…');
+      setTimeout(() => location.reload(), 900);
+    }).catch(() => dire('Ce fichier n’est pas une sauvegarde Jack World.'));
+  });
   document.body.append(host);
 })();

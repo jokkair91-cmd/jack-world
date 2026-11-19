@@ -1,0 +1,25 @@
+{
+    "name":  "Jack Bours",
+    "short_name":  "Bours",
+    "description":  "Apprends la Bourse avec 10 000 € fictifs.",
+    "lang":  "fr",
+    "start_url":  "index.html",
+    "scope":  "./",
+    "display":  "standalone",
+    "background_color":  "#0d1117",
+    "theme_color":  "#0d1117",
+    "icons":  [
+                  {
+                      "purpose":  "any",
+                      "type":  "image/png",
+                      "sizes":  "192x192",
+                      "src":  "icon-192.png"
+                  },
+                  {
+                      "purpose":  "any",
+                      "type":  "image/png",
+                      "sizes":  "512x512",
+                      "src":  "icon-512.png"
+                  }
+              ]
+}

@@ -1,0 +1,25 @@
+{
+    "name":  "J-DJ Club Graphite",
+    "short_name":  "J-DJ",
+    "description":  "Deux platines pour enchaîner tes morceaux.",
+    "lang":  "fr",
+    "start_url":  "console.html",
+    "scope":  "./",
+    "display":  "standalone",
+    "background_color":  "#0b0d12",
+    "theme_color":  "#0b0d12",
+    "icons":  [
+                  {
+                      "purpose":  "any",
+                      "type":  "image/png",
+                      "sizes":  "192x192",
+                      "src":  "icon-192.png"
+                  },
+                  {
+                      "purpose":  "any",
+                      "type":  "image/png",
+                      "sizes":  "512x512",
+                      "src":  "icon-512.png"
+                  }
+              ]
+}

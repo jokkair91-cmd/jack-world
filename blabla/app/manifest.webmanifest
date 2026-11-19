@@ -1,0 +1,25 @@
+{
+    "name":  "Jack Blabla",
+    "short_name":  "Blabla",
+    "description":  "Apprends les langues avec Jack, le perroquet.",
+    "lang":  "fr",
+    "start_url":  "index.html",
+    "scope":  "./",
+    "display":  "standalone",
+    "background_color":  "#0b2621",
+    "theme_color":  "#0b2621",
+    "icons":  [
+                  {
+                      "purpose":  "any",
+                      "type":  "image/png",
+                      "sizes":  "192x192",
+                      "src":  "icon-192.png"
+                  },
+                  {
+                      "purpose":  "any",
+                      "type":  "image/png",
+                      "sizes":  "512x512",
+                      "src":  "icon-512.png"
+                  }
+              ]
+}

@@ -1,0 +1,25 @@
+{
+    "name":  "Jack Bâtiment",
+    "short_name":  "Bâtiment",
+    "description":  "Formation aux métiers du chantier avec David le castor.",
+    "lang":  "fr",
+    "start_url":  "index.html",
+    "scope":  "./",
+    "display":  "standalone",
+    "background_color":  "#16181b",
+    "theme_color":  "#16181b",
+    "icons":  [
+                  {
+                      "purpose":  "any",
+                      "type":  "image/png",
+                      "sizes":  "192x192",
+                      "src":  "icon-192.png"
+                  },
+                  {
+                      "purpose":  "any",
+                      "type":  "image/png",
+                      "sizes":  "512x512",
+                      "src":  "icon-512.png"
+                  }
+              ]
+}
