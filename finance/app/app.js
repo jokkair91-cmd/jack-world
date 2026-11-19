@@ -111,7 +111,10 @@ function vueTableau() {
   const m = moisSel, prec = decalerMois(m, -1), fin = finDeMois(m);
   const pat = patrimoine(fin), patPrec = patrimoine(finDeMois(prec)), pat12 = patrimoine(finDeMois(decalerMois(m, -12)));
   const evol12 = pat12 ? ((pat - pat12) / Math.abs(pat12) * 100) : 0;
-  const t = totauxMois(m), tPrec = totauxMois(prec);
+  // Mois en cours : on compare au mois précédent à la même date (sinon un mois entamé paraît toujours « en baisse »)
+  const enCours = m === moisCourant(), jourRef = enCours ? Number(aujourdhui().slice(8, 10)) : 31;
+  const t = totauxMois(m), tPrec = totauxMois(prec, jourRef);
+  const refComp = enCours ? `vs le ${dateCourte(`${prec}-${pad(Math.min(jourRef, joursDansMois(prec)))}`)}` : 'vs mois précédent';
   const taux = pct(t.solde, t.revenus);
   const bt = budgetTotal(), pb = pct(t.depenses, bt);
   const prenom = etat.profil?.prenom;
@@ -132,9 +135,9 @@ function vueTableau() {
         </div>
       </div>
     </div>
-    <div class="carte tuile"><span class="ic-tuile positif">${ic('telecharger')}</span><div><div class="etiquette">Revenus (mois)</div><div class="valeur">${nb(t.revenus)}</div><small class="discret">${comparaison(t.revenus, tPrec.revenus, true)}</small></div></div>
-    <div class="carte tuile"><span class="ic-tuile negatif">${ic('importer')}</span><div><div class="etiquette">Dépenses (mois)</div><div class="valeur">${nb(t.depenses)}</div><small class="discret">${comparaison(t.depenses, tPrec.depenses, false)}</small></div></div>
-    <div class="carte tuile"><span class="ic-tuile">${ic('tirelire')}</span><div><div class="etiquette">Épargne du mois</div><div class="valeur ${t.solde < 0 ? 'negatif' : ''}">${nb(t.solde)}</div><small class="discret">${t.revenus ? `${taux} % des revenus` : '—'}</small></div></div>
+    <div class="carte tuile txt-bleu"><span class="ic-tuile positif">${ic('telecharger')}</span><div><div class="etiquette">Revenus (mois)</div><div class="valeur">${nb(t.revenus)}</div><small class="discret">${comparaison(t.revenus, tPrec.revenus, true, refComp)}</small></div></div>
+    <div class="carte tuile txt-bleu"><span class="ic-tuile negatif">${ic('importer')}</span><div><div class="etiquette">Dépenses (mois)</div><div class="valeur">${nb(t.depenses)}</div><small class="discret">${comparaison(t.depenses, tPrec.depenses, false, refComp)}</small></div></div>
+    <div class="carte tuile txt-vert"><span class="ic-tuile">${ic('tirelire')}</span><div><div class="etiquette">Épargne du mois</div><div class="valeur ${t.solde < 0 ? 'negatif' : ''}">${nb(t.solde)}</div><small class="discret">${t.revenus ? `${taux} % des revenus` : '—'}</small></div></div>
   </div>`;
 
   // Budget mensuel (vedette)
@@ -149,7 +152,7 @@ function vueTableau() {
 
   // Comptes
   const comptes = `<div class="carte">${tete('Mes comptes', `<a class="lien" href="#/comptes">Voir tout ${ic('chevron_d')}</a>`)}
-    ${etat.comptes.length ? `<ul class="liste cliquable">${etat.comptes.map(c => `<li data-action="ouvrir-compte" data-id="${c.id}">${badgeBanque(c)}<div class="lib"><strong>${echapper(c.nom)}</strong><small>${echapper(c.banque || TYPES_COMPTE[c.type])}</small></div><span class="mt">${euros(soldeCompte(c, fin))}</span></li>`).join('')}</ul>
+    ${etat.comptes.length ? `<ul class="liste cliquable liste-comptes">${etat.comptes.map(c => `<li data-action="ouvrir-compte" data-id="${c.id}">${badgeBanque(c)}<div class="lib"><strong>${echapper(c.nom)}</strong><small>${echapper(c.banque || TYPES_COMPTE[c.type])}</small></div><span class="mt">${euros(soldeCompte(c, fin))}</span></li>`).join('')}</ul>
     <div class="total"><span>Total</span><span>${euros(pat)}</span></div>` : `<div class="vide">Aucun compte pour l'instant.<br><br><button class="btn principal" data-action="nouveau-compte">${ic('plus')} Ajouter un compte</button></div>`}
   </div>`;
 
@@ -218,11 +221,12 @@ function vueTableau() {
   return `${barre}${bandeau}${tuiles}
     <div class="grille g-3">${budget}${comptes}${bilan}</div>`;
 }
-function comparaison(v, avant, hausseBonne) {
-  if (!avant) return 'vs mois précédent : —';
+function comparaison(v, avant, hausseBonne, ref = 'vs mois précédent') {
+  if (!avant) return `${ref} : —`;
   const d = Math.round((v - avant) / avant * 100);
-  const bon = hausseBonne ? d >= 0 : d <= 0;
-  return `<span class="${d === 0 ? '' : bon ? 'positif' : 'negatif'}">${d > 0 ? '+' : d < 0 ? '−' : ''}${Math.abs(d)} %</span> vs mois précédent`;
+  if (d === 0) return `<span>= stable</span> ${ref}`;
+  const bon = hausseBonne ? d > 0 : d < 0;
+  return `<span class="${bon ? 'positif' : 'negatif'}">${d > 0 ? '+' : '−'}${Math.abs(d)} %</span> ${ref}`;
 }
 function valeurSerie(m) {
   const t = totauxMois(m);
@@ -429,7 +433,7 @@ function vueAnalyses() {
   rendreEntete('Analyses', `Vos tendances sur les ${analysePeriode} derniers mois.`);
   const n = analysePeriode, mois = [];
   for (let i = n - 1; i >= 0; i--) mois.push(decalerMois(moisSel, -i));
-  const tots = mois.map(totauxMois);
+  const tots = mois.map(m => totauxMois(m));
   const sRev = tots.reduce((s, t) => s + t.revenus, 0), sDep = tots.reduce((s, t) => s + t.depenses, 0);
   const pal = paletteCategories();
   const patDebut = patrimoine(finDeMois(decalerMois(moisSel, -n))), patFin = patrimoine(finDeMois(moisSel));
@@ -478,8 +482,8 @@ function vueAnalyses() {
   }
 
   return `${barre}
-    <div class="grille g-tuiles" style="grid-template-columns:repeat(4,minmax(0,1fr))">
-      <div class="carte tuile vedette"><span class="ic-tuile">${ic('tendance')}</span><div><div class="etiquette">Évolution du patrimoine</div><div class="valeur">${eurosSigne(arrondi(patFin - patDebut))}</div><small style="opacity:.8">${patDebut ? (((patFin - patDebut) / Math.abs(patDebut)) * 100).toLocaleString('fr-FR', { maximumFractionDigits: 1 }) + ' %' : ''}</small></div></div>
+    <div class="grille g-tuiles">
+      <div class="carte tuile vedette"><span class="ic-tuile">${ic('tendance')}</span><div><div class="etiquette">Évolution du patrimoine</div><div class="valeur">${eurosSigne(arrondi(patFin - patDebut))}</div><small style="opacity:.85">${patDebut ? `${patFin >= patDebut ? '+' : '−'} ${Math.abs(((patFin - patDebut) / Math.abs(patDebut)) * 100).toLocaleString('fr-FR', { maximumFractionDigits: 1 })} % en ${n} mois` : ''}</small></div></div>
       <div class="carte tuile"><span class="ic-tuile">${ic('salaire')}</span><div><div class="etiquette">Revenus moyens / mois</div><div class="valeur">${nb(sRev / n)}</div></div></div>
       <div class="carte tuile"><span class="ic-tuile bleu">${ic('panier')}</span><div><div class="etiquette">Dépenses moyennes / mois</div><div class="valeur">${nb(sDep / n)}</div></div></div>
       <div class="carte tuile"><span class="ic-tuile">${ic('tirelire')}</span><div><div class="etiquette">Taux d'épargne</div><div class="valeur">${pct(sRev - sDep, sRev)} %</div></div></div>
@@ -594,7 +598,7 @@ function formOperation(op = null, compteDefaut = null) {
 }
 
 function formCompte(c = null) {
-  const couleurs = ['#2456e6', '#0e9f6e', '#1a3fc4', '#0b7d5a', '#0f7f8c', '#0a2a6b', '#16c486', '#475569'];
+  const couleurs = ['#2456e6', '#0e9f6e', '#1a3fc4', '#0b7d5a', '#0f7f8c', '#0a2a6b', '#c99a45', '#475569'];
   ouvrirModale(c ? 'Modifier le compte' : 'Nouveau compte', `
     ${champ('Nom du compte', 'nom', c?.nom || '', 'text', 'placeholder="Compte courant, Livret A…" required')}
     <div class="champs-2">${champ('Banque', 'banque', c?.banque || '', 'text', 'placeholder="Ma banque"')}${selectHtml('Type', 'type', Object.entries(TYPES_COMPTE), c?.type || 'courant')}</div>

@@ -187,6 +187,45 @@ body::after { /* voile sombre + lucioles */
 .aide-son .card h2 { margin-top: 0; }
 .aide-son .btn { margin: 4px 8px 4px 0; }
 
+/* ---------- Les 3 étapes d'un niveau : Cours → Quiz → Test ---------- */
+.etapes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 18px 0 6px; }
+.etape {
+  display: flex; align-items: center; gap: 10px; text-align: left; padding: 12px;
+  border: 2px solid var(--line); border-radius: 16px; background: var(--card); box-shadow: var(--shadow); line-height: 1.2;
+}
+.etape small { color: var(--muted); font-weight: 600; }
+.etape-num {
+  flex: 0 0 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+  background: #1a463d; font-weight: 800; font-size: 1.1rem;
+}
+.etape.actif { border-color: var(--jaune); background: #2a3a1c; }
+.etape.actif .etape-num { background: var(--jaune); color: #2a1d00; }
+.conseil { margin-top: 14px; line-height: 1.6; }
+h2.section small { font-size: .9rem; font-weight: 700; }
+.ligne-titre small { font-weight: 600; }
+
+/* ---------- Cours écrit ---------- */
+.cours { line-height: 1.65; }
+.cours .card { font-size: 1.02rem; }
+.objectif { border-left: 5px solid var(--turquoise); }
+.retenir { margin-top: 22px; border-left: 5px solid var(--jaune); background: linear-gradient(90deg, #33361a, var(--card)); }
+.exemples td { padding: 9px 6px; border-bottom: 1px dashed var(--line); vertical-align: top; }
+.exemples tr:last-child td { border-bottom: 0; }
+.exemples .cible { font-weight: 800; width: 50%; }
+.exemples .fr { color: var(--muted); }
+.faire { padding: 12px 0; border-bottom: 1px dashed var(--line); }
+.faire:last-child { border-bottom: 0; }
+.faire-q { font-weight: 700; margin-bottom: 4px; }
+.faire .oui { color: #9ff0c2; font-weight: 800; }
+.faire .non { color: #ffaba3; }
+.faire .non s { text-decoration-thickness: 2px; }
+.faire-fr { color: var(--muted); font-size: .93rem; margin-top: 2px; }
+.faire-pq { margin-top: 6px; padding: 8px 10px; border-radius: 10px; background: rgba(255, 200, 61, .09); font-size: .95rem; }
+.fin-cours { margin-top: 22px; }
+.test-carte h3 { margin: 18px 0 6px; }
+.check { list-style: none; padding: 0; margin: 0 0 10px; }
+.check li { padding: 6px 0; }
+
 /* ---------- Téléphone ---------- */
 @media (max-width: 640px) {
   .accueil-jungle {
@@ -198,6 +237,10 @@ body::after { /* voile sombre + lucioles */
       linear-gradient(0deg, rgba(8, 30, 26, .95) 30%, rgba(8, 30, 26, .4) 48%, transparent 60%),
       url("images/jack-jungle.webp") no-repeat 74% 0 / auto 62%, #0c3a33;
   }
+  .etapes { gap: 6px; }
+  .etape { flex-direction: column; text-align: center; padding: 10px 4px; gap: 4px; }
+  .etape small { font-size: .72rem; }
+  .exemples .cible { width: auto; }
   .accueil-texte { padding: 0 16px 28px; }
   .accueil-texte > * { max-width: none; }
 }

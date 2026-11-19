@@ -1,4 +1,4 @@
-// Logo Jack Finance : monogramme JF doré dans un double anneau, avec un trait de lumière.
+// Logo Jack Finance : J émeraude + F bleu, dans un double anneau d'or, avec un trait de lumière.
 // p = préfixe unique pour les identifiants SVG ; anime = version animée (présentation).
 function logoSvg(p = 'l', anime = false) {
   const J = 'M47 21 L67 11 L57 70 C53 89 41 97 25 97 C14 97 8 91 5 81 L22 73 C23 80 27 83 32 83 C38 83 42 78 43 70 Z';
@@ -10,8 +10,11 @@ function logoSvg(p = 'l', anime = false) {
     <linearGradient id="${p}-or1" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#fff3cc"/><stop offset=".32" stop-color="#f0d38a"/><stop offset=".62" stop-color="#d2a956"/><stop offset="1" stop-color="#9c712c"/>
     </linearGradient>
-    <linearGradient id="${p}-or2" x1="0" y1="0" x2=".6" y2="1">
-      <stop offset="0" stop-color="#f4dc9f"/><stop offset=".5" stop-color="#c39645"/><stop offset="1" stop-color="#7f5a1f"/>
+    <linearGradient id="${p}-vert" x1="0" y1="0" x2=".4" y2="1">
+      <stop offset="0" stop-color="#6ff5bf"/><stop offset=".5" stop-color="#17c487"/><stop offset="1" stop-color="#077a54"/>
+    </linearGradient>
+    <linearGradient id="${p}-bleu" x1="0" y1="0" x2=".5" y2="1">
+      <stop offset="0" stop-color="#7fb0ff"/><stop offset=".5" stop-color="#2f6bff"/><stop offset="1" stop-color="#1636b0"/>
     </linearGradient>
     <linearGradient id="${p}-anneau" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#f7e4ad"/><stop offset=".35" stop-color="#b98a3e"/><stop offset=".6" stop-color="#f3d996"/><stop offset="1" stop-color="#94692a"/>
@@ -26,11 +29,11 @@ function logoSvg(p = 'l', anime = false) {
   <circle class="logo-anneau logo-anneau-2" cx="100" cy="100" r="86.5" fill="none" stroke="url(#${p}-anneau)" stroke-width=".8" opacity=".55" pathLength="1"/>
   <path class="logo-losange" d="M100 1.5 L104 6 L100 10.5 L96 6 Z" fill="url(#${p}-or1)"/>
   <g transform="translate(32 34.5) scale(1.15)">
-    <path class="logo-lettre logo-j" d="${J}" fill="url(#${p}-or1)"/>
-    <path class="logo-lettre logo-f" d="${F}" fill="url(#${p}-or2)"/>
+    <path class="logo-lettre logo-j" d="${J}" fill="url(#${p}-vert)" stroke="url(#${p}-or1)" stroke-width="1.1" stroke-linejoin="round"/>
+    <path class="logo-lettre logo-f" d="${F}" fill="url(#${p}-bleu)" stroke="url(#${p}-or1)" stroke-width="1.1" stroke-linejoin="round"/>
     ${anime ? `<path d="${J}" fill="url(#${p}-eclat)"/><path d="${F}" fill="url(#${p}-eclat)"/>` : ''}
     <path class="logo-trait" d="${trait}" fill="none" stroke="#fffaf0" stroke-width="3.4" stroke-linecap="round" pathLength="1"/>
-    <path class="logo-etoile" d="${etoile}" fill="#fffaf0"/>
+    <path class="logo-etoile" d="${etoile}" fill="url(#${p}-or1)"/>
   </g>
 </svg>`;
 }

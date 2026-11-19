@@ -7,7 +7,8 @@ function melange(a, b, t) {
 }
 // Palette de catégories : les verts et les bleus de Jack, en alternance
 function paletteCategories() {
-  return ['#0b7d5a', '#2456e6', '#16c486', '#6aa2ff', '#0f7f8c', '#a9c3ff', '#8fe3c3', '#1a3fc4', '#5b6b73', '#c9d4d8'];
+  // vert et bleu dominent, une touche d'or
+  return ['#0b7d5a', '#2456e6', '#16c486', '#6aa2ff', '#0f7f8c', '#d4a64a', '#8fe3c3', '#1a3fc4', '#a9c3ff', '#c9d4d8'];
 }
 // Dégradés partagés (vert en bas, bleu en haut) utilisables dans tous les graphiques
 const DEGRADES_SVG = `<defs>

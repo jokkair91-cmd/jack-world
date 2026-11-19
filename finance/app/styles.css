@@ -1,11 +1,11 @@
-/* Jack Finance — l'univers Jack : émeraude + bleu, un seul thème */
+/* Jack Finance — l'univers Jack : émeraude + bleu dominants, l'or en touches (liserés, anneaux, côté) */
 :root {
   --nuit: #062a2a;
-  --nuit-2: #081f3c;
+  --nuit-2: #0a1f45;
   --vert: #0e9f6e;
   --vert-vif: #16c486;
   --vert-clair: #e3f6ee;
-  --bleu: #2563eb;
+  --bleu: #2456e6;
   --bleu-vif: #2f6bff;
   --bleu-clair: #e6edff;
   --degrade: linear-gradient(120deg, #0e9f6e 0%, #0f7f8c 48%, #2456e6 100%);
@@ -15,7 +15,9 @@
   --or-fonce: #a57b35;
   --degrade-or: linear-gradient(120deg, #fbecc2 0%, #e2bf73 35%, #b88a3f 70%, #f0d697 100%);
   --serif: "Cormorant Garamond", Georgia, serif;
-  --fond: #f1f5f5;
+  --fond: #eef4f3;
+  --bleu-texte: #1f5fd6;  /* petites écritures en bleu */
+  --vert-texte: #0b8a5f;  /* petites écritures en vert */
   --carte: #ffffff;
   --beige: #e8eef0;      /* fond des barres vides */
   --beige-2: #f3f7f7;    /* fonds secondaires */
@@ -39,10 +41,12 @@ body { min-height: 100vh; align-items: flex-start; }
 body {
   font-family: var(--sans);
   color: var(--texte);
+  /* Fond doré derrière les cartes */
   background:
-    radial-gradient(900px 500px at 12% -10%, rgba(22, 196, 134, .10), transparent 60%),
-    radial-gradient(900px 520px at 100% -5%, rgba(47, 107, 255, .10), transparent 60%),
-    var(--fond);
+    radial-gradient(900px 520px at 8% -8%, rgba(214, 176, 102, .22), transparent 60%),
+    radial-gradient(900px 600px at 100% 0%, rgba(47, 107, 255, .14), transparent 62%),
+    radial-gradient(900px 700px at 100% 100%, rgba(22, 196, 134, .12), transparent 65%),
+    linear-gradient(150deg, #f6f4ec 0%, #eef4f3 45%, #e9f0fa 100%);
   background-attachment: fixed;
   display: flex;
   font-size: 15px;
@@ -62,7 +66,7 @@ svg.ic { width: 20px; height: 20px; flex: none; stroke: currentColor; fill: none
 }
 .barre::before { /* halos qui respirent doucement */
   content: ""; position: absolute; inset: auto -40% 14% -20%; height: 240px; pointer-events: none;
-  background: radial-gradient(closest-side, rgba(47, 107, 255, .22), transparent), radial-gradient(closest-side at 30% 60%, rgba(22, 196, 134, .18), transparent);
+  background: radial-gradient(closest-side, rgba(47, 107, 255, .26), transparent), radial-gradient(closest-side at 30% 60%, rgba(22, 196, 134, .2), transparent);
   filter: blur(10px); animation: respire 9s ease-in-out infinite alternate;
 }
 .barre::after { /* liseré doré sur le bord */
@@ -141,12 +145,27 @@ svg.ic { width: 20px; height: 20px; flex: none; stroke: currentColor; fill: none
 .tuile .etiquette svg.ic { width: 15px; height: 15px; }
 .tuile .valeur { font-family: var(--chiffres); font-weight: 600; font-size: 24px; margin: 3px 0 2px; white-space: nowrap; letter-spacing: -.02em; }
 .tuile small { font-size: 12.5px; }
+/* Petites écritures colorées : bleu pour revenus et dépenses, vert pour l'épargne et les comptes */
+.tuile.txt-bleu .etiquette, .tuile.txt-bleu small.discret { color: var(--bleu-texte); }
+.tuile.txt-vert .etiquette, .tuile.txt-vert small.discret { color: var(--vert-texte); }
+.tuile.txt-bleu small .positif, .tuile.txt-bleu small .negatif { font-weight: 600; }
+.liste-comptes .lib strong { color: var(--vert-texte); }
+.liste-comptes .lib small { color: var(--bleu-texte); opacity: .85; }
+/* Les montants s'adaptent à la largeur de la tuile : ils ne débordent jamais */
+.tuile:not(.vedette) { container-type: inline-size; }
+.tuile:not(.vedette) > div { min-width: 0; }
+.tuile:not(.vedette) .valeur { font-size: clamp(16px, calc((100cqi - 110px) / 5.6), 24px); }
+.tuile:not(.vedette) small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 1500px) and (min-width: 1251px) {
+  .g-tuiles:not([style]) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .g-tuiles:not([style]) > .vedette { grid-column: 1 / -1; }
+}
 .tuile-pile { flex-direction: column; align-items: flex-start; gap: 6px; }
 
 /* Carte vedette : le dégradé Jack */
 .tuile.vedette, .carte.vedette {
   position: relative; overflow: hidden; color: #fff; border: 0;
-  background: var(--degrade); box-shadow: 0 14px 34px rgba(20, 90, 140, .28);
+  background: var(--degrade); box-shadow: 0 14px 34px rgba(120, 95, 30, .28);
 }
 .tuile.vedette::after { /* trait blanc du logo */
   content: ""; position: absolute; right: -40px; top: -60px; width: 320px; height: 220px; pointer-events: none;
@@ -226,7 +245,7 @@ svg.ic { width: 20px; height: 20px; flex: none; stroke: currentColor; fill: none
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 42px; padding: 0 16px; border-radius: 12px; border: 1px solid var(--trait); background: var(--carte); cursor: pointer; font-weight: 600; font-size: 14px; text-decoration: none; white-space: nowrap; }
 .btn:hover { background: var(--beige-2); }
 .btn svg.ic { width: 18px; height: 18px; }
-.btn.principal { background: var(--degrade); border: 0; color: #fff; box-shadow: 0 6px 16px rgba(30, 100, 160, .25); }
+.btn.principal { background: var(--degrade); border: 0; color: #fff; box-shadow: 0 6px 16px rgba(130, 100, 35, .25); }
 .btn.principal:hover { filter: brightness(1.07); }
 .btn.danger { color: var(--negatif); }
 .btn.petit { height: 34px; padding: 0 12px; font-size: 13px; }
@@ -310,7 +329,7 @@ table.tableau { width: 100%; border-collapse: collapse; font-size: 14px; }
 
 /* Budget mensuel (carte sombre) */
 .carte.budget-vedette { background: linear-gradient(160deg, #073630 0%, var(--nuit) 45%, var(--nuit-2) 100%); color: #e4eef0; border: 0; position: relative; overflow: hidden; }
-.carte.budget-vedette::after { content: ""; position: absolute; right: -60px; bottom: -80px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(closest-side, rgba(47, 107, 255, .35), transparent); pointer-events: none; }
+.carte.budget-vedette::after { content: ""; position: absolute; right: -60px; bottom: -80px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(closest-side, rgba(47, 107, 255, .4), transparent); pointer-events: none; }
 .carte.budget-vedette > * { position: relative; }
 .budget-vedette h2 { color: #fff; }
 .carte.budget-vedette .lien { color: #8fe3c3; }
@@ -382,7 +401,7 @@ table.tableau { width: 100%; border-collapse: collapse; font-size: 14px; }
 }
 
 /* ================= Touches dorées dans le contenu ================= */
-.tuile.vedette { box-shadow: 0 14px 34px rgba(20, 90, 140, .28), inset 0 0 0 1px rgba(242, 220, 165, .28); }
+.tuile.vedette { box-shadow: 0 14px 34px rgba(120, 95, 30, .28), inset 0 0 0 1px rgba(242, 220, 165, .28); }
 .carte.budget-vedette { box-shadow: var(--ombre), inset 0 0 0 1px rgba(214, 176, 102, .25); }
 .carte.budget-vedette h2 { color: var(--or-clair); }
 .carte.budget-vedette .lien { color: var(--or-clair); }
@@ -427,7 +446,7 @@ table.tableau { width: 100%; border-collapse: collapse; font-size: 14px; }
 
 /* ================= Présentation ================= */
 .presentation { position: fixed; inset: 0; z-index: 100; overflow-y: auto; color: #eef4f2;
-  background: radial-gradient(1200px 700px at 50% -10%, #0b4a42 0%, transparent 60%), linear-gradient(165deg, #04201f 0%, #051b2e 55%, #060f22 100%); }
+  background: radial-gradient(1200px 700px at 50% -10%, #0b4a42 0%, transparent 60%), linear-gradient(165deg, #04201f 0%, #071d33 55%, #0a1a40 100%); }
 .presentation[hidden] { display: none; }
 .presentation.sortie { animation: sortie .7s cubic-bezier(.6, 0, .4, 1) forwards; }
 @keyframes sortie { to { opacity: 0; transform: scale(1.04); filter: blur(6px); } }
@@ -435,7 +454,7 @@ table.tableau { width: 100%; border-collapse: collapse; font-size: 14px; }
 .pr-orbes span { position: absolute; border-radius: 50%; filter: blur(70px); opacity: .55; animation: flotte 18s ease-in-out infinite alternate; }
 .pr-orbes span:nth-child(1) { width: 520px; height: 520px; left: -140px; top: 18%; background: #0e9f6e; }
 .pr-orbes span:nth-child(2) { width: 600px; height: 600px; right: -180px; top: -120px; background: #2456e6; animation-duration: 22s; }
-.pr-orbes span:nth-child(3) { width: 380px; height: 380px; left: 42%; bottom: -160px; background: #c99a48; opacity: .35; animation-duration: 16s; }
+.pr-orbes span:nth-child(3) { width: 380px; height: 380px; left: 42%; bottom: -160px; background: #c99a48; opacity: .28; animation-duration: 16s; }
 @keyframes flotte { 0% { transform: translate(0, 0) scale(1); } 50% { transform: translate(60px, -40px) scale(1.1); } 100% { transform: translate(-40px, 50px) scale(.95); } }
 .pr-lignes { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: .5; }
 .pr-lignes path { fill: none; stroke: url(#pr-or-ligne); stroke-width: 1.2; stroke-dasharray: 1 1; animation: tracer 3.5s ease both; }

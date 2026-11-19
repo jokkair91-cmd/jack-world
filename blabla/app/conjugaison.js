@@ -127,6 +127,52 @@ MOTEURS.fr = function (v, t) {
   }
 };
 
+// ---------------- ITALIEN ----------------
+// base : infinitif « ancien » pour fare (facere), dire (dicere), bere (bevere), tradurre (traducere)
+// isc : verbes en -ire qui prennent -isc- (capire → capisco) · radicalFutur : sar-, avr-, andr-…
+MOTEURS.it = function (v, t) {
+  const base = v.base || v.inf;
+  const g = base.slice(-3);                       // are, ere, ire
+  const rad = base.slice(0, -3);
+  const dur = g === "are" && /[cg]$/.test(rad);    // cercare, pagare → cerchi, paghi
+  const colle = (r, f) => {
+    if (dur && /^[ie]/.test(f)) return r + "h" + f;         // cerc + i → cerchi
+    if (f[0] === "i" && /i$/.test(r)) return r + f.slice(1); // mangi + i → mangi, studi + iamo → studiamo
+    return r + f;
+  };
+  const T = {
+    presente: { are: ["o", "i", "a", "iamo", "ate", "ano"], ere: ["o", "i", "e", "iamo", "ete", "ono"], ire: ["o", "i", "e", "iamo", "ite", "ono"] },
+    imperfetto: { are: ["avo", "avi", "ava", "avamo", "avate", "avano"], ere: ["evo", "evi", "eva", "evamo", "evate", "evano"], ire: ["ivo", "ivi", "iva", "ivamo", "ivate", "ivano"] },
+    congiuntivo: { are: ["i", "i", "i", "iamo", "iate", "ino"], ere: ["a", "a", "a", "iamo", "iate", "ano"], ire: ["a", "a", "a", "iamo", "iate", "ano"] },
+    "congiuntivo-imperfetto": { are: ["assi", "assi", "asse", "assimo", "aste", "assero"], ere: ["essi", "essi", "esse", "essimo", "este", "essero"], ire: ["issi", "issi", "isse", "issimo", "iste", "issero"] },
+  };
+  const formes = (temps) => {
+    if (v.formes && v.formes[temps]) return v.formes[temps];
+    if (v.isc && temps === "presente") return ["isco", "isci", "isce", "iamo", "ite", "iscono"].map((f) => rad + f);
+    if (v.isc && temps === "congiuntivo") return ["isca", "isca", "isca", "iamo", "iate", "iscano"].map((f) => rad + f);
+    return T[temps][g].map((f) => colle(rad, f));
+  };
+  // Radical du futur et du conditionnel : parlare → parler-, mangiare → manger-, cercare → cercher-
+  const radF = v.radicalFutur || (g === "are"
+    ? (/[cg]i$/.test(rad) ? rad.slice(0, -1) + "er" : dur ? rad + "her" : rad + "er")
+    : rad + (g === "ere" ? "er" : "ir"));
+  const pp = v.participe || rad + { are: "ato", ere: "uto", ire: "ito" }[g];
+  const essere = v.aux === "essere";
+  const AUX = essere
+    ? { presente: ["sono", "sei", "è", "siamo", "siete", "sono"], imperfetto: ["ero", "eri", "era", "eravamo", "eravate", "erano"], condizionale: ["sarei", "saresti", "sarebbe", "saremmo", "sareste", "sarebbero"] }
+    : { presente: ["ho", "hai", "ha", "abbiamo", "avete", "hanno"], imperfetto: ["avevo", "avevi", "aveva", "avevamo", "avevate", "avevano"], condizionale: ["avrei", "avresti", "avrebbe", "avremmo", "avreste", "avrebbero"] };
+  // Avec essere, le participe s'accorde : andato/a, andati/e
+  const compose = (aux) => aux.map((a, i) => a + " " + (essere ? (i < 3 ? pp + "/a" : pp.slice(0, -1) + "i/e") : pp));
+  switch (t) {
+    case "presente": case "imperfetto": case "congiuntivo": case "congiuntivo-imperfetto": return formes(t);
+    case "futuro": return v.formes?.futuro || ["ò", "ai", "à", "emo", "ete", "anno"].map((f) => radF + f);
+    case "condizionale": return v.formes?.condizionale || ["ei", "esti", "ebbe", "emmo", "este", "ebbero"].map((f) => radF + f);
+    case "passato": return compose(AUX.presente);
+    case "trapassato": return compose(AUX.imperfetto);
+    case "condizionale-passato": return compose(AUX.condizionale);
+  }
+};
+
 function conjuguer(langue, verbe, temps) {
   if (verbe.formes && verbe.formes[temps]) return verbe.formes[temps];
   return MOTEURS[langue](verbe, temps);

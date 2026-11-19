@@ -28,6 +28,11 @@ const LANGUES = {
     nomLocal: "Deutsch", adj: "allemande", perso: "🥨", persoNom: "Bretzel de Bavière", couleur: "#d40000",
     drapeau: svgDrapeau(`<rect width="60" height="40" fill="#000"/><rect y="13.33" width="60" height="13.34" fill="#DD0000"/><rect y="26.67" width="60" height="13.33" fill="#FFCE00"/>`),
   },
+  it: {
+    nom: "Italien", voix: "it-IT", bonjour: "Ciao!", accents: ["à", "è", "é", "ì", "ò", "ù"],
+    nomLocal: "Italiano", adj: "italienne", perso: "🍕", persoNom: "Pizza napolitaine", couleur: "#009246",
+    drapeau: svgDrapeau(`<rect width="20" height="40" fill="#009246"/><rect x="20" width="20" height="40" fill="#fff"/><rect x="40" width="20" height="40" fill="#CE2B37"/>`),
+  },
   // Pour les francophones : maîtriser l'orthographe, la grammaire et la conjugaison (façon Bescherelle)
   fr: {
     nom: "Français", voix: "fr-FR", bonjour: "Bonjour !", accents: ["é", "è", "ê", "à", "â", "ù", "û", "ç", "ô", "î", "ï", "ë", "œ"],
@@ -50,7 +55,8 @@ const NIVEAUX = [
 const PARCOURS_SEMAINES = [1, 5, 9, 14, 19, 24];
 const PARCOURS_TOTAL = 26;
 
-const SEUIL_TEST = 7; // bonnes réponses sur 10 pour passer au niveau suivant
+const SEUIL_TEST = 7; // ancien test (10 questions)
+const SEUIL_TEST_12 = 9; // test de passage : 9 bonnes réponses sur 12 pour passer au niveau suivant
 
 // Rempli par contenu/en.js, contenu/es.js, contenu/de.js
 const CONTENU = {};

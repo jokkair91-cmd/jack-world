@@ -171,6 +171,8 @@ function correction(bonne, pourquoi) {
 // La règle d'une leçon de grammaire, en une phrase (sert d'explication par défaut)
 function regleDe(lecon) {
   if (lecon.astuce) return lecon.astuce;
+  const plus = typeof COURS_PLUS !== "undefined" && (COURS_PLUS[etat.langue] || {})[lecon.id];
+  if (plus && plus.retenir) return plus.retenir;
   return lecon.explication.split(/<br\s*\/?>/i)[0].replace(/<[^>]+>/g, "").trim();
 }
 
@@ -218,7 +220,7 @@ document.getElementById("btn-home").onclick = () => aller(etat.langue ? { nom: "
 function rendre() {
   afficherStats();
   if (vue.nom === "accueil" || !etat.langue) return vueAccueil();
-  const vues = { hub: vueHub, theme: vueTheme, grammaire: vueGrammaire, conjugaison: vueConjugaison, irreguliers: vueIrreguliers, test: vueTest, parcours: vueParcours, revision: vueRevision };
+  const vues = { hub: vueHub, theme: vueTheme, grammaire: vueGrammaire, quizgram: vueQuizGrammaire, conjugaison: vueConjugaison, irreguliers: vueIrreguliers, test: vueTest, parcours: vueParcours, revision: vueRevision };
   (vues[vue.nom] || vueHub)();
 }
 const boutonRetour = (texte = "← Retour") => `<button class="retour" id="retour">${texte}</button>`;
@@ -271,7 +273,8 @@ const scoreGrammaire = (g) => (fait(`${etat.langue}:g:${g.id}`).score || 0) * 10
 function progressionNiveau(n) {
   const items = [
     ...C().themes.filter((t) => t.niveau === n).map(progressionTheme),
-    ...C().grammaire.filter((g) => g.niveau === n).map(scoreGrammaire),
+    // Une leçon = 30 % pour la lecture du cours + 70 % pour le quiz
+    ...C().grammaire.filter((g) => g.niveau === n).map((g) => (fait(`${etat.langue}:g:${g.id}`).lu ? 30 : 0) + scoreGrammaire(g) * 0.7),
   ];
   return items.length ? items.reduce((a, b) => a + b, 0) / items.length : 0;
 }
@@ -293,6 +296,7 @@ function vueHub() {
   const nbIrr = C().irreguliers.lignes.filter((r) => r[r.length - 1] <= n).length;
   const tempsDispo = C().temps.filter((t) => t.niveau <= n).map((t) => t.nom.split(" (")[0]).join(", ");
   const prog = progressionNiveau(n);
+  const etape = ["cours", "quiz", "test"].includes(etat.etape) ? etat.etape : "cours";
 
   app.innerHTML = `
     <div class="rangee" style="justify-content:space-between">
@@ -331,53 +335,16 @@ function vueHub() {
         <b>${Math.round(prog)} %</b>
       </div>
       ${barre(prog)}
-      ${n === max && n < NIVEAUX.length - 1 ? `
-        <div class="rangee" style="margin-top:14px">
-          <button class="btn" id="test">🎓 Test de passage → ${NIVEAUX[n + 1].nom}</button>
-          <span class="muted">${SEUIL_TEST}/10 pour débloquer le niveau suivant</span>
-        </div>` : ""}
     </div>
 
-    <h2 class="section">📚 Vocabulaire</h2>
-    <div class="grid grid-2">
-      ${themes.map((t) => {
-        const dues = cartesDues(t);
-        return `
-        <button class="tile" data-theme="${t.id}">
-          <span class="big">${t.emoji}</span>
-          <span class="titre">${t.titre}</span>
-          <span class="sous">${t.mots.length} mots · ${dues} carte${dues > 1 ? "s" : ""} à revoir</span>
-          ${barre(progressionTheme(t))}
-        </button>`;
-      }).join("")}
-    </div>
-
-    <h2 class="section">📐 Grammaire</h2>
-    <div class="liste">
-      ${lecons.map((g, i) => {
-        const s = scoreGrammaire(g);
-        return `
-        <button class="ligne" data-lecon="${g.id}">
-          <span class="num">${i + 1}</span>
-          <span class="ligne-titre">${g.titre}</span>
-          <span class="ligne-etat">${s >= 80 ? "✅" : s > 0 ? `${Math.round(s)} %` : "→"}</span>
-        </button>`;
-      }).join("")}
-    </div>
-
-    <h2 class="section">🔤 Conjugaison et verbes</h2>
-    <div class="grid grid-2">
-      <button class="tile" id="conj">
-        <span class="big">🔤</span>
-        <span class="titre">Conjugaison</span>
-        <span class="sous">${nbVerbes} verbes · ${tempsDispo}</span>
-      </button>
-      <button class="tile" id="irr">
-        <span class="big">⚡</span>
-        <span class="titre">Verbes irréguliers</span>
-        <span class="sous">${nbIrr} verbes à connaître par cœur</span>
-      </button>
-    </div>`;
+    <nav class="etapes" aria-label="Étapes du niveau">
+      ${[["cours", "①", "📖 Cours", "Lire et comprendre"], ["quiz", "②", "✅ Quiz", "S'entraîner"], ["test", "③", "🎓 Test", n < NIVEAUX.length - 1 ? `Passer en ${NIVEAUX[n + 1].nom}` : "Diplôme final"]]
+        .map(([id, num, nom, sous]) => `
+        <button class="etape ${etape === id ? "actif" : ""}" data-etape="${id}" aria-pressed="${etape === id}">
+          <span class="etape-num">${num}</span><span><b>${nom}</b><br><small>${sous}</small></span>
+        </button>`).join("")}
+    </nav>
+    <section id="etape">${{ cours: etapeCours, quiz: etapeQuiz, test: etapeTest }[etape](n, max, { themes, lecons, nbVerbes, nbIrr, tempsDispo, prog })}</section>`;
 
   document.getElementById("changer").onclick = () => aller({ nom: "accueil" });
   document.getElementById("parcours").onclick = () => aller({ nom: "parcours" });
@@ -393,12 +360,118 @@ function vueHub() {
     sauver();
     vueHub();
   });
+  app.querySelectorAll("[data-etape]").forEach((b) => b.onclick = () => { etat.etape = b.dataset.etape; sauver(); vueHub(); });
   const t = document.getElementById("test");
   if (t) t.onclick = () => aller({ nom: "test", niveau: n });
-  app.querySelectorAll("[data-theme]").forEach((b) => b.onclick = () => aller({ nom: "theme", theme: b.dataset.theme, onglet: "lecon" }));
+  app.querySelectorAll("[data-theme]").forEach((b) => b.onclick = () => aller({ nom: "theme", theme: b.dataset.theme, onglet: b.dataset.onglet || "lecon" }));
   app.querySelectorAll("[data-lecon]").forEach((b) => b.onclick = () => aller({ nom: "grammaire", id: b.dataset.lecon }));
-  document.getElementById("conj").onclick = () => aller({ nom: "conjugaison" });
-  document.getElementById("irr").onclick = () => aller({ nom: "irreguliers" });
+  app.querySelectorAll("[data-quizgram]").forEach((b) => b.onclick = () => aller({ nom: "quizgram", id: b.dataset.quizgram }));
+  app.querySelectorAll("[data-aller]").forEach((b) => b.onclick = () => {
+    const [nom, drill] = b.dataset.aller.split(":");
+    aller({ nom, drill: drill === "drill" });
+  });
+}
+
+// ---------- Étape ① : les cours écrits du niveau ----------
+function etapeCours(n, max, { themes, lecons, nbVerbes, nbIrr, tempsDispo }) {
+  const lus = lecons.filter((g) => fait(`${etat.langue}:g:${g.id}`).lu).length;
+  return `
+    <div class="card conseil">📖 <b>Commence ici.</b> Chaque cours s'explique par écrit : la règle, <b>pourquoi</b> on dit comme ça, ce qu'il faut <b>faire</b> et <b>ne pas faire</b>, avec des exemples traduits. Le son est en option.</div>
+    <h2 class="section">📐 Cours de grammaire <small class="muted">${lus}/${lecons.length} lus</small></h2>
+    <div class="liste">
+      ${lecons.map((g, i) => {
+        const lu = fait(`${etat.langue}:g:${g.id}`).lu;
+        return `
+        <button class="ligne" data-lecon="${g.id}">
+          <span class="num">${i + 1}</span>
+          <span class="ligne-titre">${g.titre}<br><small class="muted">${echap(regleDe(g)).slice(0, 110)}${regleDe(g).length > 110 ? "…" : ""}</small></span>
+          <span class="ligne-etat">${lu ? "📖 lu" : "Lire →"}</span>
+        </button>`;
+      }).join("")}
+    </div>
+    <h2 class="section">📚 Fiches de vocabulaire</h2>
+    <div class="grid grid-2">
+      ${themes.map((t) => `
+        <button class="tile" data-theme="${t.id}" data-onglet="lecon">
+          <span class="big">${t.emoji}</span>
+          <span class="titre">${t.titre}</span>
+          <span class="sous">${t.mots.length} mots et expressions à lire</span>
+          ${fait(cleTheme(t)).lecon ? `<span class="pastille ok">📖 lue</span>` : ""}
+        </button>`).join("")}
+    </div>
+    <h2 class="section">🔤 Fiches de conjugaison</h2>
+    <div class="grid grid-2">
+      <button class="tile" data-aller="conjugaison">
+        <span class="big">🔤</span><span class="titre">Tableaux de conjugaison</span>
+        <span class="sous">${nbVerbes} verbes · ${tempsDispo}</span>
+      </button>
+      <button class="tile" data-aller="irreguliers">
+        <span class="big">⚡</span><span class="titre">Verbes irréguliers</span>
+        <span class="sous">${nbIrr} verbes à connaître par cœur</span>
+      </button>
+    </div>`;
+}
+
+// ---------- Étape ② : les quiz du niveau (séparés des cours) ----------
+function etapeQuiz(n, max, { themes, lecons }) {
+  return `
+    <div class="card conseil">✅ <b>Entraîne-toi</b> après avoir lu les cours. À chaque erreur, Jack t'explique pourquoi. Vise <b>80 %</b> partout avant le test.</div>
+    <h2 class="section">📐 Quiz de grammaire</h2>
+    <div class="liste">
+      ${lecons.map((g, i) => {
+        const s = scoreGrammaire(g);
+        return `
+        <button class="ligne" data-quizgram="${g.id}">
+          <span class="num">${i + 1}</span>
+          <span class="ligne-titre">${g.titre} <small class="muted">· ${g.exercices.length} questions</small></span>
+          <span class="ligne-etat">${s >= 80 ? "✅" : s > 0 ? `${Math.round(s)} %` : "Jouer →"}</span>
+        </button>`;
+      }).join("")}
+    </div>
+    <h2 class="section">📚 Quiz de vocabulaire</h2>
+    <div class="grid grid-2">
+      ${themes.map((t) => {
+        const dues = cartesDues(t);
+        return `
+        <button class="tile" data-theme="${t.id}" data-onglet="quiz">
+          <span class="big">${t.emoji}</span>
+          <span class="titre">${t.titre}</span>
+          <span class="sous">Quiz, cartes (${dues} à revoir), parler${t.dialogue ? ", dialogue" : ""}</span>
+          ${barre(progressionTheme(t))}
+        </button>`;
+      }).join("")}
+    </div>
+    <h2 class="section">🔤 Entraînements verbes</h2>
+    <div class="grid grid-2">
+      <button class="tile" data-aller="conjugaison:drill"><span class="big">✏️</span><span class="titre">Conjugaison</span><span class="sous">10 formes à écrire</span></button>
+      <button class="tile" data-aller="irreguliers:drill"><span class="big">⚡</span><span class="titre">Irréguliers</span><span class="sous">10 formes à écrire</span></button>
+    </div>`;
+}
+
+// ---------- Étape ③ : le test de passage ----------
+function etapeTest(n, max, { themes, lecons, prog }) {
+  const dernier = n === NIVEAUX.length - 1;
+  const suivant = NIVEAUX[n + 1];
+  const lus = lecons.filter((g) => fait(`${etat.langue}:g:${g.id}`).lu).length;
+  const quizOk = lecons.filter((g) => scoreGrammaire(g) >= 80).length;
+  const vocOk = themes.filter((t) => (fait(cleTheme(t)).quiz || 0) >= 0.8).length;
+  const valide = dernier ? (etat.diplome || {})[etat.langue] : n < max;
+  const coche = (ok) => (ok ? "✅" : "⬜");
+  return `
+    <div class="card test-carte">
+      <h2 style="margin-top:0">🎓 ${dernier ? `Test final · Diplôme ${L().nom} ${NIVEAUX[n].nom}` : `Test de passage : ${NIVEAUX[n].nom} → ${suivant.emoji} ${suivant.nom}`}</h2>
+      ${valide ? `<p class="feedback ok">✅ ${dernier ? "Diplôme obtenu ! Tu peux repasser le test pour t'entraîner." : `Niveau déjà validé : ${suivant.nom} est débloqué. Tu peux repasser le test pour t'entraîner.`}</p>` : ""}
+      <p><b>12 questions</b> mélangées : vocabulaire, grammaire et conjugaison du niveau ${NIVEAUX[n].nom}. Il faut <b>${SEUIL_TEST_12}/12</b> pour réussir${dernier ? " et obtenir ton diplôme" : ` et débloquer le niveau <b>${suivant.nom}</b>`}.</p>
+      <h3>Es-tu prêt ?</h3>
+      <ul class="check">
+        <li>${coche(lus === lecons.length)} Cours lus : <b>${lus}/${lecons.length}</b></li>
+        <li>${coche(quizOk === lecons.length)} Quiz de grammaire à 80 % : <b>${quizOk}/${lecons.length}</b></li>
+        <li>${coche(vocOk === themes.length)} Quiz de vocabulaire à 80 % : <b>${vocOk}/${themes.length}</b></li>
+        <li>${coche(prog >= 80)} Progression du niveau : <b>${Math.round(prog)} %</b></li>
+      </ul>
+      <p class="muted">${prog >= 80 ? "Tu as tout ce qu'il faut. Bonne chance ! 🍀" : "Conseil : termine les cours et les quiz avant. Mais tu peux tenter le test quand tu veux."}</p>
+      <button class="btn" id="test">🎓 Commencer le test</button>
+    </div>`;
 }
 
 // ================= QCM générique =================
@@ -509,7 +582,7 @@ const MSG_DEFAUT = ["Excellent ! Jack est fier de toi.", "Pas mal du tout ! Enco
 // ================= Thème de vocabulaire =================
 function vueTheme() {
   const t = C().themes.find((x) => x.id === vue.theme);
-  const onglets = [["lecon", "📖 Leçon"], ["quiz", "✅ Quiz"], ["cartes", "🃏 Cartes"], ["parler", "🎤 Parler"]];
+  const onglets = [["lecon", "📖 Fiche à lire"], ["quiz", "✅ Quiz"], ["cartes", "🃏 Cartes"], ["parler", "🎤 Parler"]];
   if (t.dialogue) onglets.push(["blabla", "💬 Blabla avec Jack"]);
   app.innerHTML = `
     ${boutonRetour(`← ${L().nom} · ${NIVEAUX[t.niveau].nom}`)}
@@ -804,52 +877,121 @@ function questionsGrammaire(lecon) {
   }));
 }
 
+// Compléments écrits d'une leçon : « pourquoi » et pièges, dans la leçon elle-même ou dans contenu/cours.js
+function complementsCours(g) {
+  const plus = ((typeof COURS_PLUS !== "undefined" && COURS_PLUS[etat.langue]) || {})[g.id] || {};
+  return { pourquoi: g.pourquoi || plus.pourquoi || "", pieges: [...(g.pieges || []), ...(plus.pieges || [])] };
+}
+
+// ---------- Le cours écrit d'une leçon de grammaire ----------
 function vueGrammaire() {
   const g = C().grammaire.find((x) => x.id === vue.id);
   const lecons = C().grammaire.filter((x) => x.niveau === g.niveau);
   const idx = lecons.indexOf(g);
   const suivante = lecons[idx + 1];
+  const { pourquoi, pieges } = complementsCours(g);
+  const cle = `${etat.langue}:g:${g.id}`;
+
+  // « À faire / à ne pas faire » : les pièges écrits à la main, puis chaque exercice corrigé
+  const lignesExo = g.exercices.map((ex) => {
+    const faux = ex.choix.slice(1).filter((c) => !c.startsWith("—"))[0];
+    const avecTrou = ex.q.includes("___");
+    return `
+      <div class="faire">
+        ${avecTrou ? "" : `<div class="faire-q">${echap(ex.q)}</div>`}
+        <div class="oui">✅ ${echap(avecTrou ? phraseComplete(ex.q, ex.choix[0]) : ex.choix[0])}</div>
+        ${faux ? `<div class="non">❌ <s>${echap(avecTrou ? phraseComplete(ex.q, faux) : faux)}</s></div>` : ""}
+        ${ex.fr ? `<div class="faire-fr">${echap(ex.fr)}</div>` : ""}
+        ${ex.pourquoi ? `<div class="faire-pq">💡 ${ex.pourquoi}</div>` : ""}
+      </div>`;
+  }).join("");
+
   app.innerHTML = `
     ${boutonRetour(`← ${L().nom} · ${NIVEAUX[g.niveau].nom}`)}
-    <p class="muted" style="margin:0">📐 Grammaire · leçon ${idx + 1}/${lecons.length}</p>
+    <p class="muted" style="margin:0">📖 Cours écrit · ${NIVEAUX[g.niveau].emoji} ${NIVEAUX[g.niveau].nom} · leçon ${idx + 1}/${lecons.length}</p>
     <h1>${g.titre}</h1>
-    <section id="zone">
-      <div class="card explication">${g.explication}
-        <div class="rangee" style="margin-top:12px"><button class="lien-son" id="expliquer">🔊 Jack m'explique la leçon</button></div>
+    <article class="cours">
+      <div class="card objectif">🎯 <b>Dans ce cours :</b> ${echap(regleDe(g))}
+        <div class="rangee" style="margin-top:10px"><button class="lien-son" id="expliquer">🔊 Écouter le cours (facultatif)</button></div>
       </div>
-      <h2 class="section">Exemples</h2>
+
+      <h2 class="section">📖 La règle</h2>
+      <div class="card explication">${g.explication}</div>
+
+      ${pourquoi ? `<h2 class="section">💡 Pourquoi ?</h2><div class="card explication">${pourquoi}</div>` : ""}
+
+      <h2 class="section">📝 Exemples</h2>
       <div class="card">
-        ${g.exemples.map(([cible, fr], i) => `
-          <div class="mot">
-            <div><div class="cible">${echap(cible)}</div><div class="fr">${echap(fr)}</div></div>
-            <button class="hp" data-i="${i}" aria-label="Écouter">🔊</button>
-          </div>`).join("")}
+        <table class="exemples">
+          ${g.exemples.map(([cible, fr], i) => `
+            <tr><td class="cible">${echap(cible)}</td><td class="fr">${echap(fr)}</td>
+            <td><button class="hp petit" data-i="${i}" aria-label="Écouter">🔊</button></td></tr>`).join("")}
+        </table>
       </div>
-      <div class="rangee" style="margin-top:18px">
-        <button class="btn" id="go">✏️ Faire les exercices (${g.exercices.length})</button>
+
+      ${pieges.length ? `
+        <h2 class="section">⚠️ Les pièges des francophones</h2>
+        <div class="card">
+          ${pieges.map(([mauvais, bon, raison]) => `
+            <div class="faire">
+              <div class="non">❌ <s>${echap(mauvais)}</s></div>
+              <div class="oui">✅ ${echap(bon)}</div>
+              ${raison ? `<div class="faire-pq">💡 ${raison}</div>` : ""}
+            </div>`).join("")}
+        </div>` : ""}
+
+      <h2 class="section">✅ À faire · ❌ À ne pas faire</h2>
+      <div class="card">${lignesExo}</div>
+
+      <div class="card retenir">📌 <b>À retenir :</b> ${echap(regleDe(g))}</div>
+
+      <div class="rangee fin-cours">
+        <button class="btn" id="lu">${fait(cle).lu ? "✅ Cours lu" : "✔ J'ai lu ce cours"} → Quiz</button>
+        ${suivante ? `<button class="btn secondaire" id="suivant">Cours suivant →</button>` : ""}
       </div>
-    </section>`;
+    </article>`;
   brancherRetour();
   app.querySelectorAll(".hp").forEach((b) => b.onclick = () => parler(g.exemples[b.dataset.i][0]));
-  // Explication orale : la règle en français, puis chaque exemple (langue étudiée + traduction)
+  // Lecture à voix haute, en option : la règle en français, puis chaque exemple
   document.getElementById("expliquer").onclick = () => direSuite([
-    [`${g.titre}.`, "fr"], [g.explication, "fr"], ["Écoute les exemples.", "fr"],
+    [`${g.titre}.`, "fr"], [g.explication, "fr"], [pourquoi, "fr"], ["Écoute les exemples.", "fr"],
     ...g.exemples.flatMap(([cible, fr]) => [[cible, etat.langue], [fr, "fr"]]),
   ]);
+  document.getElementById("lu").onclick = () => {
+    if (!fait(cle).lu) { marquer(cle, "lu", true); gagnerXp(3); }
+    aller({ nom: "quizgram", id: g.id });
+  };
+  const s = document.getElementById("suivant");
+  if (s) s.onclick = () => { if (!fait(cle).lu) marquer(cle, "lu", true); aller({ nom: "grammaire", id: suivante.id }); };
+}
+
+// ---------- Le quiz d'une leçon (séparé du cours) ----------
+function vueQuizGrammaire() {
+  const g = C().grammaire.find((x) => x.id === vue.id);
+  const lecons = C().grammaire.filter((x) => x.niveau === g.niveau);
+  const suivante = lecons[lecons.indexOf(g) + 1];
+  app.innerHTML = `
+    ${boutonRetour(`← ${L().nom} · ${NIVEAUX[g.niveau].nom}`)}
+    <p class="muted" style="margin:0">✅ Quiz · ${NIVEAUX[g.niveau].nom}</p>
+    <h1>${g.titre}</h1>
+    <div class="rangee" style="margin-bottom:10px"><button class="lien-son" id="relire">📖 Relire le cours</button></div>
+    <section id="zone"></section>`;
+  brancherRetour();
+  document.getElementById("relire").onclick = () => aller({ nom: "grammaire", id: g.id });
   const zone = document.getElementById("zone");
   const lancer = () => lancerQcm(zone, questionsGrammaire(g), (score, total) => {
     const cle = `${etat.langue}:g:${g.id}`;
     if (score / total > (fait(cle).score || 0)) marquer(cle, "score", score / total);
     gagnerXp(score * 2);
     ecranResultat(zone, { score, total,
-      messages: ["Règle maîtrisée ! 🏆", "Presque ! Relis l'explication et retente.", "Relis bien la règle et les exemples, puis réessaie."],
+      messages: ["Règle maîtrisée ! 🏆", "Presque ! Relis le cours et retente.", "Relis bien le cours et les exemples, puis réessaie."],
       boutons: [
-        { texte: "Revoir la leçon", secondaire: true, action: () => vueGrammaire() },
+        { texte: "Relire le cours", secondaire: true, action: () => aller({ nom: "grammaire", id: g.id }) },
         { texte: "Recommencer", secondaire: true, action: lancer },
-        suivante ? { texte: "Leçon suivante →", action: () => aller({ nom: "grammaire", id: suivante.id }) } : { texte: "Retour", action: () => aller({ nom: "hub" }) },
+        suivante ? { texte: "Cours suivant →", action: () => aller({ nom: "grammaire", id: suivante.id }) } : { texte: "Aller au test →", action: () => { etat.etape = "test"; sauver(); aller({ nom: "hub" }); } },
       ] });
   });
-  document.getElementById("go").onclick = lancer;
+  lancer();
 }
 
 // ================= Conjugaison =================
@@ -894,6 +1036,7 @@ function vueConjugaison() {
   app.querySelectorAll("[data-temps]").forEach((b) => b.onclick = () => aller({ ...vue, temps: b.dataset.temps, verbe: v.inf }));
   app.querySelectorAll("[data-verbe]").forEach((b) => b.onclick = () => aller({ ...vue, verbe: b.dataset.verbe, temps: t.id }));
   document.getElementById("drill").onclick = () => drillConjugaison(verbes, temps);
+  if (vue.drill) { vue.drill = false; drillConjugaison(verbes, temps); }
 }
 
 function drillConjugaison(verbes, temps) {
@@ -957,6 +1100,7 @@ function vueIrreguliers() {
     app.querySelectorAll("tbody tr").forEach((tr) => tr.style.display = tr.dataset.cherche.includes(q) ? "" : "none");
   };
   document.getElementById("drill").onclick = () => drillIrreguliers(rows);
+  if (vue.drill) { vue.drill = false; drillIrreguliers(rows); }
 }
 
 function drillIrreguliers(rows) {
@@ -986,16 +1130,40 @@ function drillIrreguliers(rows) {
 }
 
 // ================= Test de passage de niveau =================
+// Questions de conjugaison en QCM pour le test : la bonne forme parmi celles d'autres personnes
+function questionsConjugaison(n, nb) {
+  const verbes = C().verbes.filter((v) => v.niveau <= n);
+  const temps = C().temps.filter((t) => t.niveau <= n);
+  const qs = [];
+  for (let essai = 0; essai < 40 && qs.length < nb; essai++) {
+    const v = hasard(verbes), t = hasard(temps), p = Math.floor(Math.random() * 6);
+    const formes = conjuguer(etat.langue, v, t.id);
+    const bonne = formes[p];
+    const autres = melanger([...new Set(formes.filter((f) => f !== bonne))]).slice(0, 2);
+    if (autres.length < 2) continue;
+    qs.push({
+      consigne: `Conjugaison · ${t.nom}`,
+      question: `${echap(C().pronoms[p])} … <span class="trou">${echap(v.inf)}</span> <small class="muted">(${echap(v.fr)})</small>`,
+      choix: melanger([bonne, ...autres]),
+      bonne,
+      audioReponse: avecPronom(C().pronoms[p], bonne),
+      pourquoi: `Avec « ${C().pronoms[p]} » (${C().pronomsFr[p]}), au ${t.nom.toLowerCase()}, ${v.inf} se conjugue « ${bonne} ». Revois le tableau dans Conjugaison.`,
+    });
+  }
+  return qs;
+}
+
 function vueTest() {
   const n = vue.niveau;
   const suivant = NIVEAUX[n + 1];
+  const dernier = !suivant;
   app.innerHTML = `
     ${boutonRetour()}
-    <h1>🎓 Test de passage</h1>
-    <p class="muted">Niveau ${NIVEAUX[n].nom} → ${suivant.nom}. 10 questions de vocabulaire et de grammaire. Il faut <b>${SEUIL_TEST}/10</b>.</p>
+    <h1>🎓 ${dernier ? "Test final" : "Test de passage"}</h1>
+    <p class="muted">Niveau ${NIVEAUX[n].nom}${dernier ? "" : ` → ${suivant.nom}`}. 12 questions : vocabulaire, grammaire, conjugaison. Il faut <b>${SEUIL_TEST_12}/12</b>.</p>
     <section id="zone"><div class="card">
-      <p>Ce test vérifie que tu maîtrises le niveau <b>${NIVEAUX[n].nom}</b>. Si tu réussis, tu débloques le niveau <b>${suivant.emoji} ${suivant.nom}</b> : ${suivant.desc.toLowerCase()}</p>
-      <p class="muted">Conseil : fais d'abord les quiz et les leçons de grammaire du niveau.</p>
+      <p>Ce test vérifie que tu maîtrises le niveau <b>${NIVEAUX[n].nom}</b>. ${dernier ? "Si tu réussis, tu obtiens ton <b>diplôme Jack Blabla</b> 🏆." : `Si tu réussis, tu débloques le niveau <b>${suivant.emoji} ${suivant.nom}</b> : ${suivant.desc.toLowerCase()}`}</p>
+      <p class="muted">Pendant le test, les explications s'affichent après chaque réponse : c'est aussi une révision.</p>
       <button class="btn" id="go">C'est parti !</button>
     </div></section>`;
   brancherRetour();
@@ -1003,26 +1171,35 @@ function vueTest() {
   document.getElementById("go").onclick = () => {
     const mots = C().themes.filter((t) => t.niveau === n).flatMap((t) => t.mots);
     const gram = melanger(C().grammaire.filter((g) => g.niveau === n).flatMap((g) => questionsGrammaire(g)));
-    const questions = melanger([...questionsVocab(mots, 5), ...gram.slice(0, 5)]);
+    const conj = questionsConjugaison(n, 2);
+    const nbGram = 12 - 4 - conj.length;
+    const questions = melanger([...questionsVocab(mots, 4), ...gram.slice(0, nbGram), ...conj]);
     lancerQcm(zone, questions, (score, total) => {
-      const reussi = score >= SEUIL_TEST;
-      if (reussi && niveauDebloque() <= n) {
+      const reussi = score >= Math.ceil((SEUIL_TEST_12 / 12) * total);
+      if (reussi && dernier) {
+        etat.diplome = { ...(etat.diplome || {}), [etat.langue]: true };
+        sauver();
+        gagnerXp(100);
+      } else if (reussi && niveauDebloque() <= n) {
         etat.debloque[etat.langue] = n + 1;
         etat.niveauChoisi[etat.langue] = n + 1;
+        etat.etape = "cours";
         sauver();
         gagnerXp(50);
       } else gagnerXp(score);
       zone.innerHTML = `
         <div class="card resultat">
-          <div class="big">${reussi ? "🎉" : "💪"}</div>
+          <div class="big">${reussi ? (dernier ? "🏆" : "🎉") : "💪"}</div>
           <h2>${score} / ${total}</h2>
-          <p>${reussi ? `Bravo ! Tu passes au niveau <b>${suivant.emoji} ${suivant.nom}</b> !` : `Il faut ${SEUIL_TEST}/10. Révise encore un peu et retente ta chance, tu y es presque !`}</p>
+          <p>${reussi
+            ? (dernier ? `Félicitations ! Tu obtiens ton <b>diplôme Jack Blabla ${/^[aeiouy]/i.test(L().nom) ? "d'" : "de "}${L().nom.toLowerCase()}</b>, niveau ${NIVEAUX[n].nom} !` : `Bravo ! Tu passes au niveau <b>${suivant.emoji} ${suivant.nom}</b> !`)
+            : `Il faut ${SEUIL_TEST_12}/12. Relis les cours où tu t'es trompé, refais les quiz, et retente ta chance : tu y es presque !`}</p>
           <div class="rangee" style="justify-content:center">
             ${reussi ? "" : `<button class="btn secondaire" id="re">Retenter</button>`}
-            <button class="btn" id="hub">${reussi ? `Découvrir le niveau ${suivant.nom} →` : "Réviser"}</button>
+            <button class="btn" id="hub">${reussi ? (dernier ? "Retour" : `Découvrir le niveau ${suivant.nom} →`) : "Réviser les cours"}</button>
           </div>
         </div>`;
-      document.getElementById("hub").onclick = () => aller({ nom: "hub" });
+      document.getElementById("hub").onclick = () => { if (!reussi) { etat.etape = "cours"; sauver(); } aller({ nom: "hub" }); };
       const re = document.getElementById("re");
       if (re) re.onclick = () => vueTest();
     });

@@ -118,7 +118,13 @@ let etat;
 function chargerEtat() {
   try {
     const brut = localStorage.getItem(CLE_STOCKAGE);
-    if (brut) { etat = JSON.parse(brut); return; }
+    if (brut) {
+      etat = JSON.parse(brut);
+      // Les comptes passés à l'or reviennent au bleu de Jack
+      const versBleu = { '#c99a45': '#2456e6', '#a87a2e': '#1a3fc4', '#7a5a1e': '#0a2a6b' };
+      (etat.comptes || []).forEach(c => { if (versBleu[c.couleur]) c.couleur = versBleu[c.couleur]; });
+      return;
+    }
   } catch (e) { /* stockage indisponible : on part sur les exemples */ }
   etat = creerDonneesExemple();
   sauver();
@@ -152,10 +158,11 @@ function finDeMois(m) { return `${m}-${pad(joursDansMois(m))}`; }
 function patrimoine(jusqua = null, filtre = () => true) {
   return arrondi(etat.comptes.filter(filtre).reduce((s, c) => s + soldeCompte(c, jusqua), 0));
 }
-function totauxMois(m) {
+function totauxMois(m, jourMax = 31) {
   let revenus = 0, depenses = 0;
   opsDuMois(m).forEach(o => {
     if (estVirement(o) || o.valorisation) return; // ni les virements internes, ni la variation des placements
+    if (Number(o.date.slice(8, 10)) > jourMax) return; // pour comparer « à la même date »
     if (o.montant > 0) revenus += o.montant; else depenses += -o.montant;
   });
   return { revenus: arrondi(revenus), depenses: arrondi(depenses), solde: arrondi(revenus - depenses) };
