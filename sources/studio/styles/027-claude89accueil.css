@@ -1,0 +1,9 @@
+
+/* Accueil Studio = présentation de référence 8.6 (demande de Bob), sans M6 ni 15.
+   Le bandeau reste celui de la 8.6 : « Réduire » passe dans le menu Projet. */
+#storeWarn .claude89Reduce{display:none!important}
+/* Badges M6 et 15 retirés : leur hauteur reste réservée pour que mixeur et Orbite gardent la géométrie 8.6 (tailles de la 8.6). */
+.orbitMixerName{min-height:35px}
+.orbitSynthName{min-height:54px}
+@media(max-width:1250px){.orbitSynthName{min-height:44px}}
+@media(max-width:520px){.orbitSynthName{min-height:46px}}

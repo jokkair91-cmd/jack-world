@@ -1,0 +1,90 @@
+
+/* Claude — habillage commun des cinq écrans d'après les planches validées : fond graphite, bordures discrètes,
+   rouge réservé à l'onglet actif, à l'action principale et à l'enregistrement. Seulement des styles : aucune commande ne change. */
+:root{--j-bg:#111214;--j-panel:#17181b;--j-surface:#1f2125;--j-line:rgba(255,255,255,.07);--j-line2:rgba(255,255,255,.12);
+ --j-text:#e9e9ec;--j-muted:#a0a4ab;--j-red:#c8323a;--j-red2:#db3d46;--j-redsoft:rgba(200,50,58,.16);--j-r:6px}
+html body.j93Workspace{background:var(--j-bg)!important}
+/* ---------- Boutons : une hauteur, une police ; secondaires sobres, principaux en rouge ---------- */
+html body.j93Workspace :is(#j93Nav,#dockHeader,#j105EditorBar,#c119Bar,#c121Guide,#roll .roll-bar,#timeline .tl-bar,#cVoices,#j109Mic,#cWords,#mixer,#fx,#synth .dockSynthToolbar,#j108Performance) button:where(:not(.step,.key,.dockPresetPlanet,.c92WinClose,[aria-pressed="true"],[aria-selected="true"],.active,.on,.sel)){
+ min-height:0!important;height:30px!important;padding:0 12px!important;border-radius:var(--j-r)!important;
+ background:var(--j-surface)!important;border:1px solid var(--j-line)!important;color:#d9dbdf!important;
+ font:600 12.5px/1 system-ui,"Segoe UI",sans-serif!important;letter-spacing:0!important;text-transform:none!important;box-shadow:none!important}
+html body.j93Workspace :is(#j93Nav,#dockHeader,#j105EditorBar,#c119Bar,#c121Guide,#roll .roll-bar,#timeline .tl-bar,#cVoices,#j109Mic,#cWords,#mixer,#fx,#synth .dockSynthToolbar,#j108Performance) button:where(:not(.step,.key,:disabled,[aria-pressed="true"],.active,.on,.sel)):hover{background:#272a2f!important;border-color:var(--j-line2)!important;color:#fff!important}
+html body.j93Workspace :is(#j93Nav,#dockHeader,#j105EditorBar,#c119Bar,#c121Guide,#roll .roll-bar,#cVoices,#j109Mic,#cWords,#synth .dockSynthToolbar,#j108Performance) button:disabled{opacity:.42!important}
+html body.j93Workspace :is(select,input[type=number],input[type=text]):not([type=range]){border-radius:var(--j-r)!important;border:1px solid var(--j-line2)!important;background:#141518!important;color:var(--j-text)!important}
+html body.j93Workspace :is(button,select,input,summary):focus-visible{outline:2px solid #f5b13f!important;outline-offset:2px!important}
+/* Onglets principaux (Studio, Composition, Voix & texte, Console) : l'actif en rouge plein */
+html body.j93Workspace #j93Nav{background:var(--j-panel)!important;border:0!important;border-bottom:1px solid var(--j-line)!important;border-radius:0!important;box-shadow:none!important}
+html body.j93Workspace #j93Nav .j93Groups{background:transparent!important;border:0!important;box-shadow:none!important;gap:4px!important;padding:0!important}
+html body.j93Workspace #j93Nav .j93Groups button{background:transparent!important;border-color:transparent!important;color:#c9ccd1!important;font-size:13.5px!important}
+html body.j93Workspace #j93Nav .j93Groups button[aria-pressed="true"],html body.j93Workspace #j93Nav>button[aria-pressed="true"]{background:var(--j-red)!important;border-color:var(--j-red)!important;color:#fff!important}
+/* Vues (Arrangement, Batterie, Piano Roll, Console…) : discrètes, l'active soulignée de rouge */
+html body.j93Workspace #j93Nav .j93Subs button{background:transparent!important;border-color:transparent!important;color:var(--j-muted)!important;border-radius:0!important;border-bottom:2px solid transparent!important}
+html body.j93Workspace #j93Nav .j93Subs button[aria-pressed="true"][aria-pressed]{color:#fff!important;background:transparent!important;border:0!important;border-bottom:2px solid var(--j-red)!important;border-radius:0!important;box-shadow:none!important;height:30px!important;padding:0 12px!important;font:600 12.5px/1 system-ui,"Segoe UI",sans-serif!important}
+html body.j93Workspace #j93Nav summary{height:30px!important;display:inline-flex!important;align-items:center;padding:0 12px!important;border-radius:var(--j-r)!important;background:var(--j-surface)!important;border:1px solid var(--j-line)!important;color:#d9dbdf!important;font:600 12.5px/1 system-ui,"Segoe UI",sans-serif!important}
+/* Actions principales et enregistrement en rouge */
+html body.j93Workspace :is(#cVoices .j113Rec,#recRec,#c119Bar .c119Rec,#cPromptToggle,#c121Guide .c121Step.next button){background:var(--j-red)!important;border-color:var(--j-red)!important;color:#fff!important}
+html body.j93Workspace #c119Bar .c119Rec{background:transparent!important;border-color:transparent!important;color:var(--j-red2)!important}
+/* ---------- Panneaux : bordures atténuées, fond graphite ---------- */
+html body.j93Workspace #dockStage>.panel,html body.j93Workspace #dockStage>section{background:var(--j-panel)!important;border:1px solid var(--j-line)!important;box-shadow:none!important;border-radius:8px!important}
+html body.j93Workspace #dockStage>.panel::before,html body.j93Workspace #dockStage>.panel::after{opacity:.0!important}
+html body #c119Bar{background:var(--j-panel)!important;border-top:1px solid var(--j-line)!important}
+html body #c119Pos{background:#0c0d0f!important;border-color:var(--j-line)!important}
+/* En-tête de Studio et ligne des messages : une ligne, sans cadre lourd */
+html body.j93Workspace #dockHeader{background:var(--j-panel)!important;border:0!important;border-bottom:1px solid var(--j-line)!important;box-shadow:none!important}
+html body.j93Workspace #dockMessages{background:transparent!important;border:0!important;box-shadow:none!important}
+html body.j93Workspace #dockMessages :is(.dockStatus,.feedbackBox,p,#status){white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;max-height:22px!important;line-height:22px!important;font-size:12px!important;color:var(--j-muted)!important}
+/* ---------- Premiers pas : allégés pour que la timeline domine ---------- */
+html body #c121Guide{background:transparent!important;border:0!important;border-bottom:1px solid var(--j-line)!important;border-radius:0!important;padding:4px 6px!important;margin:0 0 4px!important;font-size:12px!important;color:var(--j-muted)!important}
+html body #c121Guide strong{color:#fff!important;font-weight:700}
+html body #c121Guide .c121Step b{width:18px!important;height:18px!important;font-size:11px!important;background:#2a2c31!important}
+html body #c121Guide .c121Step.done b{background:#2f8a4e!important}
+html body #c121Guide .c121Step.next b{background:var(--j-red)!important}
+html body.j93Workspace #c121Guide button{height:24px!important;padding:0 8px!important;background:transparent!important;border-color:var(--j-line2)!important;font-size:12px!important}
+/* ---------- Arrangement : pistes, mesures et clips ressortent ---------- */
+html body #timeline .tl-ruler{background:#141518!important;border-bottom:1px solid var(--j-line2)!important;color:#d9dbdf!important;font-weight:700!important}
+html body #timeline #tlRows .tl-row .tl-label{background:#1a1b1e!important;border:0!important;border-bottom:1px solid var(--j-line)!important;box-shadow:inset 3px 0 0 var(--c123Track,#5a5e66)!important;color:#eceef1!important}
+html body #tlRows>.tl-row:nth-of-type(2) .tl-label{--c123Track:#d6343b}
+html body #tlRows>.tl-row:nth-of-type(3) .tl-label{--c123Track:#2bb3a3}
+html body #tlRows>.tl-row:nth-of-type(4) .tl-label{--c123Track:#e2a93a}
+html body #tlRows>.tl-row:nth-of-type(5) .tl-label,html body #tlRows>.tl-row:nth-of-type(6) .tl-label,html body #tlRows>.tl-row:nth-of-type(7) .tl-label{--c123Track:#d04fa0}
+html body #timeline .tl-lane{background-color:#151619!important;border-bottom:1px solid var(--j-line)!important}
+/* Clips colorés par piste, comme sur la planche (batterie rouge, basse turquoise, mélodie or, voix rose) */
+html body #tlRows>.tl-row:nth-of-type(2) .tl-block{background:#a8323a!important}
+html body #tlRows>.tl-row:nth-of-type(3) .tl-block{background:#1f8f85!important}
+html body #tlRows>.tl-row:nth-of-type(4) .tl-block{background:#b8862c!important}
+html body #tlRows>.tl-row:nth-of-type(n+5) .tl-block{background:#a83f82!important}
+html body #timeline .tl-block{border-radius:4px!important;border:0!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),0 1px 2px rgba(0,0,0,.4)!important;color:#fff!important;font-weight:700!important;text-shadow:0 1px 1px rgba(0,0,0,.45)}
+/* ---------- Batterie : 16 pas lisibles par groupes de quatre ---------- */
+html body #dockBeat #tracks .track .step{border-radius:5px!important;border:0!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)!important}
+html body #dockBeat #tracks .track .step:not(.active){background:#24262a!important}
+html body #dockBeat #tracks .track>.step:is(:nth-child(6),:nth-child(7),:nth-child(8),:nth-child(9),:nth-child(14),:nth-child(15),:nth-child(16),:nth-child(17)):not(.active){background:#2d3035!important}
+html body #dockBeat #tracks .track .step.active{box-shadow:inset 0 0 0 1px rgba(255,255,255,.2),0 0 8px rgba(200,50,58,.3)!important}
+html body #dockBeat #tracks .track .track-label{font-weight:700!important;color:#eceef1!important;box-shadow:inset 3px 0 0 var(--j-red)!important;padding-left:10px!important}
+/* ---------- Piano Roll : grille et clavier sur un même fond graphite, débuts de mesure marqués ---------- */
+html body #roll .roll-grid{background:#16171a!important}
+html body #roll .roll-row{border-bottom-color:rgba(255,255,255,.035)!important}
+html body #roll .roll-row.blk{background:rgba(0,0,0,.22)!important}
+html body #roll .roll-row.c{border-bottom-color:rgba(255,255,255,.12)!important}
+html body #roll .roll-lines{background-image:linear-gradient(90deg,rgba(255,255,255,.34) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.075) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px)!important}
+html body #roll .rn{box-shadow:0 1px 2px rgba(0,0,0,.45)!important;border-color:rgba(255,255,255,.35)!important}
+html body #roll .j22-seek{background:#141518!important}
+html body #synth#synth{background:#16171a!important;border-color:var(--j-line)!important}
+html body #synth#synth .dockSynthToolbar::before{color:#e9e9ec!important}
+/* ---------- Voix & texte : titres alignés, chrono et forme d'onde au premier plan, réglages calmés ---------- */
+#dockStage.j109Voice>#j109Mic,#dockStage.j109Voice>#cVoices,#dockStage.j109Voice>#cWords{padding:10px 12px!important}
+html body #dockStage.j109Voice #j106Input,html body #dockStage.j109Voice #c120MicState,html body #dockStage.j109Voice #c120Takes,html body #dockStage.j109Voice .cVoice,html body #dockStage.j109Voice #c117Lines,html body #dockStage.j109Voice #cWords .cRow{background:#141518!important;border:1px solid var(--j-line)!important;box-shadow:none!important}
+html body #dockStage.j109Voice #cVoices .cTopline h2,html body #dockStage.j109Voice #cWords .cTopline h2{font-size:14.5px!important;line-height:20px!important;margin:0!important;min-height:20px}
+html body #dockStage.j109Voice #c117Clock{font-size:22px!important;color:#fff!important}
+html body #dockStage.j109Voice #c117Clock.c117Rec{color:#ff5a60!important}
+html body #dockStage.j109Voice .cVoice canvas{background:#0f0c0d!important;border:0!important;box-shadow:inset 0 0 0 1px rgba(200,50,58,.25)!important}
+html body #dockStage.j109Voice #j109Mic .cRow label{border-bottom-color:var(--j-line)!important}
+html body #dockStage.j109Voice #cVoiceFeedback{background:#14201a!important;border-color:rgba(95,211,138,.25)!important}
+/* ---------- Console : tranches alignées, cadres atténués ---------- */
+html body #mixer #dockInstrumentBank.mix-row{background:#141518!important;border:1px solid var(--j-line)!important;box-shadow:none!important}
+html body #mixer .mix-row .strip{background:linear-gradient(180deg,#1d1f23,#17181b)!important;border:1px solid var(--j-line)!important;box-shadow:none!important}
+html body #mixer .mix-row .strip.master{background:linear-gradient(180deg,#26282c,#1b1c1f)!important;border-color:var(--j-line2)!important}
+html body #dockStage #fx .fx-card.fx-card{background:#141518!important;background-image:none!important;border:1px solid var(--j-line)!important;box-shadow:none!important}
+html body #dockStage #fx .dockEqPlot.dockEqPlot{background:#0f1012!important;background-image:none!important;border:1px solid var(--j-line)!important}
+html body #dockStage #fx [data-dock-fx]{background:transparent!important;border-color:transparent!important}
+html body #dockStage #fx [data-dock-fx][aria-pressed="true"],html body #dockStage #fx [data-dock-fx].active{color:#fff!important;border-bottom:2px solid var(--j-red)!important;border-radius:0!important}

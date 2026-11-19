@@ -1,0 +1,74 @@
+
+/* Workspace and tool windows only. The home screen and piano paint are intentionally untouched. */
+body.j93Workspace #dockStage{background:#15191d!important;gap:1px!important;border:1px solid #343b40!important;border-radius:10px!important;overflow:hidden!important}
+body.j93Workspace #dockStage>.panel{background:#191e22!important}body.j93Workspace #dockStage>.panel:not(#synth){padding:12px!important}
+body.j93Workspace #j93Nav{border-radius:9px;background:linear-gradient(180deg,#23272b,#1b1f23);padding:9px 12px;box-shadow:0 5px 18px #0003}
+body.j93Workspace #j93Nav .j93Groups{gap:4px;padding:3px;background:#12171b;border:1px solid #333b42;border-radius:7px}
+body.j93Workspace #j93Nav .j93Groups button{border:0;border-radius:5px;min-width:105px;box-shadow:none;background:transparent;color:#c5cecf}
+body.j93Workspace #j93Nav .j93Groups button[aria-pressed=true]{background:linear-gradient(#a33041,#802738);color:#fff;box-shadow:inset 0 1px #ffffff15}
+body.j93Workspace #j93Nav .j93Subs{padding-top:8px;gap:6px;border-color:#333b42}
+body.j93Workspace #j93Nav .j93Subs button{font-size:11px;padding:5px 12px;border-color:#39434b;background:#222a30}
+body.j93Workspace #timeline .tl-row,body.j93Workspace #timeline .tl-lane{height:39px;min-height:39px}
+body.j93Workspace #timeline .tl-block{top:5px;height:29px;border-radius:5px;box-shadow:0 2px 5px #0004}
+body.j93Workspace #timeline .tl-block.sel{outline:1px solid #e4d9bd;outline-offset:1px}
+body.j93Workspace #timeline .tl-label{padding:5px 8px;color:#cbd4d6}
+body.j93Workspace #timeline .tl-label small{opacity:.65}
+body.j93Workspace #timeline .tl-num{color:#92a0a8;font-size:10px}
+body.j93Workspace #rollWrap{border-radius:7px;border:1px solid #37424a!important;background:#172027}
+body.j93Workspace #rollGrid .rn{border-radius:3px;box-shadow:0 2px 5px #0003}
+body.j93Workspace #c92Inspector{font-size:11px;color:#b8c3c8}
+body.j93Workspace #c92Inspector button{min-height:29px;border-color:#3c4750;font-size:10px}
+body.j93Workspace #j93Library .j93LibraryList button{border:1px solid #354049;background:linear-gradient(#263039,#20282e);padding:8px 10px;min-height:33px}
+body.j93Workspace #j93Library .j93LibraryList button:hover{border-color:#9a4d5b;background:#33282f}
+body.j93Workspace #mixer .mix-row{max-height:450px;min-height:280px;align-self:start;flex:none!important;border-radius:8px;background:#151b20}
+body.j93Workspace #mixer .strip{gap:8px;padding:10px 4px;background:linear-gradient(90deg,#202830,#26313a,#1d252b);border-color:#394750}
+body.j93Workspace #mixer input.fader{height:clamp(145px,27vh,280px)!important;flex:none!important}
+body.j93Workspace #mixer .mn{font-weight:600;letter-spacing:.4px}
+body.j93Workspace #mixer .skinMixerNote{max-width:520px;line-height:1.6}
+.j102Dialog{--j102-line:#38434c!important;--j102-muted:#99a8b2;box-sizing:border-box!important;width:min(1120px,94vw)!important;max-width:calc(100vw - 24px)!important;max-height:90dvh!important;padding:0!important;border:1px solid #48545d!important;border-radius:13px!important;background:#191f25!important;color:#e2e7e9!important;box-shadow:0 28px 100px #000b!important;font-family:Arial,sans-serif!important;overflow:auto!important;color-scheme:dark}
+.j102Dialog::backdrop{background:#080d12b3!important;backdrop-filter:blur(3px)}
+.j102Dialog>header{position:sticky;top:0;z-index:20;display:flex!important;align-items:center;justify-content:space-between;gap:15px;margin:0!important;padding:17px 22px!important;background:linear-gradient(100deg,#292d33,#1d252c)!important;border-bottom:1px solid #414a52;border-top:3px solid #ad3d50;border-radius:12px 12px 0 0}
+.j102Dialog>header h2{font:600 15px/1.4 Arial,sans-serif!important;letter-spacing:.3px!important;text-transform:none!important;color:#f0ece5!important;margin:0!important}
+.j102Dialog>header>button{font-size:11px!important;padding:6px 14px!important;border-radius:6px!important;min-height:32px!important;background:#1b2229!important;color:#bfcbd1!important;border:1px solid #4b5861!important}
+.j102Dialog>[id$=Body]{padding:18px 22px!important;display:grid;gap:12px}
+.j102Dialog #j97Tabs{margin:0!important;padding:12px 22px!important;background:#151c22;border-bottom:1px solid #323e48;display:flex;flex-wrap:wrap;gap:5px}
+.j102Dialog #j97Tabs button{background:transparent;border:1px solid transparent;border-radius:5px;color:#a9b7c1;padding:7px 11px}
+.j102Dialog #j97Tabs button[aria-pressed=true]{background:#3b2630;border-color:#8d4556;color:#f7d9df}
+.j102Dialog :is(.j97Row,.j98Row,.j99Row,.j100Row,.j101Row){display:flex!important;align-items:end!important;gap:10px!important;flex-wrap:wrap;padding:12px!important;border:1px solid #34404a!important;border-radius:8px;background:#202932;margin:0!important}
+.j102Dialog label{display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:normal!important;gap:6px!important;font-size:10px!important;letter-spacing:.1px!important;line-height:1.3!important;color:#afc0cb!important}
+.j102Dialog input,.j102Dialog select,.j102Dialog textarea{box-sizing:border-box!important;font:12px/1.4 Arial,sans-serif!important;color:#e1e9ed!important;background:#141c23!important;border:1px solid #40505d!important;border-radius:5px!important;padding:7px 9px!important;min-height:33px!important;box-shadow:inset 0 1px 4px #0003!important}
+.j102Dialog input[type=checkbox]{min-height:17px!important;width:17px!important;height:17px;accent-color:#ba455c;box-shadow:none!important}
+.j102Dialog input[type=color]{padding:3px!important;min-width:45px;max-width:60px!important}
+.j102Dialog input[type=number]{min-width:86px!important;max-width:125px!important;font-variant-numeric:tabular-nums}
+.j102Dialog input[type=text]{min-width:120px;max-width:220px!important}
+.j102Dialog textarea{font-family:ui-monospace,monospace!important;font-size:11px!important;resize:vertical;min-height:95px!important}
+.j102Dialog button{font:500 11px/1.3 Arial,sans-serif!important;letter-spacing:0!important;padding:8px 12px!important;min-height:33px!important;border:1px solid #45545f!important;border-radius:6px!important;background:linear-gradient(#303e49,#25313a)!important;color:#e1e8ec!important;box-shadow:inset 0 1px #ffffff09!important;cursor:pointer}
+.j102Dialog button:hover{border-color:#83979f!important;background:#354752!important}
+.j102Dialog button:focus-visible,.j102Dialog input:focus-visible,.j102Dialog select:focus-visible,.j102Dialog summary:focus-visible{outline:2px solid #79bba7!important;outline-offset:3px}
+.j102Dialog .j102Primary{border-color:#9c4052!important;background:linear-gradient(#a9374c,#822b3c)!important;color:white!important}
+.j102Dialog .j102Danger{color:#efb1bc!important;border-color:#653e48!important;background:#32242c!important}
+.j102Dialog h3{font:600 11px/1.4 Arial,sans-serif!important;letter-spacing:1px!important;text-transform:uppercase;color:#a6b9c4!important;margin:8px 0 0!important;padding-bottom:7px;border-bottom:1px solid #38434a}
+.j102Dialog p{font-size:11px!important;line-height:1.6!important;color:#a6b5bf!important;margin:0!important}
+.j102Dialog>[id$=Status]{position:sticky;bottom:0;padding:10px 22px!important;background:#171e24!important;color:#e5c38a!important;border-top:1px solid #34414b;min-height:37px;box-sizing:border-box}
+.j102Dialog>[id$=Status]:empty{display:none!important}
+.j102Dialog :is(.j97Card,.j100Fx){border-radius:9px!important;border:1px solid #3a4b57!important;background:#1c2730!important;padding:14px!important;margin:0!important}
+.j102Dialog .j100Fx>.j100Row{background:transparent!important;border:0!important;padding:0!important}
+.j102Dialog .j100Fx>.j100Row:first-child{margin-bottom:13px!important;border-bottom:1px solid #38434b!important;padding-bottom:10px!important;align-items:center!important}
+.j102Dialog .j100Fx strong{font-size:12px!important;flex:1;color:#e2c8c1!important}
+.j102Dialog .j97Mixer{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))!important;gap:12px!important}
+.j102Dialog .j97Card label{margin:8px 0}
+.j102Dialog canvas{border:1px solid #3e505b!important;border-radius:7px!important;background:#121c23!important}
+.j102Dialog table{border:1px solid #354550;border-radius:5px}
+.j102Help{margin:0 22px 16px;border-top:1px solid #34424c;padding-top:11px;font-size:11px;color:#99acb7}
+.j102Help>summary{cursor:pointer;letter-spacing:.2px}
+.j102Help p{margin-top:8px!important;max-width:900px}
+.dockProject .dockPopupBody>button[hidden]{display:none!important}.dockProject .dockPopupBody{max-height:calc(100dvh - 105px);overflow:auto}.j102ProjectTools{border-top:1px solid #41434a;margin-top:5px;padding-top:7px}
+.j102ProjectTools>summary{font-size:12px;cursor:pointer;padding:7px;color:#e9bdc5}
+.j102ToolsGroup{display:grid;gap:4px;padding:7px}
+.j102ToolsGroup strong{font-size:9px;color:#8b9da8;letter-spacing:1.2px;padding:5px 2px;text-transform:uppercase}
+.j102ToolsGroup button{text-align:left;font-size:11px!important;min-height:31px}
+#j102Atelier{position:relative;margin-left:auto}
+#j102Atelier>summary{font-size:11px;list-style:none;border:1px solid #65404d;border-radius:6px;padding:7px 12px;cursor:pointer;color:#e5bbc5;background:#30232c}
+#j102Atelier>.j102ToolsMenu{position:absolute;right:0;top:calc(100% + 8px);width:245px;max-height:65vh;overflow:auto;border:1px solid #4d5962;border-radius:8px;background:#1d262e;box-shadow:0 14px 40px #0009;padding:7px;z-index:300}
+#j102Atelier:not([open])>.j102ToolsMenu{display:none}
+@media(max-width:700px){.j102Dialog{max-height:94dvh!important;max-width:calc(100vw - 14px)!important;width:calc(100vw - 14px)!important;border-radius:9px!important}.j102Dialog>header{padding:12px 14px!important;gap:8px}.j102Dialog>[id$=Body],.j102Dialog #j97Tabs{padding:12px!important}.j102Dialog :is(.j97Row,.j98Row,.j99Row,.j100Row,.j101Row){gap:9px!important;padding:10px!important}.j102Dialog label{max-width:100%}.j102Dialog select{max-width:calc(100vw - 65px)!important}.j102Dialog input[type=text]{min-width:100px}.j102Help{margin:0 14px 12px}.j102Dialog .j97Mixer{grid-template-columns:minmax(0,1fr)!important}body.j93Workspace #j93Nav .j93Groups button{min-width:0;font-size:11px}body.j93Workspace #dockStage{border-radius:7px!important}#j102Atelier{margin-left:0}.j102Dialog canvas{height:230px!important}}

@@ -1,0 +1,20 @@
+
+body.j93Workspace #dockStage.j109Voice{grid-template-columns:minmax(190px,.8fr) minmax(0,1.15fr) minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr)!important}
+body.j93Workspace #dockStage.j109Voice>#j109Mic{grid-area:1/1!important}
+body.j93Workspace #dockStage.j109Voice>#cVoices{grid-area:1/2!important}
+body.j93Workspace #dockStage.j109Voice>#cWords{grid-area:1/3!important}
+#j109Mic .cRow{display:grid;gap:8px}
+#j109Mic select{max-width:100%}
+#j109VoiceTabs[hidden]{display:none!important}
+#j109VoiceTabs{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+#j109VoiceTabs button[aria-pressed=true]{background:#842638;color:white}
+#dockStage.j109Voice .cVoiceGrid{display:block!important}
+#dockStage.j109Voice .cVoice[hidden]{display:none!important}
+#dockStage.j109Voice .cVoice canvas{max-width:100%}
+body.j93Workspace #j93Nav button[aria-pressed=true]{background:#842638!important;color:white!important}
+@media(max-width:950px){
+ body.j93Workspace #dockStage.j109Voice{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto!important}
+ body.j93Workspace #dockStage.j109Voice>#j109Mic,
+ body.j93Workspace #dockStage.j109Voice>#cVoices,
+ body.j93Workspace #dockStage.j109Voice>#cWords{grid-area:auto!important}
+}

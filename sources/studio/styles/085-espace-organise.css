@@ -1,0 +1,36 @@
+
+body.j93Workspace{font-family:"Segoe UI",Arial,sans-serif;color:#efeff1;background:#121315}
+body.j93Workspace #j93Nav{background:#18191c!important;border:1px solid #34353a!important;border-radius:0!important;gap:8px!important}
+body.j93Workspace #j93Nav :is(button,summary){background:#25262a!important;color:#eee!important;border-color:#414247!important}
+body.j93Workspace #j93Nav button[aria-pressed=true]{background:#7f2533!important;border-color:#c04a59!important}
+body.j93Workspace #dockStage{background:#101113!important;border-color:#36373b!important}
+body.j93Workspace #dockStage>.panel[data-j93-visible=true]{background:#1b1c20!important;color:#eee!important;border:1px solid #393a40!important}
+body.j93Workspace #dockStage.j111Patterns{grid-template-columns:minmax(0,1fr) var(--samples,0px)!important;grid-template-rows:46px minmax(0,1fr)!important}
+body.j93Workspace #dockStage.j111Patterns.j108Notes{grid-template-rows:46px minmax(0,1fr) 160px!important}
+body.j93Workspace #dockStage.j111Patterns:has(>#j93Library[data-j93-visible=true]){--samples:clamp(190px,22vw,310px)}
+body.j93Workspace #dockStage.j111Patterns>#j105EditorBar{grid-area:1/1/2/2!important;background:#202125!important}
+body.j93Workspace #dockStage.j111Patterns>[data-j93-area=editor]{grid-area:2/1/3/2!important}
+body.j93Workspace #dockStage.j111Patterns>#j93Library{grid-area:1/2/-1/3!important}
+body.j93Workspace #dockStage.j111Patterns>#c92Inspector{display:none!important}
+body.j93Workspace #dockStage.j111Patterns.j108Notes>#synth[data-j93-visible=true]{grid-area:3/1/4/2!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto auto!important;grid-template-rows:auto minmax(65px,1fr)!important;gap:6px!important;padding:8px 12px!important}
+body.j93Workspace #dockStage.j111Patterns #synth .skinTop,body.j93Workspace #dockStage.j111Patterns #synth .dockOrbitHost{display:none!important}
+body.j93Workspace #dockStage.j111Patterns #synth>.dockSynthToolbar{grid-area:1/1/2/2!important}
+body.j93Workspace #dockStage.j111Patterns #synth>.dockSynthCore{grid-area:1/3/2/4!important}
+body.j93Workspace #dockStage.j111Patterns #synth>#j108Performance{grid-area:1/2/2/3!important;border:0;padding:0}
+body.j93Workspace #dockStage.j111Patterns.j108Notes>#synth[data-j93-visible=true]>#piano{grid-area:2/1/3/-1!important;width:100%;height:100%!important;min-height:65px!important;margin:0!important}
+body.j93Workspace #piano .key.white{background:linear-gradient(150deg,#b9cda5,#829e74 65%,#a7bc94)!important}
+body.j93Workspace #piano .key.down{background:var(--key-lit,#efab45)!important}
+body.j93Workspace #piano .key:nth-child(3n){--key-lit:#a871dc}
+body.j93Workspace #piano .key:nth-child(3n + 1){--key-lit:#51d1ad}
+body.j93Workspace #dockBeat .step{border-radius:5px!important}
+body.j93Workspace #dockBeat .step:is(.on,.active,[aria-pressed=true]){background:#ec5965!important;border-color:#ff858e!important}
+body.j93Workspace #rollGrid .rn{background:#31bb9f!important;border-color:#65e0c8!important}
+body.j93Workspace #rollHead{background:#ff404e!important;width:2px!important}
+body.j93Workspace #dockStage.j109Voice :is(.cVoice,.cRow,textarea){background:#222326!important;color:#eee!important;border-color:#44454a!important}
+body.j93Workspace #dockStage.j109Voice button[data-action=record]{background:#872638!important;color:#fff!important}
+#j111Samples[hidden]{display:none!important}
+@media(max-width:950px){
+ body.j93Workspace #dockStage.j111Patterns>#j93Library{order:8}
+ body.j93Workspace #dockStage.j111Patterns.j108Notes>#synth[data-j93-visible=true]{display:flex!important;min-height:160px!important;height:auto!important}
+ body.j93Workspace #dockStage.j111Patterns.j108Notes>#synth[data-j93-visible=true]>#piano{height:84px!important}
+}

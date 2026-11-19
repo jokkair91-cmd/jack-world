@@ -1,0 +1,12 @@
+
+/* 7.8 — retours de Bob sur le clavier du bas. Le son ne change pas.
+   1. « Afficher le clavier / Grand Piano Roll » : sur écran étroit (≤ 950 px, par ex. Edge zoomé sur un portable), une règle plus
+      ancienne forçait le clavier à rester affiché ; le bouton ne faisait donc rien. Cette règle-ci, plus précise, le replie partout. */
+html body.j93Workspace.c118Big #dockStage#dockStage.j108Notes>#synth#synth{display:none!important}
+/* 2. Un seul bouton dans la barre du clavier (demande de Bob) : le bouton « HARMONIQUES 808 », qui apparaissait en plus quand on
+      choisit le son 808, disparaît. Il reste « VOLUME SYNTHÉ », qui règle aussi le 808. Les harmoniques gardent leur valeur
+      (50 % par défaut, ou celle du projet) : le son ne change pas. L'aide qui parlait de ce curseur est masquée avec lui. */
+html body #harmCtl#harmCtl,html body #harmCtl#harmCtl.on,html body #harmHint#harmHint,html body #harmHint#harmHint.on{display:none!important}
+/* 3. Touche jouée : sa couleur passe devant le vert des touches blanches (la règle verte c134 était plus forte et la masquait). */
+html body #piano#piano#piano .key.down,html body #piano#piano#piano .key.c116Lit{background:var(--c116C,var(--c116On))!important;box-shadow:0 0 16px var(--c116C,var(--c116On)),0 0 3px #fff,inset 0 0 10px rgba(255,255,255,.55)!important}
+html body #piano#piano#piano .key.down::after,html body #piano#piano#piano .key.c116Lit::after{color:#0b0b0b!important}

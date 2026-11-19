@@ -1,0 +1,5 @@
+
+.j22-seek{position:relative;height:28px;flex:none;margin-left:46px;overflow:hidden;background:#25272c;color:#eee;cursor:ew-resize;touch-action:none}
+.j22-seek span{position:absolute;top:4px;pointer-events:none}
+.j22-seek b{position:absolute;bottom:0;color:#ff565e;transform:translateX(-50%);pointer-events:none}
+#rollHead{pointer-events:none}

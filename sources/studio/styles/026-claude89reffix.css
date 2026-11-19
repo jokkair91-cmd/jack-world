@@ -1,0 +1,3 @@
+
+/* Contrôle Claude de la 8.9 de référence : « Réduire » lisible sur le bandeau doré (contraste 2,06 → encre du bandeau). */
+#storeWarn .claude89Reduce{color:inherit!important;background:transparent!important;border:1px solid currentColor!important;border-radius:5px!important;white-space:nowrap;opacity:.9}

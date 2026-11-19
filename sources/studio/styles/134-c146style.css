@@ -1,0 +1,6 @@
+
+/* 7.5 — M4 « Enregistrer dans le montage » : une prise micro posée sur la piste choisie, à la tête de lecture. */
+#c146Tools{display:inline-flex;align-items:center;gap:4px;margin-left:6px}
+#c146Tools .c146Rec{background:#cf2f3b!important;border-color:#e0505a!important;color:#fff!important}
+#c146Tools .c146Rec[aria-pressed="true"]{animation:c146blink 1s steps(2,start) infinite}
+@keyframes c146blink{to{opacity:.55}}

@@ -1,0 +1,6 @@
+
+/* Claude sur la 11.5 : correctifs, son Guitare, mode afro (rythmes, basse, guitare), Hardy Bay avec égaliseur par instrument. */
+/* Fenêtres libres : la fenêtre Synthé Orbite était masquée par une règle des espaces (j107). */
+body.c92Pro:not(.j93Workspace) #dockStage > #synth#synth:not(.c92Closed){display:block!important}
+.rn.p-guitar{background:#fb7185}
+#c93Packs .c115Opts{display:flex;flex-wrap:wrap;gap:4px 12px;margin:4px 0}

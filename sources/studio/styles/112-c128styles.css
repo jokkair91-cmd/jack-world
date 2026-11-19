@@ -1,0 +1,8 @@
+
+#timeline .tl-aud .c128Edge{position:absolute;top:0;bottom:0;width:7px;cursor:ew-resize;z-index:3;background:transparent}
+#timeline .tl-aud .c128L{left:0}#timeline .tl-aud .c128R{right:0}
+#timeline .tl-aud:hover .c128Edge{background:#ffffff22}
+#timeline .tl-aud.c128Over{outline:2px dashed #e2bb78;outline-offset:-2px}
+#timeline .tl-ruler{cursor:col-resize}
+#tlHead.c128Cursor{display:block;opacity:.85}
+#c128Box{border-top:1px solid #353a40;margin-top:18px}

@@ -1,0 +1,1053 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="jack22-build" content="JACK22-11.5-CLAUDE-7.9"><!-- Jack World : évite d'afficher l'ancien habillage pendant que la page se charge (la page reste cachée sur fond sombre jusqu'à la fin de la lecture). Sans JavaScript, rien ne change. -->
+<style id="jw-anti-flash">html{background:#171b1e}html.jw-chargement body{visibility:hidden}html.jw-chargement::before{content:"JACK22 STUDIO · chargement…";position:fixed;inset:0;display:grid;place-items:center;color:#9aa3ab;font:600 15px system-ui,sans-serif;letter-spacing:.14em}</style>
+<script>(function(){var d=document.documentElement,f=function(){d.classList.remove('jw-chargement')};d.classList.add('jw-chargement');document.addEventListener('DOMContentLoaded',function(){setTimeout(f,1700)});setTimeout(f,7000)})();</script><meta name="viewport" content="width=device-width,initial-scale=1"><title>JACK22 STUDIO - 11.5 + Claude (packs, afro, maquettes) - Patterns et prises voix</title><style>{{JW-MORCEAU:styles/001-base-de-l-interface.css}}</style><style id="skinStyles">{{JW-MORCEAU:styles/002-skinstyles.css}}</style><style id="dockStyles">{{JW-MORCEAU:styles/003-dockstyles.css}}</style><style id="orbitStyles">{{JW-MORCEAU:styles/004-orbitstyles.css}}</style><style id="browserFixes">{{JW-MORCEAU:styles/005-browserfixes.css}}</style><style id="compact88Styles">{{JW-MORCEAU:styles/006-compact88styles.css}}</style><style id="studioFullHeightFix">{{JW-MORCEAU:styles/007-studiofullheightfix.css}}</style><style id="j90Styles">{{JW-MORCEAU:styles/008-j90styles.css}}</style>
+<style id="jack22TextCleanup92">
+/* Présentation uniquement : préserver les éléments utilisés par les modules. */
+#v8History { display: none !important; }
+p[hidden] { display: none !important; }
+</style>
+<style id="jwLogoSite">{{JW-MORCEAU:styles/009-jwlogosite.css}}</style>
+<link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<script data-jack-world-nav src="../../jack-world-nav.js" defer></script>
+<link rel="manifest" href="manifest.webmanifest">
+</head><body><main class="app dockApp"><header id="dockHeader" aria-label="JACK22 : lecture et projet"><div class="skinBrand"><img class="skinRobot" src="{{JW-MORCEAU:donnees/image-01.txt}}" alt="Jackbot, mascotte JACK22"><div><h1>JACK<span>22</span><small>STUDIO</small></h1><div class="sub">GRAPHITE · ORBITE · CRÉATION MUSICALE</div></div><svg class="skinJack" viewbox="0 0 65 80" role="img" aria-label="Logo J22 prise jack"><g fill="currentColor"><rect x="13" y="2" width="7" height="8" rx="1"></rect><rect x="13" y="13" width="7" height="13"></rect><path d="M11 29h11v26c0 14-21 14-21 0h8c0 6 5 6 5 0V29z"></path></g><text x="20" y="65" font-family="Arial,sans-serif" font-weight="bold" font-style="italic" font-size="38" fill="currentColor">22</text></svg></div><div class="transport"><button class="primary" id="play">▶ Play</button><button id="stop">■ Stop</button><label for="bpm">BPM</label><input id="bpm" type="number" min="40" max="240" value="120"><label for="master">VOLUME</label><input id="master" type="range" min="0" max="100" value="70" aria-label="Volume master"><span class="master-val" id="masterVal">70%</span><button id="save">Sauvegarder</button><button id="projExport" title="Télécharge tout le projet (morceau, réglages, fichiers audio) dans un seul fichier">Exporter projet</button><details class="dockPopup dockProject"><summary>Projet ▾</summary><div class="dockPopupBody"><button id="load">Charger</button><button id="clear">Effacer</button><button id="projImport" title="Ouvre un fichier de projet exporté">Importer projet</button><input type="file" id="projFile" accept=".zip,.jack22,application/zip" hidden></div></details><button id="cRecordStop" disabled>■ Arrêter la prise</button><button id="l3GlobalCancel" type="button" hidden disabled>Annuler le traitement</button></div>
+</header><p class="store-warn" id="storeWarn" role="note"><b>⚠ Attention :</b> ta sauvegarde (morceau et fichiers audio) est enregistrée dans le navigateur. Elle sera perdue si tu effaces les données de navigation d'Edge, si le navigateur les efface, ou en navigation privée. Garde tes fichiers audio d'origine.</p>
+<p class="store-warn" id="ramWarn" role="note" hidden><b>⚠ Sons non protégés :</b> <span></span></p><div id="dockMessages"><div class="dockStatus"><span class="status" id="status">Prêt</span></div><section class="feedbackBox" aria-label="Messages du studio"><h2 class="feedbackTitle">DERNIÈRE OPÉRATION</h2><p class="feedbackLatest" id="feedbackLatest" role="status" aria-live="polite">Prêt. Les confirmations et les erreurs restent visibles ici.</p><details><summary>Voir les derniers messages de cette session</summary><ol id="feedbackLog"></ol></details></section>
+</div><nav id="dockNav" aria-label="Espaces du studio"><button type="button" data-dock-pane="studio" aria-pressed="true">Studio</button><button type="button" data-dock-pane="dockComposer" aria-pressed="false">Composer</button><button type="button" data-dock-pane="dockVoices" aria-pressed="false">Voix</button><button type="button" data-dock-pane="dockWords" aria-pressed="false">Paroles</button><button type="button" data-dock-pane="dockExport" aria-pressed="false">Exporter</button><button type="button" data-dock-pane="dockTools" aria-pressed="false">Outils</button><button type="button" data-dock-pane="dockMore" aria-pressed="false">Version</button></nav><div id="dockContent"><div id="skinWorkspace" style="height:100%;min-height:0"><div id="dockStage"><section class="panel timeline dockTimeline" id="timeline" aria-label="Arrangement / Timeline"><div class="dockTimelineBar"><h2>ARRANGEMENT / TIMELINE</h2>
+<button id="modePattern" type="button" aria-pressed="true">PATTERN</button><button id="modeSong" type="button" aria-pressed="false">SONG</button>
+<button id="audioImport" type="button">Importer audio</button><button id="audioMute" class="mute" type="button" aria-pressed="false" aria-label="Couper la piste AUDIO">M</button><details class="dockPopup"><summary>Réglages ▾</summary><div class="dockPopupBody dockTimelineSettings"><div class="tl-bar"><span class="tl-lbl">LECTURE</span><label for="tlLen">NOUVEAU BLOC</label><select id="tlLen"><option value="1">1 mesure</option><option value="2">2 mesures</option><option value="4" selected>4 mesures</option><option value="8">8 mesures</option><option value="16">16 mesures</option></select>
+<label for="tlBars">MORCEAU</label><select id="tlBars"><option value="64" selected>64 mesures</option><option value="96">96 mesures</option><option value="128">128 mesures</option></select></div>
+<div class="tl-bar"><span class="tl-lbl">AUDIO</span><input type="file" id="audioFile" accept=".wav,.mp3,audio/wav,audio/x-wav,audio/mpeg,audio/mp3" hidden>
+<label for="audioLevel">VOLUME AUDIO</label><input type="range" id="audioLevel" min="0" max="100" value="80"><span class="pcount" id="audioLevelVal">80%</span></div>
+<p class="roll-status" id="audioMsg" aria-live="polite">Importer audio : fichier WAV ou MP3 (50 Mo et 10 minutes au maximum, 4 fichiers importés plus 3 prises voix). Il apparaît sur la ligne AUDIO et joue avec le bouton Play, à la mesure où tu le places. L'audio importé est inclus dans l'export WAV et sauvegardé avec le projet (bouton Sauvegarder, dans le stockage du navigateur) ; il n'est pas étiré si le tempo change. Attention : le stockage du navigateur peut être effacé (par toi, par le navigateur ou en navigation privée) : garde tes fichiers audio d'origine.</p>
+<p class="roll-status" id="tlStatus" aria-live="polite"></p>
+<details class="skinHelp"><summary>Conseils et fonctionnement</summary><p class="hint">Clique une mesure vide d'une ligne : le pattern actif de cette piste (nom affiché à gauche) y est placé, sur la longueur « nouveau bloc » (raccourcie si la place manque). Clique un bloc pour le sélectionner, puis déplace-le (glisser à la souris, ou boutons), change sa longueur, duplique-le ou supprime-le : supprimer un bloc ne supprime jamais son pattern. Un bloc répète son pattern sur toute sa longueur ; les notes qui dépasseraient la fin du bloc sont relâchées à sa frontière. Mode SONG : la lecture suit la timeline (silences et boutons M respectés) et s'arrête à la fin du dernier bloc. Mode PATTERN : comportement habituel. Pas de chevauchement sur une piste. La timeline est sauvegardée avec le morceau (Sauvegarder / Charger) et exportée en WAV en mode SONG.</p></details></div></details></div><div class="tl-wrap" id="tlWrap" tabindex="0" aria-label="Timeline : clic sur une mesure vide pour placer le pattern actif de la piste ; Suppr, flèches gauche et droite pour le bloc sélectionné"><div class="tl-inner" id="tlInner"><div id="tlRows"></div><div class="tl-head" id="tlHead"></div></div></div>
+<div class="dockSelection" style="margin-top:12px"><span class="pcount" id="tlSelInfo"></span><button id="tlLeft" type="button" disabled>◀ Mesure</button><button id="tlRight" type="button" disabled>Mesure ▶</button><button id="tlShort" type="button" disabled>− Longueur</button><button id="tlLong" type="button" disabled>+ Longueur</button><button id="tlDup" type="button" disabled>Dupliquer</button><button id="tlDel" type="button" disabled>Supprimer le bloc</button></div>
+<div id="orbitQuick"><span>TON MORCEAU</span><button type="button" data-orbit-go="dockComposer">＋ Composer</button><button type="button" data-orbit-go="dockVoices">● Poser une voix</button><button type="button" data-orbit-go="dockExport">↗ WAV</button></div></section><section class="panel fx dockFx" id="fx" aria-label="Effets audio"><h2>EFFETS · MASTER</h2><div class="dockFxTabs" role="group" aria-label="Choisir un effet master"><button type="button" data-dock-fx="0" aria-pressed="true">ÉQ</button><button type="button" data-dock-fx="1" aria-pressed="false">Réverb</button><button type="button" data-dock-fx="2" aria-pressed="false">Delay</button><button type="button" data-dock-fx="3" aria-pressed="false">Comp.</button></div><div class="fx-grid"><div class="fx-card" data-dock-fx-card="0"><div class="fx-head"><h3>ÉGALISEUR</h3></div><div class="dockEqPlot"><svg viewbox="0 0 300 120" role="img" aria-label="Repère indicatif des trois réglages EQ master"><defs><pattern id="dockEqGrid" width="30" height="20" patternunits="userSpaceOnUse"><path d="M30 0H0V20" fill="none" stroke="#41515a" stroke-width=".5"></path></pattern></defs><rect x="0" y="0" width="300" height="120" fill="#182127"></rect><rect x="0" y="0" width="300" height="120" fill="url(#dockEqGrid)"></rect><path id="dockEqCurve" d="M0 60 Q75 60 150 60 T300 60" fill="none" stroke="#82c6ad" stroke-width="2"></path><circle id="dockEqLow" cx="50" cy="60" r="4" fill="#e3b060"></circle><circle id="dockEqMid" cx="150" cy="60" r="4" fill="#79c6ae"></circle><circle id="dockEqHigh" cx="250" cy="60" r="4" fill="#a28cdb"></circle></svg><small>Graves · Médiums · Aigus — repère indicatif</small></div><div class="dockFxControl"><label for="fxLow">Graves <span id="fxLowVal"></span></label><span class="dockRing" data-unit="dB"><input id="fxLow" type="range" min="-12" max="12" step="1" value="0"></span></div><div class="dockFxControl"><label for="fxMid">Médiums <span id="fxMidVal"></span></label><span class="dockRing" data-unit="dB"><input id="fxMid" type="range" min="-12" max="12" step="1" value="0"></span></div><div class="dockFxControl"><label for="fxHigh">Aigus <span id="fxHighVal"></span></label><span class="dockRing" data-unit="dB"><input id="fxHigh" type="range" min="-12" max="12" step="1" value="0"></span></div></div><div class="fx-card" data-dock-fx-card="1" hidden=""><div class="fx-head"><h3>REVERB</h3><button class="fxon" id="fxRevOn" type="button" aria-pressed="false" aria-label="Reverb activée ou non">OFF</button></div><div class="dockFxControl"><label for="fxRevMix">Mix <span id="fxRevMixVal"></span></label><span class="dockRing" data-unit="%"><input id="fxRevMix" type="range" min="0" max="100" step="1" value="25"></span></div><div class="dockFxControl"><label for="fxRevDecay">Decay (durée) <span id="fxRevDecayVal"></span></label><span class="dockRing" data-unit=""><input id="fxRevDecay" type="range" min="3" max="40" step="1" value="15"></span></div></div><div class="fx-card" data-dock-fx-card="2" hidden=""><div class="fx-head"><h3>DELAY</h3><button class="fxon" id="fxDlyOn" type="button" aria-pressed="false" aria-label="Delay activé ou non">OFF</button></div><label for="fxDlyNote">Temps (synchro BPM) <span id="fxDlyTimeVal"></span></label><select id="fxDlyNote"><option value="0.25">1/16</option><option value="0.5" selected>1/8</option><option value="0.75">1/8 pointée</option><option value="1">1/4</option><option value="1.5">1/4 pointée</option></select><div class="dockFxControl"><label for="fxDlyFb">Feedback <span id="fxDlyFbVal"></span></label><span class="dockRing" data-unit="%"><input id="fxDlyFb" type="range" min="0" max="80" step="1" value="35"></span></div><div class="dockFxControl"><label for="fxDlyMix">Mix <span id="fxDlyMixVal"></span></label><span class="dockRing" data-unit="%"><input id="fxDlyMix" type="range" min="0" max="100" step="1" value="30"></span></div></div><div class="fx-card" data-dock-fx-card="3" hidden=""><div class="fx-head"><h3>COMPRESSEUR</h3><button class="fxon" id="fxCmpOn" type="button" aria-pressed="false" aria-label="Compresseur activé ou non">OFF</button></div><div class="dockFxControl"><label for="fxCmpThr">Threshold (seuil) <span id="fxCmpThrVal"></span></label><span class="dockRing" data-unit="dB"><input id="fxCmpThr" type="range" min="-40" max="0" step="1" value="-18"></span></div><div class="dockFxControl"><label for="fxCmpRatio">Ratio <span id="fxCmpRatioVal"></span></label><span class="dockRing" data-unit=""><input id="fxCmpRatio" type="range" min="1" max="20" step="1" value="3"></span></div><div class="dockFxControl"><label for="fxCmpAtk">Attack <span id="fxCmpAtkVal"></span></label><span class="dockRing" data-unit=""><input id="fxCmpAtk" type="range" min="1" max="100" step="1" value="10"></span></div><div class="dockFxControl"><label for="fxCmpRel">Release <span id="fxCmpRelVal"></span></label><span class="dockRing" data-unit=""><input id="fxCmpRel" type="range" min="50" max="1000" step="10" value="250"></span></div><div class="dockFxControl"><label for="fxCmpMk">Gain de sortie (Makeup) <span id="fxCmpMkVal"></span></label><span class="dockRing" data-unit="dB"><input id="fxCmpMk" type="range" min="0" max="18" step="1" value="0"></span></div></div></div><details class="skinHelp"><summary>Conseils et fonctionnement</summary><p class="hint">Les effets s'appliquent au bus Master : à tout le son (batterie et synthé, en direct comme dans l'export WAV). Au départ ils sont éteints (ON/OFF) et l'égaliseur est à zéro : le son est exactement celui d'avant. Activer le compresseur ne change pas le volume des passages faibles ; son gain de sortie reste à 0 dB tant que tu ne le montes pas. Reverb et delay laissent leur queue mourir naturellement.</p></details></section><section class="panel mixer dockMixer" id="mixer" aria-label="Mixeur"><div class="skinTop"><div><div class="orbitMixerName"><div>GRAND STUDIO<small>MIXEUR · JACK22</small></div></div></div><svg class="skinFaders" viewbox="0 0 96 64" role="img" aria-label="Logo JACK22 aux faders colorés"><g stroke-linecap="round" stroke-width="7"><path stroke="#d8a248" d="M9 10v44"></path><path stroke="#62bcad" d="M24 5v49"></path><path stroke="#a284cc" d="M39 14v40"></path></g><g fill="#263139" stroke="#d8dfdf" stroke-width="1"><rect x="4" y="19" width="10" height="8" rx="2"></rect><rect x="19" y="30" width="10" height="8" rx="2"></rect><rect x="34" y="22" width="10" height="8" rx="2"></rect></g><text x="48" y="48" font-family="Arial,sans-serif" font-weight="bold" font-size="39" fill="#bf4a5e">22</text></svg></div><div class="dockBanks" role="group" aria-label="Banque du mixeur"><button type="button" data-dock-bank="instruments" aria-pressed="true">Instruments</button><button type="button" data-dock-bank="voices" aria-pressed="false">Voix</button></div><p class="skinMixerNote">Kick · Snare · Hi-hat · Clap · Synthé · Master. Banque Voix : trois prises.</p><div id="dockVoiceBank" hidden><div class="dockVoiceStrip" style="--strip:#68b4c9"><strong>VOIX 1</strong><span id="dockVoiceValue1">—</span><input type="range" min="0" max="100" value="100" data-dock-voice-level="1" aria-label="Volume voix 1 dans le mixeur" disabled><button type="button" data-dock-voice-mute="1" aria-pressed="false" disabled>M</button><button type="button" data-dock-voice-record="1">● Prise</button></div><div class="dockVoiceStrip" style="--strip:#809ad6"><strong>VOIX 2</strong><span id="dockVoiceValue2">—</span><input type="range" min="0" max="100" value="100" data-dock-voice-level="2" aria-label="Volume voix 2 dans le mixeur" disabled><button type="button" data-dock-voice-mute="2" aria-pressed="false" disabled>M</button><button type="button" data-dock-voice-record="2">● Prise</button></div><div class="dockVoiceStrip" style="--strip:#c58bb2"><strong>VOIX 3</strong><span id="dockVoiceValue3">—</span><input type="range" min="0" max="100" value="100" data-dock-voice-level="3" aria-label="Volume voix 3 dans le mixeur" disabled><button type="button" data-dock-voice-mute="3" aria-pressed="false" disabled>M</button><button type="button" data-dock-voice-record="3">● Prise</button></div><p class="dockVoiceBankNote">Les réglages suivent les prises voix. Les options micro sont dans l’onglet Voix.</p></div><div class="mix-row" id="dockInstrumentBank"><div class="strip"><span class="mv" id="mixKickVal">100%</span><input class="fader" id="mixKick" type="range" min="0" max="100" value="100" aria-label="Volume Kick"><span class="mn">KICK</span><button class="mute" id="muteKick" type="button" aria-pressed="false" aria-label="Couper le Kick">M</button></div><div class="strip"><span class="mv" id="mixSnareVal">100%</span><input class="fader" id="mixSnare" type="range" min="0" max="100" value="100" aria-label="Volume Snare"><span class="mn">SNARE</span><button class="mute" id="muteSnare" type="button" aria-pressed="false" aria-label="Couper le Snare">M</button></div><div class="strip"><span class="mv" id="mixHatVal">100%</span><input class="fader" id="mixHat" type="range" min="0" max="100" value="100" aria-label="Volume Hi-hat"><span class="mn">HI-HAT</span><button class="mute" id="muteHat" type="button" aria-pressed="false" aria-label="Couper le Hi-hat">M</button></div><div class="strip"><span class="mv" id="mixClapVal">100%</span><input class="fader" id="mixClap" type="range" min="0" max="100" value="100" aria-label="Volume Clap"><span class="mn">CLAP</span><button class="mute" id="muteClap" type="button" aria-pressed="false" aria-label="Couper le Clap">M</button></div><div class="strip"><span class="mv" id="mixSynthVal">80%</span><input class="fader" id="mixSynth" type="range" min="0" max="100" value="80" aria-label="Volume synthé"><span class="mn">SYNTHÉ</span><button class="mute" id="muteSynth" type="button" aria-pressed="false" aria-label="Couper le synthé">M</button></div><div class="strip master"><span class="mv" id="mixMasterVal">70%</span><input class="fader" id="mixMaster" type="range" min="0" max="100" value="70" aria-label="Volume master"><span class="mn">MASTER</span><span class="mutegap"></span></div></div><details class="skinHelp"><summary>Conseils et fonctionnement</summary><p class="hint">Chaque piste a son volume et son bouton M (Mute). Les changements sont progressifs : pas de clic. Synthé et Master sont les mêmes réglages que les curseurs du synthé et de la barre du haut.</p></details></section><section class="panel synth dockSynth" id="synth"><div class="skinTop"><div><div class="orbitSynthName"><div><h2>ORBITE</h2><small>MOUVEMENTS SPATIAUX · JX-22</small></div></div></div></div><div class="dockSynthToolbar"><label for="preset">SON</label><select id="preset"><option value="lead">Lead</option><option value="bass">Bass</option><option value="pad">Pad</option><option value="pluck">Pluck</option><option value="sub808">808 Sub</option></select><span class="oct"><label>OCTAVE</label><button id="octDown" aria-label="Octave plus basse">−</button><span class="oct-val" id="octVal">4</span><button id="octUp" aria-label="Octave plus haute">+</button></span><button id="panic">Couper les notes</button></div><div class="dockSynthCore"><div class="dockPlanetPresets"><svg class="skinFaders orbitSynthMark" viewbox="0 0 96 64" role="img" aria-label="Logo JACK22 aux faders colorés"><g stroke-linecap="round" stroke-width="7"><path stroke="#d8a248" d="M9 10v44"></path><path stroke="#62bcad" d="M24 5v49"></path><path stroke="#a284cc" d="M39 14v40"></path></g><g fill="#263139" stroke="#d8dfdf" stroke-width="1"><rect x="4" y="19" width="10" height="8" rx="2"></rect><rect x="19" y="30" width="10" height="8" rx="2"></rect><rect x="34" y="22" width="10" height="8" rx="2"></rect></g><text x="48" y="48" font-family="Arial,sans-serif" font-weight="bold" font-size="39" fill="#bf4a5e">22</text></svg><span class="orbitMicroLabel">OSCILLATEURS · SONS</span><button type="button" class="dockPresetPlanet dockMars" data-dock-preset="lead" aria-pressed="false"><span aria-hidden="true"></span>Lead</button><button type="button" class="dockPresetPlanet dockJupiter" data-dock-preset="bass" aria-pressed="false"><span aria-hidden="true"></span>Bass</button><button type="button" class="dockPresetPlanet dockNeptune" data-dock-preset="pad" aria-pressed="false"><span aria-hidden="true"></span>Pad</button><button type="button" class="dockPresetPlanet dockViolet" data-dock-preset="pluck" aria-pressed="false"><span aria-hidden="true"></span>Pluck</button><button type="button" class="dockPresetPlanet dockJade" data-dock-preset="sub808" aria-pressed="false"><span aria-hidden="true"></span>808</button><span class="orbitMicroHint">Choisir un son</span></div><div class="dockOrbitHost"><div class="skinOrbit"><svg viewbox="0 0 300 300" role="img" aria-label="Repère orbital du volume synthé, illustration sans commande XY"><defs><radialgradient id="skinSpace"><stop stop-color="#21383b"></stop><stop offset=".65" stop-color="#172225"></stop><stop offset="1" stop-color="#080c0f"></stop></radialgradient><radialgradient id="skinSun"><stop stop-color="#fff4c9"></stop><stop offset=".35" stop-color="#ffdb6c"></stop><stop offset="1" stop-color="#e58826"></stop></radialgradient><radialgradient id="orbitHalo"><stop stop-color="#f9ac45" stop-opacity=".6"></stop><stop offset="1" stop-color="#f9ac45" stop-opacity="0"></stop></radialgradient><lineargradient id="orbitGlass" x2=".7" y2="1"><stop stop-color="#ffffff" stop-opacity=".17"></stop><stop offset=".48" stop-color="#ffffff" stop-opacity="0"></stop><stop offset="1" stop-color="#ffffff" stop-opacity=".04"></stop></lineargradient><filter id="orbitGlow"><fegaussianblur stddeviation="4"></fegaussianblur></filter></defs><circle cx="150" cy="150" r="140" fill="#080b0d" stroke="#686969"></circle><circle cx="150" cy="150" r="135" fill="url(#skinSpace)" stroke="#a62a42" stroke-width="3"></circle><circle cx="150" cy="150" r="128" fill="none" stroke="#56696c" stroke-width=".7"></circle><g fill="none" stroke="#5e9e9c" stroke-width=".6" opacity=".7"><ellipse cx="150" cy="150" rx="99" ry="45" transform="rotate(-30 150 150)"></ellipse><ellipse cx="150" cy="150" rx="100" ry="44" transform="rotate(37 150 150)"></ellipse><ellipse cx="150" cy="150" rx="100" ry="45" transform="rotate(92 150 150)"></ellipse><path d="M25 150h250M150 25v250" stroke-dasharray="1 3"></path></g><g fill="#dfeee6"><circle cx="150" cy="24" r="2.5"></circle><circle cx="24" cy="150" r="2"></circle><circle cx="276" cy="150" r="2"></circle><circle cx="150" cy="276" r="2"></circle></g><circle cx="192" cy="152" r="42" fill="url(#orbitHalo)"></circle><circle cx="192" cy="152" r="15" fill="#f5b44a" filter="url(#orbitGlow)"></circle><circle cx="192" cy="152" r="10" fill="url(#skinSun)" stroke="#ffe6a4" stroke-width="1.5"></circle><circle cx="107" cy="195" r="13" fill="#21d7ce" opacity=".22" filter="url(#orbitGlow)"></circle><circle cx="107" cy="195" r="9" fill="#36d4c9"></circle><circle id="skinOrbitDot" cx="150" cy="106" r="4" fill="#b5f0e8" stroke="#d8ffff"></circle><path d="M150 150v-45" fill="none" stroke="#9de3df" opacity=".5"></path><circle cx="150" cy="150" r="124" fill="url(#orbitGlass)" pointer-events="none"></circle></svg><p>Volume synthé <strong id="skinVolText">80 %</strong><br>Harmoniques 808 <strong id="skinHarmText">50 %</strong></p><p>REPÈRE ORBITAL · VOLUME</p></div></div><div class="dockPlanetControls"><div class="dockVolumePlanet"><label for="synthVol">VOLUME SYNTHÉ</label><span class="skinDial skinRed"><input id="synthVol" type="range" min="0" max="100" value="80" aria-label="Volume synthé"></span><span class="master-val" id="synthVolVal">80%</span></div><span class="harm" id="harmCtl"><label for="harmAmt">HARMONIQUES 808</label><span class="skinDial skinAmber"><input id="harmAmt" type="range" min="0" max="100" value="50" aria-label="Harmoniques du 808"></span><span class="master-val" id="harmVal">50%</span></span></div></div><div id="piano" role="group" aria-label="Clavier de piano"></div><details class="dockPopup dockSynthHelp"><summary>ⓘ Jouer et régler</summary><div class="dockPopupBody"><p class="skinDialHint">Boutons-planètes : glisse verticalement pour régler, ou utilise les flèches du clavier après sélection. Les harmoniques apparaissent avec le son 808 Sub.</p><details class="skinHelp"><summary>Conseils et fonctionnement</summary><p class="hint">Joue à la souris, au doigt ou au clavier (les lettres sont écrites sur les touches). ↑ / ↓ : changer d'octave. Le synthé reste jouable pendant que le beat tourne, et Play / Pause / Stop ne coupent pas tes notes.</p></details><p class="hint harm-hint" id="harmHint">808 : les harmoniques servent à entendre les basses sur de petits haut-parleurs (ordinateur, téléphone). Le grave lui-même reste intact. Mets le curseur à 0 % pour retrouver le 808 pur.</p></div></details></section></div></div><div id="dockDrawer" hidden><section class="dockPane" id="dockComposer" hidden><div class="dockPaneHeading compact88Heading"><h2>Composer</h2><nav class="compact88Subnav" aria-label="Vues dockComposer"><button type="button" data-c88-view="all" aria-pressed="true">Vue complète</button><button type="button" data-c88-view="patterns" aria-pressed="false" data-c88-targets="patterns">Patterns</button><button type="button" data-c88-view="beat" aria-pressed="false" data-c88-targets="dockBeat">Batterie</button><button type="button" data-c88-view="roll" aria-pressed="false" data-c88-targets="roll">Piano Roll</button><button type="button" data-c88-view="rec" aria-pressed="false" data-c88-targets="recorder">Prise de notes</button></nav><button type="button" data-dock-close>Retour au studio</button></div><div class="compact88Grid"><section class="panel patterns compact88Panel" id="patterns" aria-label="Patterns" data-c88-slot="patterns"><div class="compact88Title"><h2>PATTERNS</h2><span class="compact88PanelActions"><button type="button" data-c88-action="fold" aria-label="Replier ou ouvrir ce panneau" title="Replier ou ouvrir ce panneau" aria-expanded="true">−</button><button type="button" data-c88-action="focus" aria-label="Agrandir ou rétablir ce panneau" title="Agrandir ou rétablir ce panneau" aria-pressed="false">⤢</button></span></div><div id="patList"></div><details class="compact88Help"><summary>Aide et fonctionnement</summary><p class="hint">Trois pistes indépendantes : Batterie, 808 / Bass et Mélodie. Chaque piste a ses propres patterns (32 au maximum) ; le pattern sélectionné est celui qui joue et que tu modifies (grille de batterie en dessous, Piano Roll plus bas pour la basse et la mélodie). Le bouton M coupe une piste entière. Les patterns se placent sur la timeline plus bas.</p></details></section>
+
+<section class="panel recorder compact88Panel" id="recorder" aria-label="Enregistreur de notes" data-c88-slot="recorder"><div class="compact88Title"><h2>ENREGISTREUR DE NOTES</h2>
+<span class="compact88PanelActions"><button type="button" data-c88-action="fold" aria-label="Replier ou ouvrir ce panneau" title="Replier ou ouvrir ce panneau" aria-expanded="true">−</button><button type="button" data-c88-action="focus" aria-label="Agrandir ou rétablir ce panneau" title="Agrandir ou rétablir ce panneau" aria-pressed="false">⤢</button></span></div><div class="rec-controls"><button id="recRec" type="button" aria-pressed="false">● REC</button><button id="recStop" type="button">■ STOP</button><button id="recPlay" type="button">▶ PLAY</button><button id="recDel" type="button" disabled>Supprimer la prise</button></div>
+<div class="rec-options"><label for="recBars">LONGUEUR</label><select id="recBars"><option value="1">1 mesure</option><option value="2" selected>2 mesures</option><option value="4">4 mesures</option></select>
+<label class="chk"><input id="recCount" type="checkbox" checked> Compte à rebours (1 mesure)</label><label class="chk"><input id="recQuant" type="checkbox" checked> Quantification 1/16</label><label class="chk"><input id="recWith" type="checkbox" checked> Mélodie avec le beat</label></div>
+<div class="rec-lane" id="recLane" aria-label="Prise enregistrée"><div class="rec-head" id="recHead"></div></div>
+<p class="rec-status" id="recStatus" aria-live="polite">Prêt. Appuie sur REC, puis joue sur le synthé.</p>
+<details class="compact88Help"><summary>Aide et fonctionnement</summary><p class="hint">REC lance le beat avec un compte à rebours, puis enregistre ce que tu joues sur le synthé pendant la longueur choisie. La prise tourne ensuite en boucle avec le beat. Une nouvelle prise remplace l'ancienne seulement si tu as joué au moins une note. Les notes sont gardées en pas de 1/16 : elles suivent le BPM.</p></details></section><section class="panel roll compact88Panel" id="roll" aria-label="Piano Roll" data-c88-slot="roll"><div class="compact88Title"><h2>PIANO ROLL</h2><span class="compact88PanelActions"><button type="button" data-c88-action="fold" aria-label="Replier ou ouvrir ce panneau" title="Replier ou ouvrir ce panneau" aria-expanded="true">−</button><button type="button" data-c88-action="focus" aria-label="Agrandir ou rétablir ce panneau" title="Agrandir ou rétablir ce panneau" aria-pressed="false">⤢</button></span></div><div class="roll-bar"><label for="rollTrack">PISTE</label><select id="rollTrack"><option value="1">808 / BASS</option><option value="2" selected>MÉLODIE</option></select><span class="pcount" id="rollPat"></span><label for="rollBars">MESURES</label><select id="rollBars"><option value="1">1</option><option value="2" selected>2</option><option value="4">4</option></select><label for="rollSound">SON</label><select id="rollSound"></select><label for="rollLen">NOUVELLE NOTE</label><select id="rollLen"><option value="1">1/16</option><option value="2" selected>1/8</option><option value="4">1/4</option><option value="8">1/2</option><option value="16">1 mesure</option></select><label class="chk"><input id="rollWith" type="checkbox" checked> Jouer avec le beat</label><button id="rollUndo" type="button" disabled>↶ Annuler</button><button id="rollClear" type="button" disabled>Effacer tout</button></div><div class="roll-wrap" id="rollWrap"><div class="roll-inner"><div class="roll-keycol" id="rollKeyCol"></div><div class="roll-grid" id="rollGrid" tabindex="0" aria-label="Grille du Piano Roll : clic pour ajouter une note"><div class="roll-lines"></div><div class="roll-head" id="rollHead"></div></div></div></div><p class="roll-status" id="rollStatus" aria-live="polite"></p><details class="compact88Help"><summary>Aide et fonctionnement</summary><p class="hint">Clic = ajouter une note (glisse tout de suite vers la droite pour l'allonger). Glisser une note = la déplacer (temps et hauteur) ; glisser son bord droit = changer sa longueur. Clic droit sur une note, ou la sélectionner puis Suppr = la supprimer. Ctrl+Z = annuler. Les notes jouent avec le beat (Play / Pause / Stop du haut), passent par le fader et le Mute du synthé et par les effets, et sont incluses dans l'export WAV. Une note identique à une note de la prise enregistrée (même pas, même hauteur, même son) n'est jouée qu'une seule fois.</p></details></section><section class="panel compact88Panel" id="dockBeat" data-c88-slot="dockBeat"><div class="compact88Title"><h2>Batterie · 16 pas</h2><span class="compact88PanelActions"><button type="button" data-c88-action="fold" aria-label="Replier ou ouvrir ce panneau" title="Replier ou ouvrir ce panneau" aria-expanded="true">−</button><button type="button" data-c88-action="focus" aria-label="Agrandir ou rétablir ce panneau" title="Agrandir ou rétablir ce panneau" aria-pressed="false">⤢</button></span></div><div class="legend"><div>INSTRUMENT</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div><div>10</div><div>11</div><div>12</div><div>13</div><div>14</div><div>15</div><div>16</div></div><div id="tracks"></div></section></div></section><section class="dockPane" id="dockVoices" hidden><div class="dockPaneHeading compact88Heading"><h2>Voix</h2><nav class="compact88Subnav" aria-label="Vues dockVoices"><button type="button" data-c88-view="all" aria-pressed="true">Prises &amp; effets</button><button type="button" data-c88-view="takes" aria-pressed="false" data-c88-targets="cVoices">Prises</button><button type="button" data-c88-view="fx" aria-pressed="false" data-c88-targets="l3Editor">Effets / J-Tune</button></nav><button type="button" data-dock-close>Retour au studio</button></div><div class="compact88Grid"><section class="panel compact88Panel" id="cVoices"><div class="cTopline compact88Title"><h2>PRISES VOIX</h2><p id="cCapacity"></p><span class="compact88PanelActions"><button type="button" data-c88-action="fold" aria-label="Replier ou ouvrir ce panneau" title="Replier ou ouvrir ce panneau" aria-expanded="true">−</button><button type="button" data-c88-action="focus" aria-label="Agrandir ou rétablir ce panneau" title="Agrandir ou rétablir ce panneau" aria-pressed="false">⤢</button></span></div><div class="cVoiceGrid"><article class="cVoice" id="cVoice1"><h3>01 / LEAD</h3><div class="cVoiceInfo"></div><canvas width="400" height="60" aria-label="Forme d’onde voix 1"></canvas><label>Volume<input data-action="level" type="range" min="0" max="100" value="100" aria-label="Volume voix 1"></label><label>Mesure<input data-action="bar" type="number" min="1" max="128" value="1" aria-label="Début voix 1"></label><div class="cActions"><button data-action="record">● Enregistrer</button><button data-action="mute" aria-pressed="false">Mute</button><button data-action="download">WAV brut</button><button data-action="remove">Supprimer</button></div></article><article class="cVoice" id="cVoice2"><h3>02 / DOUBLES</h3><div class="cVoiceInfo"></div><canvas width="400" height="60" aria-label="Forme d’onde voix 2"></canvas><label>Volume<input data-action="level" type="range" min="0" max="100" value="100" aria-label="Volume voix 2"></label><label>Mesure<input data-action="bar" type="number" min="1" max="128" value="1" aria-label="Début voix 2"></label><div class="cActions"><button data-action="record">● Enregistrer</button><button data-action="mute" aria-pressed="false">Mute</button><button data-action="download">WAV brut</button><button data-action="remove">Supprimer</button></div></article><article class="cVoice" id="cVoice3"><h3>03 / AD-LIBS</h3><div class="cVoiceInfo"></div><canvas width="400" height="60" aria-label="Forme d’onde voix 3"></canvas><label>Volume<input data-action="level" type="range" min="0" max="100" value="100" aria-label="Volume voix 3"></label><label>Mesure<input data-action="bar" type="number" min="1" max="128" value="1" aria-label="Début voix 3"></label><div class="cActions"><button data-action="record">● Enregistrer</button><button data-action="mute" aria-pressed="false">Mute</button><button data-action="download">WAV brut</button><button data-action="remove">Supprimer</button></div></article></div><div class="cRow"><label><input type="checkbox" id="cCount" checked> Décompte 4 temps</label><label><input type="checkbox" id="cMetro" checked> Clic du décompte</label><label><input type="checkbox" id="cMetroTake"> Clic pendant toute la prise</label><label><input type="checkbox" id="cWithBeat" checked> Jouer le beat pendant la prise</label></div><p class="cFine" id="cFit"></p><p id="cVoiceFeedback" role="status" aria-live="polite">Prêt à enregistrer. Les messages du micro apparaîtront ici.</p><details class="compact88Help"><summary>Aide et fonctionnement</summary><p class="cFine">Chaque voix est un clip audio sur sa ligne VOIX de la timeline : elle est sauvegardée, exportée dans le fichier portable et mélangée dans le WAV avec son volume et son Mute. La prise démarre sur le premier temps du beat ; déplace-la ensuite avec son champ Mesure. Les voix partagent le volume AUDIO et les effets master. Un casque évite que le micro réenregistre le beat.</p><p class="cFine">Compensation de latence : décalage mesuré entre ce que le studio joue et ce que le micro enregistre (casque et carte son). Elle avance chaque nouvelle prise de cette valeur pour la remettre sur le beat. « Mesurer la latence » mesure un aller-retour acoustique : garde les mêmes périphériques que pour enregistrer et place la sortie près du micro. Une mesure sur haut-parleurs ne calibre pas un autre casque. À défaut, laisse 0 ms et signale le décalage entendu. Un changement de micro ou de sortie demande une nouvelle vérification. Rognage manuel : retire en plus un début de prise (respiration, clic). La compensation est mémorisée dans ce navigateur pour chaque micro, pas dans le projet : un projet ouvert sur un autre ordinateur n'hérite pas de la latence de celui-ci. Le rognage manuel et les cases du décompte, du clic et du beat sont enregistrés avec le projet. Les deux valeurs appliquées à une prise sont inscrites sous elle. Échap arrête la prise (ou annule le décompte).</p></details><details class="compact88Help compact88Micro"><summary>Latence et réglages micro</summary><div class="cRow"><label>Compensation de latence (cet ordinateur) <input id="cLatComp" type="number" min="0" max="500" step="1" value="0" aria-label="Compensation de latence en millisecondes"> ms</label><button id="cCalibrate" type="button">Mesurer la latence</button><span id="cLatResult" role="status"></span><button id="cLatApply" type="button" hidden>Appliquer</button><label>Rognage manuel du début <input id="cTrim" type="number" min="0" max="500" step="10" value="0" aria-label="Rognage manuel en millisecondes"> ms</label></div></details></section><section class="panel compact88Panel" id="l3Editor"><div class="cTopline compact88Title"><h2>EFFETS VOIX · J-TUNE</h2><label>Piste <select id="l3Slot"><option value="1">VOIX 1 · Lead</option><option value="2">VOIX 2 · Doubles</option><option value="3">VOIX 3 · Ad-libs</option></select></label><span class="compact88PanelActions"><button type="button" data-c88-action="fold" aria-label="Replier ou ouvrir ce panneau" title="Replier ou ouvrir ce panneau" aria-expanded="true">−</button><button type="button" data-c88-action="focus" aria-label="Agrandir ou rétablir ce panneau" title="Agrandir ou rétablir ce panneau" aria-pressed="false">⤢</button></span></div><p id="l3TrackInfo"></p><nav class="compact88FxTabs" aria-label="Traitements voix"><button type="button" data-c88-fx="0" aria-pressed="true">ÉQ</button><button type="button" data-c88-fx="1" aria-pressed="false">Comp.</button><button type="button" data-c88-fx="2" aria-pressed="false">Réverb</button><button type="button" data-c88-fx="3" aria-pressed="false">Delay</button><button type="button" data-c88-fx="4" aria-pressed="false">J-Tune</button><button type="button" data-c88-fx="5" aria-pressed="false">Découpe</button><button type="button" data-c88-fx="6" aria-pressed="false">Pan / Drive</button></nav><div class="l3Grid"><fieldset data-c88-fx-card="0"><legend>Égaliseur</legend><label class="l3Check"><input data-l3="eq.on" type="checkbox"> Égaliseur actif</label><label>Graves (dB)<input data-l3="eq.low" aria-label="Graves (dB)" type="number" min="-12" max="12" step="1" value="0"></label><label>Médiums (dB)<input data-l3="eq.mid" aria-label="Médiums (dB)" type="number" min="-12" max="12" step="1" value="0"></label><label>Aigus (dB)<input data-l3="eq.high" aria-label="Aigus (dB)" type="number" min="-12" max="12" step="1" value="0"></label></fieldset><fieldset data-c88-fx-card="1" hidden=""><legend>Compresseur</legend><label class="l3Check"><input data-l3="comp.on" type="checkbox"> Compresseur actif</label><label>Seuil (dB)<input data-l3="comp.thr" aria-label="Seuil (dB)" type="number" min="-40" max="0" step="1" value="-18"></label><label>Ratio<input data-l3="comp.ratio" aria-label="Ratio" type="number" min="1" max="20" step="1" value="3"></label><label>Attaque (ms)<input data-l3="comp.attack" aria-label="Attaque (ms)" type="number" min="1" max="100" step="1" value="10"></label><label>Relâchement (ms)<input data-l3="comp.release" aria-label="Relâchement (ms)" type="number" min="50" max="1000" step="10" value="250"></label><label>Gain (dB)<input data-l3="comp.makeup" aria-label="Gain (dB)" type="number" min="0" max="12" step="1" value="0"></label></fieldset><fieldset data-c88-fx-card="2" hidden=""><legend>Réverbération</legend><label class="l3Check"><input data-l3="reverb.on" type="checkbox"> Réverbération active</label><label>Mix réverbération (%)<input data-l3="reverb.mix" aria-label="Mix réverbération (%)" type="number" min="0" max="100" step="1" value="15"></label><label>Durée réverbération (s)<input data-l3="reverb.decay" aria-label="Durée réverbération (s)" type="number" min="0.3" max="2.5" step="0.1" value="1.2"></label></fieldset><fieldset data-c88-fx-card="3" hidden=""><legend>Delay</legend><label class="l3Check"><input data-l3="delay.on" type="checkbox"> Delay actif</label><label>Temps delay (s)<input data-l3="delay.time" aria-label="Temps delay (s)" type="number" min="0.05" max="0.5" step="0.01" value="0.25"></label><label>Feedback (%)<input data-l3="delay.fb" aria-label="Feedback (%)" type="number" min="0" max="35" step="1" value="25"></label><label>Mix delay (%)<input data-l3="delay.mix" aria-label="Mix delay (%)" type="number" min="0" max="80" step="1" value="15"></label></fieldset><fieldset data-c88-fx-card="4" hidden=""><legend>J-Tune / justesse</legend><label class="l3Check"><input data-l3="tune.on" type="checkbox"> J-Tune actif</label><label>Tonalité<select data-l3="tune.root"><option value="0">Do</option><option value="1">Do♯</option><option value="2">Ré</option><option value="3">Ré♯</option><option value="4">Mi</option><option value="5">Fa</option><option value="6">Fa♯</option><option value="7">Sol</option><option value="8">Sol♯</option><option value="9">La</option><option value="10">La♯</option><option value="11">Si</option></select></label><label>Gamme<select data-l3="tune.scale"><option value="chromatic">Chromatique</option><option value="major">Majeure</option><option value="minor">Mineure</option></select></label><label>Correction (%)<input data-l3="tune.amount" aria-label="Correction (%)" type="number" min="0" max="100" step="1" value="100"></label><label>Lissage (ms)<input data-l3="tune.smooth" aria-label="Lissage (ms)" type="number" min="0" max="500" step="10" value="80"></label></fieldset><fieldset data-c88-fx-card="5" hidden=""><legend>Édition non destructive / Lot 4</legend><label>Retirer au début (s)<input data-l3="edit.start" type="number" min="0" max="600" step="0.01" value="0"></label><label>Retirer à la fin (s)<input data-l3="edit.end" type="number" min="0" max="600" step="0.01" value="0"></label><label>Fondu entrée (s)<input data-l3="edit.fadeIn" type="number" min="0" max="5" step="0.01" value="0"></label><label>Fondu sortie (s)<input data-l3="edit.fadeOut" type="number" min="0" max="5" step="0.01" value="0"></label></fieldset><fieldset data-c88-fx-card="6" hidden=""><legend>Panoramique / Drive</legend><label>Panoramique −1 gauche / +1 droite<input data-l3="pan" type="number" min="-1" max="1" step="0.1" value="0"></label><label><input data-l3="drive.on" type="checkbox"> Saturation active</label><label>Drive (%)<input data-l3="drive.amount" type="number" min="0" max="100" step="1" value="0"></label></fieldset></div><div class="cRow"><button id="l3Dry" aria-pressed="false">Tout contourner · son brut</button><button id="l3Reset">Réinitialiser cette voix</button><button id="l3Retry">Recalculer les traitements</button><button id="l3Demo">Ajouter une voix de démo synthétique</button><button id="l3Cancel" disabled>Annuler le calcul</button></div><p id="l3Status" role="status" aria-live="polite">Enregistre une voix, puis règle ses traitements. Le rendu affiche la progression de J-Tune. Annuler le calcul conserve la prise brute ; une activation audio bloquée est interrompue après 10 secondes.</p><details class="compact88Help"><summary>Aide et fonctionnement</summary><p class="cFine">Traitements non destructifs après enregistrement. Chaque changement prépare une copie sonore partagée par l’écoute et l’export. J-Tune est expérimental : voix seule monophonique, 65–500 Hz, sans correction en direct ni préservation dédiée des formants. La prise brute et son WAV d’origine sont conservés.</p><p class="cFine" hidden>Niveaux avant master pendant la lecture. Tous les traitements voix sont conservés dans le projet portable expérimental version 4. Les premiers outils des lots 4 à 8 sont regroupés dans la vue Vision 8. Les fonctions avancées indiquées comme futures restent à développer.</p></details><details class="compact88Help"><summary>Niveaux des trois voix</summary><div class="l3Meters" aria-label="Niveaux instantanés des voix avant le master"><label>VOIX 1<meter id="l3Meter1" min="0" max="1" high="0.9" optimum="0.2" value="0"></meter><span id="l3Peak1">—</span></label><label>VOIX 2<meter id="l3Meter2" min="0" max="1" high="0.9" optimum="0.2" value="0"></meter><span id="l3Peak2">—</span></label><label>VOIX 3<meter id="l3Meter3" min="0" max="1" high="0.9" optimum="0.2" value="0"></meter><span id="l3Peak3">—</span></label></div></details></section></div></section><section class="dockPane" id="dockWords" hidden><div class="dockPaneHeading compact88Heading"><h2>Paroles</h2><nav class="compact88Subnav" aria-label="Vues dockWords"><button type="button" data-c88-view="all" aria-pressed="true">Vue double</button><button type="button" data-c88-view="write" aria-pressed="false">Écriture</button><button type="button" data-c88-view="prompt" aria-pressed="false">Prompteur</button></nav><button type="button" data-dock-close>Retour au studio</button><span class="compact88TextSize"><span>Texte</span><button type="button" data-c88-text="-1" aria-label="Réduire le texte">−</button><button type="button" data-c88-text="1" aria-label="Agrandir le texte">＋</button></span></div><div class="compact88Grid"><section class="panel compact88Panel" id="cWords"><div class="cTopline compact88Title"><h2>PAROLES / PROMPTEUR</h2><p>Écris. Relis. Pose.</p><span class="compact88PanelActions"><button type="button" data-c88-action="fold" aria-label="Replier ou ouvrir ce panneau" title="Replier ou ouvrir ce panneau" aria-expanded="true">−</button><button type="button" data-c88-action="focus" aria-label="Agrandir ou rétablir ce panneau" title="Agrandir ou rétablir ce panneau" aria-pressed="false">⤢</button></span></div><div class="cLyricsGrid"><textarea id="cLyrics" maxlength="50000" aria-label="Paroles du morceau" placeholder="[Couplet 1]
+Écris ton texte ici…"></textarea><div id="cPrompt" class="cPrompt" tabindex="0" aria-label="Prompteur"></div></div><div class="cRow"><button id="cPromptToggle">Lancer le prompteur</button><label>Vitesse <input id="cSpeed" type="range" min="5" max="80" value="24"></label></div><details class="compact88Help"><summary>Aide et fonctionnement</summary><p class="cFine">Défilement manuel indépendant de la musique. Les nombres « ≈ syll. » sont des ESTIMATIONS (élisions et « e » muets approximatifs) : ils ne bloquent rien. Les paroles, les niveaux des voix et leurs traitements voyagent avec le projet. La compensation de latence reste propre à ce navigateur et au matériel utilisé.</p></details></section></div></section><section class="dockPane" id="dockExport" hidden><div class="dockPaneHeading compact88Heading"><h2>Exporter</h2><nav class="compact88Subnav" aria-label="Vues dockExport"><button type="button" data-c88-view="all" aria-pressed="true">Export WAV</button></nav><button type="button" data-dock-close>Retour au studio</button></div><div class="compact88Grid"><section class="panel export compact88Panel" id="export" aria-label="Export WAV"><div class="compact88Title"><h2>EXPORT WAV</h2>
+<span class="compact88PanelActions"><button type="button" data-c88-action="fold" aria-label="Replier ou ouvrir ce panneau" title="Replier ou ouvrir ce panneau" aria-expanded="true">−</button><button type="button" data-c88-action="focus" aria-label="Agrandir ou rétablir ce panneau" title="Agrandir ou rétablir ce panneau" aria-pressed="false">⤢</button></span></div><div class="exp-controls"><button class="primary" id="expBtn" type="button">⬇ Exporter WAV</button><label for="expLoops">RÉPÉTITIONS DE LA BOUCLE</label><select id="expLoops"><option value="1">1</option><option value="2">2</option><option value="4" selected>4</option><option value="8">8</option></select>
+<label class="chk"><input id="expMel" type="checkbox" checked> Inclure la mélodie</label><label class="chk"><input id="expRoll" type="checkbox" checked> Inclure le Piano Roll</label></div>
+<p class="exp-info" id="expInfo"></p><p class="exp-status" id="expStatus" aria-live="polite"></p>
+<details class="compact88Help"><summary>Aide et fonctionnement</summary><p class="hint">L'export rejoue le morceau avec le même moteur et les mêmes réglages que le studio (volumes du mixeur, Mute, volume du synthé, harmoniques du 808, BPM). La boucle est répétée le nombre de fois choisi, puis une fin (1,5 s, plus longue si la reverb ou le delay sont activés) laisse mourir les dernières notes. Les effets activés sont inclus. Le studio continue de jouer pendant le rendu. En mode PATTERN, l'export joue les patterns actifs (la boucle répétée). En mode SONG, il joue toute la timeline une seule fois, de la mesure 1 à la fin du dernier bloc audible, avec les silences, les Mute des pistes et les effets ; la fin du fichier laisse mourir les dernières notes et la réverbération. Les fichiers audio importés (ligne AUDIO) sont inclus à leur mesure, à leur vitesse et à leur hauteur d'origine, avec le volume et le Mute AUDIO ; si un fichier dépasse la fin des patterns, le WAV est prolongé jusqu'à sa fin ; si les patterns sont vides, il s'arrête à la fin de l'audio.</p></details></section></div></section><section class="dockPane" id="dockTools" hidden><div class="dockPaneHeading compact88Heading"><h2>Outils</h2><nav class="compact88Subnav" aria-label="Vues dockTools"><button type="button" data-c88-view="all" aria-pressed="true">Vue complète</button><button type="button" data-c88-view="edit" aria-pressed="false" data-c88-targets="v8Edit">Édition</button><button type="button" data-c88-view="auto" aria-pressed="false" data-c88-targets="v8Mix">Automation</button><button type="button" data-c88-view="sounds" aria-pressed="false" data-c88-targets="v8Sounds">Sons / presets</button></nav><button type="button" data-dock-close>Retour au studio</button></div><div class="compact88Grid"><section class="panel compact88Panel" id="v8Edit"><div class="compact88Title"><h2>ÉDITION DU MORCEAU</h2><span class="compact88PanelActions"><button type="button" data-c88-action="fold" aria-label="Replier ou ouvrir ce panneau" title="Replier ou ouvrir ce panneau" aria-expanded="true">−</button><button type="button" data-c88-action="focus" aria-label="Agrandir ou rétablir ce panneau" title="Agrandir ou rétablir ce panneau" aria-pressed="false">⤢</button></span></div><div class="cRow"><button id="v8Undo">Annuler une édition</button><button id="v8Redo">Rétablir</button><span id="v8History"></span></div><div class="cRow"><label>Section <input id="v8SectionName" value="Couplet" maxlength="40"></label><label>Début <input id="v8SectionStart" type="number" min="1" max="128" value="1"></label><label>Fin exclusive <input id="v8SectionEnd" type="number" min="2" max="129" value="5"></label><button id="v8AddSection">Ajouter un repère</button></div><div id="v8Sections"></div><div class="cRow"><span id="v8LoopStatus"></span><button id="v8StopLoop">Arrêter la boucle de zone</button></div><details class="compact88Help"><summary>Aide et fonctionnement</summary><p class="cFine" hidden>Historique de la session, limité à 24 états (et 256 Mo d’audio en plus du projet). Il n’annule pas les fichiers déjà téléchargés ni les autorisations du micro. Les découpes et fondus des voix se règlent dans l’éditeur d’effets ; le bouton Original intégral permet de revenir à la prise entière.</p><p class="cFine">Les repères délimitent une zone. Dupliquer copie les blocs instruments entiers de cette zone.</p></details></section><section class="panel compact88Panel" id="v8Mix"><div class="compact88Title"><h2>AUTOMATISATION &amp; MIXAGE</h2><span class="compact88PanelActions"><button type="button" data-c88-action="fold" aria-label="Replier ou ouvrir ce panneau" title="Replier ou ouvrir ce panneau" aria-expanded="true">−</button><button type="button" data-c88-action="focus" aria-label="Agrandir ou rétablir ce panneau" title="Agrandir ou rétablir ce panneau" aria-pressed="false">⤢</button></span></div><p hidden>Première automation : le volume master suit une courbe pendant la lecture et dans le WAV. Les points sont donnés en mesure, pourcentage. Le panoramique propre à chaque voix est disponible dans ses traitements.</p><label><input id="v8AutoOn" type="checkbox"> Activer la courbe master au prochain Play</label><textarea id="v8Curve" rows="5" aria-label="Points de la courbe master">1, 70
+5, 70</textarea><button id="v8ApplyAuto">Appliquer la courbe</button><details class="compact88Help"><summary>Aide et fonctionnement</summary><p class="cFine">Les rampes interpolent le gain audio entre les points. La courbe remplace le réglage master fixe pendant la lecture. Bouger le master désactive la courbe ; Appliquer la courbe la réactive. Pause et Stop rétablissent le master manuel. Les changements de tempo recalculent les rampes futures. Les boucles de zone servent à l’écoute ; l’export conserve le morceau complet. Bus, envois, automation des autres paramètres et export des pistes séparées restent à développer.</p></details></section><section class="panel compact88Panel" id="v8Sounds"><div class="compact88Title"><h2>SONS, PRESETS &amp; GROOVE</h2><span class="compact88PanelActions"><button type="button" data-c88-action="fold" aria-label="Replier ou ouvrir ce panneau" title="Replier ou ouvrir ce panneau" aria-expanded="true">−</button><button type="button" data-c88-action="focus" aria-label="Agrandir ou rétablir ce panneau" title="Agrandir ou rétablir ce panneau" aria-pressed="false">⤢</button></span></div><div class="cRow"><label>Source sampler <select id="v8Sample"></select></label></div><div class="v8Keys"><button data-sample-note="0">Do</button><button data-sample-note="2">Ré</button><button data-sample-note="4">Mi</button><button data-sample-note="5">Fa</button><button data-sample-note="7">Sol</button><button data-sample-note="9">La</button><button data-sample-note="11">Si</button><button data-sample-note="12">Do +1</button></div><div class="cRow"><label>Swing batterie <input id="v8Swing" type="range" min="0" max="100" value="0"></label><span id="v8SwingValue">0 %</span></div><div class="cRow"><label>Nom du preset voix <input id="v8PresetName" value="Ma voix" maxlength="40"></label><button id="v8SavePreset">Garder les réglages de la voix sélectionnée</button></div><div id="v8Presets" class="cRow"></div><details class="compact88Help"><summary>Aide et fonctionnement</summary><p class="cFine">Préécoute sampler : la source est transposée par vitesse de lecture, jusqu’à 2 secondes par touche. Pour jouer un échantillon dans un morceau (Piano Roll, batterie et export WAV), utilise Production → Sampler et Projet → « Sampler, pads et batterie… ». Le time-stretch (changer la durée sans changer la hauteur) reste à venir.</p><p class="cFine">Le swing décale les doubles-croches impaires de batterie ; il ne modifie pas les voix ni les notes du Piano Roll. Le même décalage est prévu dans le WAV.</p><p class="cFine">Les presets contiennent les traitements de la voix choisie, découpe comprise, et voyagent avec le projet. Applique-les à une autre prise puis vérifie ses valeurs de découpe. Le drive est disponible dans l’éditeur voix.</p></details></section><p id="v8Status" class="cStatus compact88Panel" role="status">Vision 8 prête : découvre les outils, puis nous reviendrons aux essais du lot 3.</p></div></section><section class="dockPane" id="dockMore" hidden><div class="dockPaneHeading compact88Heading"><h2>Version</h2><nav class="compact88Subnav" aria-label="Vues dockMore"><button type="button" data-c88-view="all" aria-pressed="true" data-c88-targets="v8Overview">Vue générale</button><button type="button" data-c88-view="diag" aria-pressed="false" data-c88-targets="v8Diagnostics v8Status">Diagnostic</button><button type="button" data-c88-view="install" aria-pressed="false" data-c88-targets="pwaPanel">Installation</button><button type="button" data-c88-view="version" aria-pressed="false" data-c88-targets="v8Release">Version</button></nav><button type="button" data-dock-close>Retour au studio</button></div><div class="compact88Grid"><section class="panel v8Overview compact88Panel" id="v8Overview"><div class="compact88Title"><h2>Du beat au morceau, puis à la diffusion.</h2><span class="compact88PanelActions"><button type="button" data-c88-action="fold" aria-label="Replier ou ouvrir ce panneau" title="Replier ou ouvrir ce panneau" aria-expanded="true">−</button><button type="button" data-c88-action="focus" aria-label="Agrandir ou rétablir ce panneau" title="Agrandir ou rétablir ce panneau" aria-pressed="false">⤢</button></span></div><span class="cEyebrow">JACK22 / VISION FINALE</span><p hidden>Ce prototype rassemble les parcours jusqu’au lot 8. Les outils préliminaires sont utilisables ; les fonctions futures sont nommées explicitement. La version stable reste séparée.</p><div class="v8Grid"><a href="#l3Editor"><b>03 · Voix &amp; effets</b><span>Chaînes voix, J-Tune après prise.</span></a><a href="#v8Edit"><b>04 · Édition</b><span>Historique, zones, découpe des voix.</span></a><a href="#v8Mix"><b>05 · Mouvement</b><span>Automation master et panoramique.</span></a><a href="#v8Sounds"><b>06 · Sons</b><span>Sampler en préécoute, presets, swing.</span></a><a href="#v8Diagnostics"><b>07 · Vérifications</b><span>État du navigateur et diagnostic.</span></a><a href="#v8Release"><b>08 · Distribution</b><span>Fichier Web autonome et lancement Windows.</span></a></div></section><section class="panel compact88Panel" id="v8Diagnostics"><div class="compact88Title"><h2>ÉTAT &amp; DIAGNOSTIC</h2><span class="compact88PanelActions"><button type="button" data-c88-action="fold" aria-label="Replier ou ouvrir ce panneau" title="Replier ou ouvrir ce panneau" aria-expanded="true">−</button><button type="button" data-c88-action="focus" aria-label="Agrandir ou rétablir ce panneau" title="Agrandir ou rétablir ce panneau" aria-pressed="false">⤢</button></span></div><p>Disponibilité des fonctions et état du projet.</p><div class="cRow"><button id="v8Check">Afficher l’état actuel</button><button id="v8DownloadDiag">Télécharger le diagnostic</button></div><pre id="v8Diag">Aucun diagnostic exécuté.</pre></section><section class="panel compact88Panel" id="pwaPanel"><div class="compact88Title"><h2>APPLICATION WEB</h2><span class="compact88PanelActions"><button type="button" data-c88-action="fold" aria-label="Replier ou ouvrir ce panneau" title="Replier ou ouvrir ce panneau" aria-expanded="true">−</button><button type="button" data-c88-action="focus" aria-label="Agrandir ou rétablir ce panneau" title="Agrandir ou rétablir ce panneau" aria-pressed="false">⤢</button></span></div><p id="pwaStatus" role="status">Vérification de la disponibilité…</p><button id="pwaInstall" hidden>Installer JACK22 sur cet ordinateur</button><details class="compact88Help"><summary>Aide et fonctionnement</summary><p class="cFine">L’installation sera proposée par Edge lorsque la version Web sera hébergée sur HTTPS et reconnue comme installable. Elle n’est pas un installateur Windows natif. Pour passer du fichier local au site, exporte ton projet portable puis importe-le sur le site : les sauvegardes du navigateur ne sont pas transférées automatiquement. Le mode hors connexion ne remplace pas l’export du projet et de ses sons.</p></details></section><section class="panel compact88Panel" id="v8Release"><div class="compact88Title"><h2>DIFFUSION</h2><span class="compact88PanelActions"><button type="button" data-c88-action="fold" aria-label="Replier ou ouvrir ce panneau" title="Replier ou ouvrir ce panneau" aria-expanded="true">−</button><button type="button" data-c88-action="focus" aria-label="Agrandir ou rétablir ce panneau" title="Agrandir ou rétablir ce panneau" aria-pressed="false">⤢</button></span></div><p>Ouvre le studio avec le lanceur Windows fourni.</p><div class="cRow"><button id="v8Shortcut">Créer un raccourci Windows vers ce fichier</button><button id="v8Export">Sauvegarder un projet portable</button></div><details class="compact88Help"><summary>Aide et fonctionnement</summary><p class="cFine">Le raccourci téléchargé n’est pas une installation native. Le dossier Web contient maintenant la préparation PWA : installation par Edge et cache hors connexion. Publication HTTPS et installation réelle restent à valider. Aucun installateur Windows natif n’est fourni. Aucun site n’est publié par ce fichier.</p></details></section><details class="skinAbout compact88Panel"><summary>À propos de cette version expérimentale</summary><div class="cHero"><div><span class="cEyebrow">TON MORCEAU, DU PREMIER BEAT À LA DERNIÈRE PRISE</span><h2>Une session. Toutes tes idées.</h2><p>Compose avec J-Drums et JX-22. Pose ta voix, garde tes paroles sous les yeux et emporte ton projet avec ses fichiers audio.</p></div><span class="cBadge">LOT 8.9 · ORBITE · PROTOTYPE EXPÉRIMENTAL</span></div></details><p class="cFine compact88Panel" hidden>Vision Lot 8 : prototype expérimental, sauvegarde locale séparée. Pour reprendre un morceau du lot 2, utilise son fichier portable avec « Importer projet ». Garde une copie de ce portable avant de le réexporter.</p><footer class="compact88Panel">Les sons sont synthétisés localement avec Web Audio. Aucun compte ni abonnement nécessaire.</footer></div></section></div></div></main><script>{{JW-MORCEAU:scripts/010-modes-et-reglages-voix.js}}</script><script>{{JW-MORCEAU:scripts/011-user-facing-feedback-preserves-original.js}}</script><script>{{JW-MORCEAU:scripts/012-moteur-principal-du-studio.js}}</script><script>{{JW-MORCEAU:scripts/013-lot-2-voix-paroles-prompteur-latence.js}}</script><script>{{JW-MORCEAU:scripts/014-prises-voix-et-clips.js}}</script><script>{{JW-MORCEAU:scripts/015-vision-8-workbench-preliminary-editing-a.js}}</script><script>{{JW-MORCEAU:scripts/016-installation-hors-connexion.js}}</script>
+<script id="skinModule">{{JW-MORCEAU:scripts/017-skinmodule.js}}</script><script id="dockModule">{{JW-MORCEAU:scripts/018-dockmodule.js}}</script><script id="orbitModule">{{JW-MORCEAU:scripts/019-orbitmodule.js}}</script>
+<style id="workspace87Styles">{{JW-MORCEAU:styles/020-workspace87styles.css}}</style>
+<script id="workspace87Module">{{JW-MORCEAU:scripts/021-workspace87module.js}}</script>
+<style id="claude88Styles">{{JW-MORCEAU:styles/022-claude88styles.css}}</style><script id="claude88Module">{{JW-MORCEAU:scripts/023-claude88module.js}}</script><style id="claude89Styles">{{JW-MORCEAU:styles/024-claude89styles.css}}</style><script id="claude89Module">{{JW-MORCEAU:scripts/025-claude89module.js}}</script><style id="claude89RefFix">{{JW-MORCEAU:styles/026-claude89reffix.css}}</style><style id="claude89Accueil">{{JW-MORCEAU:styles/027-claude89accueil.css}}</style><script id="claude89AccueilModule">{{JW-MORCEAU:scripts/028-claude89accueilmodule.js}}</script><script id="j90Module">{{JW-MORCEAU:scripts/029-j90module.js}}</script><style id="claude90Styles">
+/* Contre-expertise 9.0 (Claude) : accueil identique à la 8.9 validée, trois défauts corrigés. */
+.dockTimelineSettings .claude90Edit #j90Zoom{display:inline-flex;gap:3px;align-items:center}
+</style><script id="claude90Module">{{JW-MORCEAU:scripts/030-claude90module.js}}</script><style id="claude91Styles">{{JW-MORCEAU:styles/031-claude91styles.css}}</style><script id="claude91Module">{{JW-MORCEAU:scripts/032-claude91module.js}}</script><style id="claude92Styles">{{JW-MORCEAU:styles/033-claude92styles.css}}</style><script id="claude92Module">{{JW-MORCEAU:scripts/034-claude92module.js}}</script></body></html>
+<style id="jack22Workspace93Styles">{{JW-MORCEAU:styles/035-jack22workspace93styles.css}}</style>
+<script id="jack22Workspace93Module">{{JW-MORCEAU:scripts/036-jack22workspace93module.js}}</script>
+
+<script id="jack22NoteTools94Logic">{{JW-MORCEAU:scripts/037-jack22notetools94logic.js}}</script>
+<style id="jack22NoteTools94Styles">{{JW-MORCEAU:styles/038-jack22notetools94styles.css}}</style>
+<script id="jack22NoteTools94UI">{{JW-MORCEAU:scripts/039-jack22notetools94ui.js}}</script>
+
+<script id="jack22AdvancedNotes95Logic">{{JW-MORCEAU:scripts/040-jack22advancednotes95logic.js}}</script>
+<style id="jack22Selection95Styles">
+#rollGrid .rn.j95Selected{outline:2px solid #eabb72!important;box-shadow:0 0 0 2px #eabb7233;z-index:3}
+#rollGrid .j95Lasso{position:absolute;border:1px solid #d59c60;background:#d59c6022;pointer-events:none;z-index:20}
+#j94Tools .j95SelectionStatus{color:#e2b87d;font-size:11px;margin:0}
+</style>
+<script id="jack22Selection95UI">{{JW-MORCEAU:scripts/041-jack22selection95ui.js}}</script>
+<style id="jack22Ergonomie96Styles">{{JW-MORCEAU:styles/042-jack22ergonomie96styles.css}}</style>
+<script id="jack22Ergonomie96Module">{{JW-MORCEAU:scripts/043-jack22ergonomie96module.js}}</script>
+
+<script id="j97MusicCore">{{JW-MORCEAU:scripts/044-j97musiccore.js}}</script>
+<style id="j97Styles">{{JW-MORCEAU:styles/045-j97styles.css}}</style>
+<script id="j97Production">{{JW-MORCEAU:scripts/046-j97production.js}}</script>
+
+<script id="j98CaptureCore">{{JW-MORCEAU:scripts/047-j98capturecore.js}}</script>
+<style id="j98Styles">{{JW-MORCEAU:styles/048-j98styles.css}}</style>
+<script id="j98Capture">{{JW-MORCEAU:scripts/049-j98capture.js}}</script>
+
+<script id="j99AudioCore">{{JW-MORCEAU:scripts/050-j99audiocore.js}}</script>
+<style id="j99Styles">{{JW-MORCEAU:styles/051-j99styles.css}}</style>
+<script id="j99AudioEditing">{{JW-MORCEAU:scripts/052-j99audioediting.js}}</script>
+
+<script id="j100RackCore">{{JW-MORCEAU:scripts/053-j100rackcore.js}}</script>
+<style id="j100Styles">{{JW-MORCEAU:styles/054-j100styles.css}}</style>
+<script id="j100Racks">{{JW-MORCEAU:scripts/055-j100racks.js}}</script>
+
+<script id="j101AutomationCore">{{JW-MORCEAU:scripts/056-j101automationcore.js}}</script>
+<style id="j101Styles">{{JW-MORCEAU:styles/057-j101styles.css}}</style>
+<script id="j101Automation">{{JW-MORCEAU:scripts/058-j101automation.js}}</script>
+
+<style id="j102Polish">{{JW-MORCEAU:styles/059-j102polish.css}}</style>
+<script id="j102PolishUI">{{JW-MORCEAU:scripts/060-j102polishui.js}}</script>
+
+<style id="j103Clean">{{JW-MORCEAU:styles/061-j103clean.css}}</style>
+<script id="j103CleanUI">{{JW-MORCEAU:scripts/062-j103cleanui.js}}</script>
+
+<style>{{JW-MORCEAU:styles/063-image-de-fond-1.css}}</style>
+<style id="j104Design">{{JW-MORCEAU:styles/064-j104design.css}}</style>
+<script id="j104DesignUI">{{JW-MORCEAU:scripts/065-j104designui.js}}</script>
+
+<style id="j104Final">{{JW-MORCEAU:styles/066-j104final.css}}</style>
+<style>{{JW-MORCEAU:styles/067-image-de-fond-2.css}}</style>
+<style id="j105Studio">{{JW-MORCEAU:styles/068-j105studio.css}}</style>
+<script id="j105StudioUI">{{JW-MORCEAU:scripts/069-j105studioui.js}}</script>
+
+<style id="j105Final">{{JW-MORCEAU:styles/070-j105final.css}}</style>
+<style id="j105MobileMenu">@media(max-width:950px){#j105PatternMenu{position:fixed!important;left:12px!important;right:12px!important;top:35vh!important;min-width:0!important;max-height:55vh!important;overflow:auto!important;z-index:2000!important}}</style>
+<style id="j105DrumStates">{{JW-MORCEAU:styles/071-j105drumstates.css}}</style>
+<style id="j106Workflow">{{JW-MORCEAU:styles/072-j106workflow.css}}</style>
+<script id="j106WorkflowUI">{{JW-MORCEAU:scripts/073-j106workflowui.js}}</script>
+
+<style id="j106VoiceFocus">
+body.j93Workspace #cVoices>.cTopline h2,body.j93Workspace #cWords>.cTopline h2{display:block!important}
+body.j93Workspace #cVoices #cCapacity{font-size:10px;color:#8fa9c8;margin:0}
+body.j93Workspace #dockStage.j93Voice:not(.j93Writing):not(.j93Prompt) #cWords #cPrompt{display:none!important}
+</style>
+<script id="j106VoiceFocusUI">{{JW-MORCEAU:scripts/074-j106voicefocusui.js}}</script>
+
+<style id="j107Organization">{{JW-MORCEAU:styles/075-j107organization.css}}</style>
+<script id="j107OrganizationUI">{{JW-MORCEAU:scripts/076-j107organizationui.js}}</script>
+
+<style id="j108Rooms">{{JW-MORCEAU:styles/077-j108rooms.css}}</style>
+<script id="j108RoomsUI">{{JW-MORCEAU:scripts/078-j108roomsui.js}}</script>
+
+<style id="j108GridPriority">{{JW-MORCEAU:styles/079-j108gridpriority.css}}</style>
+<style id="j108Panels">{{JW-MORCEAU:styles/080-j108panels.css}}</style><style>{{JW-MORCEAU:styles/081-tete-de-lecture-piano-roll.css}}</style>
+<script>{{JW-MORCEAU:scripts/082-regle-et-tete-de-lecture.js}}</script>
+<style>{{JW-MORCEAU:styles/083-voix-et-micro.css}}</style>
+<script>{{JW-MORCEAU:scripts/084-grille-des-voix.js}}</script>
+<style>{{JW-MORCEAU:styles/085-espace-organise.css}}</style>
+<script>{{JW-MORCEAU:scripts/086-menu-de-navigation.js}}</script>
+<style>{{JW-MORCEAU:styles/087-motifs-de-batterie.css}}</style>
+<style>{{JW-MORCEAU:styles/088-bibliotheque.css}}</style>
+<script>{{JW-MORCEAU:scripts/089-bibliotheque-de-sons.js}}</script>
+<style>{{JW-MORCEAU:styles/090-ajustements-scene-1.css}}</style>
+<style>{{JW-MORCEAU:styles/091-ajustements-scene-2.css}}</style>
+<style id="claude93Styles">{{JW-MORCEAU:styles/092-claude93styles.css}}</style><script id="claude93Module">{{JW-MORCEAU:scripts/093-claude93module.js}}</script><style id="claude115Styles">{{JW-MORCEAU:styles/094-claude115styles.css}}</style><script id="claude115Module">{{JW-MORCEAU:scripts/095-claude115module.js}}</script><style id="claude116Styles">{{JW-MORCEAU:styles/096-claude116styles.css}}</style><script id="claude116Module">{{JW-MORCEAU:scripts/097-claude116module.js}}</script>
+<style id="claude117Styles">{{JW-MORCEAU:styles/098-claude117styles.css}}</style><script id="claude117Module">{{JW-MORCEAU:scripts/099-claude117module.js}}</script>
+<style id="claude118Styles">{{JW-MORCEAU:styles/100-claude118styles.css}}</style><script id="claude118Module">{{JW-MORCEAU:scripts/101-claude118module.js}}</script>
+<style id="claude119Styles">{{JW-MORCEAU:styles/102-claude119styles.css}}</style><script id="claude119Module">{{JW-MORCEAU:scripts/103-claude119module.js}}</script>
+<style id="claude120Styles">{{JW-MORCEAU:styles/104-claude120styles.css}}</style><script id="claude120Module">{{JW-MORCEAU:scripts/105-claude120module.js}}</script>
+<style id="claude121Styles">{{JW-MORCEAU:styles/106-claude121styles.css}}</style><script id="claude121Module">{{JW-MORCEAU:scripts/107-claude121module.js}}</script>
+<script id="claude122Module">{{JW-MORCEAU:scripts/108-claude122module.js}}</script>
+<style id="claude123Styles">{{JW-MORCEAU:styles/109-claude123styles.css}}</style>
+<style id="claude124Styles">{{JW-MORCEAU:styles/110-claude124styles.css}}</style><script id="claude124Module">{{JW-MORCEAU:scripts/111-claude124module.js}}</script>
+<style id="c128Styles">{{JW-MORCEAU:styles/112-c128styles.css}}</style>
+<script id="c128Montage">{{JW-MORCEAU:scripts/113-c128montage.js}}</script>
+<script id="c129Notes">{{JW-MORCEAU:scripts/114-c129notes.js}}</script>
+<style id="c130Styles">{{JW-MORCEAU:styles/115-c130styles.css}}</style>
+<script id="c130Sampler">{{JW-MORCEAU:scripts/116-c130sampler.js}}</script>
+<style id="c133Style">{{JW-MORCEAU:styles/117-c133style.css}}</style>
+<script id="c133Apercu">{{JW-MORCEAU:scripts/118-c133apercu.js}}</script>
+<style id="c134Style">{{JW-MORCEAU:styles/119-c134style.css}}</style>
+<script id="c134Mark">window.JACK22_STYLE134={version:'11.5-claude-6.4-retouches'};</script>
+<style id="c136Style">{{JW-MORCEAU:styles/120-c136style.css}}</style>
+<script id="c136Script">{{JW-MORCEAU:scripts/121-c136script.js}}</script>
+<script id="jack22C137NotesDebut">{{JW-MORCEAU:scripts/122-jack22c137notesdebut.js}}</script>
+<style id="jack22C138Styles">{{JW-MORCEAU:styles/123-jack22c138styles.css}}</style>
+<script id="jack22C138HorlogeCrete">{{JW-MORCEAU:scripts/124-jack22c138horlogecrete.js}}</script>
+<script id="jack22C139ExportLong">{{JW-MORCEAU:scripts/125-jack22c139exportlong.js}}</script>
+<style id="jack22C140Styles">
+#j140Snap{display:inline-flex;align-items:center;gap:4px;margin-left:6px}
+#j140Snap button[aria-pressed="true"]{color:#fff!important;background:var(--red,#cf2f3b)!important;border-color:var(--red,#cf2f3b)!important}
+#j140Snap select{font-size:11px;width:auto;min-width:64px;max-width:none}
+</style>
+<script id="jack22C140GrilleAimant">{{JW-MORCEAU:scripts/126-jack22c140grilleaimant.js}}</script>
+<script id="jack22C141Clips">{{JW-MORCEAU:scripts/127-jack22c141clips.js}}</script>
+<!--
+Encodeur MP3 intégré : lamejs 1.2.1 (https://github.com/zhuker/lamejs), portage JavaScript de LAME (https://lame.sourceforge.net).
+Licence : GNU LGPL 3.0 (voir la notice complète en fin de fichier). Le code ci-dessous est la version publiée sur npm
+(lame.min.js, paquet lamejs@1.2.1, intégrité sha512-s7bxvjvYthw6oPLCm5pFxvA84wUROODB8jEO2+CE1adhKgrIvVOlmMgY8zyugxGrvRaDHNJanOiS21/emty6dQ==),
+sans aucune modification. Copie conforme du bloc de J-DJ M4 (même texte, empreinte vérifiée). Il est isolé dans ce bloc et peut être remplacé par une autre version de lame.min.js.
+-->
+<script type="text/plain" id="lamejs-src">{{JW-MORCEAU:scripts/128-lamejs-src.txt}}</script>
+<!--
+Encodeur MP3 : lamejs 1.2.1 – Copyright (c) zhuker et contributeurs, portage de LAME – Copyright (c) les auteurs de LAME
+(https://lame.sourceforge.net). Distribué sous GNU LGPL 3.0. Le code de lamejs est inclus sans modification dans le bloc
+bloc « lamejs-src » (balise script de type texte, placée avant le script principal) : on peut le remplacer par une autre version compatible sans toucher au reste de J-DJ.
+J-DJ lui-même n'est pas sous LGPL ; il utilise lamejs comme une bibliothèque séparée, chargée dans un Worker au moment de l'export MP3.
+
+Fichier LICENSE du paquet lamejs :
+Can I use LAME in my commercial program?  
+
+Yes, you can, under the restrictions of the LGPL.  The easiest
+way to do this is to:
+
+1. Link to LAME as separate jar (lame.min.js or lame.all.js)
+
+2. Fully acknowledge that you are using LAME, and give a link
+   to our web site, lame.sourceforge.net
+
+3. If you make modifications to LAME, you *must* release these
+   these modifications back to the LAME project, under the LGPL.
+
+-----------------------------------------------------------
+                   GNU LESSER GENERAL PUBLIC LICENSE
+                       Version 3, 29 June 2007
+
+ Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+
+
+  This version of the GNU Lesser General Public License incorporates
+the terms and conditions of version 3 of the GNU General Public
+License, supplemented by the additional permissions listed below.
+
+  0. Additional Definitions.
+
+  As used herein, "this License" refers to version 3 of the GNU Lesser
+General Public License, and the "GNU GPL" refers to version 3 of the GNU
+General Public License.
+
+  "The Library" refers to a covered work governed by this License,
+other than an Application or a Combined Work as defined below.
+
+  An "Application" is any work that makes use of an interface provided
+by the Library, but which is not otherwise based on the Library.
+Defining a subclass of a class defined by the Library is deemed a mode
+of using an interface provided by the Library.
+
+  A "Combined Work" is a work produced by combining or linking an
+Application with the Library.  The particular version of the Library
+with which the Combined Work was made is also called the "Linked
+Version".
+
+  The "Minimal Corresponding Source" for a Combined Work means the
+Corresponding Source for the Combined Work, excluding any source code
+for portions of the Combined Work that, considered in isolation, are
+based on the Application, and not on the Linked Version.
+
+  The "Corresponding Application Code" for a Combined Work means the
+object code and/or source code for the Application, including any data
+and utility programs needed for reproducing the Combined Work from the
+Application, but excluding the System Libraries of the Combined Work.
+
+  1. Exception to Section 3 of the GNU GPL.
+
+  You may convey a covered work under sections 3 and 4 of this License
+without being bound by section 3 of the GNU GPL.
+
+  2. Conveying Modified Versions.
+
+  If you modify a copy of the Library, and, in your modifications, a
+facility refers to a function or data to be supplied by an Application
+that uses the facility (other than as an argument passed when the
+facility is invoked), then you may convey a copy of the modified
+version:
+
+   a) under this License, provided that you make a good faith effort to
+   ensure that, in the event an Application does not supply the
+   function or data, the facility still operates, and performs
+   whatever part of its purpose remains meaningful, or
+
+   b) under the GNU GPL, with none of the additional permissions of
+   this License applicable to that copy.
+
+  3. Object Code Incorporating Material from Library Header Files.
+
+  The object code form of an Application may incorporate material from
+a header file that is part of the Library.  You may convey such object
+code under terms of your choice, provided that, if the incorporated
+material is not limited to numerical parameters, data structure
+layouts and accessors, or small macros, inline functions and templates
+(ten or fewer lines in length), you do both of the following:
+
+   a) Give prominent notice with each copy of the object code that the
+   Library is used in it and that the Library and its use are
+   covered by this License.
+
+   b) Accompany the object code with a copy of the GNU GPL and this license
+   document.
+
+  4. Combined Works.
+
+  You may convey a Combined Work under terms of your choice that,
+taken together, effectively do not restrict modification of the
+portions of the Library contained in the Combined Work and reverse
+engineering for debugging such modifications, if you also do each of
+the following:
+
+   a) Give prominent notice with each copy of the Combined Work that
+   the Library is used in it and that the Library and its use are
+   covered by this License.
+
+   b) Accompany the Combined Work with a copy of the GNU GPL and this license
+   document.
+
+   c) For a Combined Work that displays copyright notices during
+   execution, include the copyright notice for the Library among
+   these notices, as well as a reference directing the user to the
+   copies of the GNU GPL and this license document.
+
+   d) Do one of the following:
+
+       0) Convey the Minimal Corresponding Source under the terms of this
+       License, and the Corresponding Application Code in a form
+       suitable for, and under terms that permit, the user to
+       recombine or relink the Application with a modified version of
+       the Linked Version to produce a modified Combined Work, in the
+       manner specified by section 6 of the GNU GPL for conveying
+       Corresponding Source.
+
+       1) Use a suitable shared library mechanism for linking with the
+       Library.  A suitable mechanism is one that (a) uses at run time
+       a copy of the Library already present on the user's computer
+       system, and (b) will operate properly with a modified version
+       of the Library that is interface-compatible with the Linked
+       Version.
+
+   e) Provide Installation Information, but only if you would otherwise
+   be required to provide such information under section 6 of the
+   GNU GPL, and only to the extent that such information is
+   necessary to install and execute a modified version of the
+   Combined Work produced by recombining or relinking the
+   Application with a modified version of the Linked Version. (If
+   you use option 4d0, the Installation Information must accompany
+   the Minimal Corresponding Source and Corresponding Application
+   Code. If you use option 4d1, you must provide the Installation
+   Information in the manner specified by section 6 of the GNU GPL
+   for conveying Corresponding Source.)
+
+  5. Combined Libraries.
+
+  You may place library facilities that are a work based on the
+Library side by side in a single library together with other library
+facilities that are not Applications and are not covered by this
+License, and convey such a combined library under terms of your
+choice, if you do both of the following:
+
+   a) Accompany the combined library with a copy of the same work based
+   on the Library, uncombined with any other library facilities,
+   conveyed under the terms of this License.
+
+   b) Give prominent notice with the combined library that part of it
+   is a work based on the Library, and explaining where to find the
+   accompanying uncombined form of the same work.
+
+  6. Revised Versions of the GNU Lesser General Public License.
+
+  The Free Software Foundation may publish revised and/or new versions
+of the GNU Lesser General Public License from time to time. Such new
+versions will be similar in spirit to the present version, but may
+differ in detail to address new problems or concerns.
+
+  Each version is given a distinguishing version number. If the
+Library as you received it specifies that a certain numbered version
+of the GNU Lesser General Public License "or any later version"
+applies to it, you have the option of following the terms and
+conditions either of that published version or of any later version
+published by the Free Software Foundation. If the Library as you
+received it does not specify a version number of the GNU Lesser
+General Public License, you may choose any version of the GNU Lesser
+General Public License ever published by the Free Software Foundation.
+
+  If the Library as you received it specifies that a proxy can decide
+whether future versions of the GNU Lesser General Public License shall
+apply, that proxy's public statement of acceptance of any version is
+permanent authorization for you to choose that version for the
+Library.
+
+-----------------------------------------------------------
+                    GNU GENERAL PUBLIC LICENSE
+                       Version 3, 29 June 2007
+
+ Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+
+                            Preamble
+
+  The GNU General Public License is a free, copyleft license for
+software and other kinds of works.
+
+  The licenses for most software and other practical works are designed
+to take away your freedom to share and change the works.  By contrast,
+the GNU General Public License is intended to guarantee your freedom to
+share and change all versions of a program--to make sure it remains free
+software for all its users.  We, the Free Software Foundation, use the
+GNU General Public License for most of our software; it applies also to
+any other work released this way by its authors.  You can apply it to
+your programs, too.
+
+  When we speak of free software, we are referring to freedom, not
+price.  Our General Public Licenses are designed to make sure that you
+have the freedom to distribute copies of free software (and charge for
+them if you wish), that you receive source code or can get it if you
+want it, that you can change the software or use pieces of it in new
+free programs, and that you know you can do these things.
+
+  To protect your rights, we need to prevent others from denying you
+these rights or asking you to surrender the rights.  Therefore, you have
+certain responsibilities if you distribute copies of the software, or if
+you modify it: responsibilities to respect the freedom of others.
+
+  For example, if you distribute copies of such a program, whether
+gratis or for a fee, you must pass on to the recipients the same
+freedoms that you received.  You must make sure that they, too, receive
+or can get the source code.  And you must show them these terms so they
+know their rights.
+
+  Developers that use the GNU GPL protect your rights with two steps:
+(1) assert copyright on the software, and (2) offer you this License
+giving you legal permission to copy, distribute and/or modify it.
+
+  For the developers' and authors' protection, the GPL clearly explains
+that there is no warranty for this free software.  For both users' and
+authors' sake, the GPL requires that modified versions be marked as
+changed, so that their problems will not be attributed erroneously to
+authors of previous versions.
+
+  Some devices are designed to deny users access to install or run
+modified versions of the software inside them, although the manufacturer
+can do so.  This is fundamentally incompatible with the aim of
+protecting users' freedom to change the software.  The systematic
+pattern of such abuse occurs in the area of products for individuals to
+use, which is precisely where it is most unacceptable.  Therefore, we
+have designed this version of the GPL to prohibit the practice for those
+products.  If such problems arise substantially in other domains, we
+stand ready to extend this provision to those domains in future versions
+of the GPL, as needed to protect the freedom of users.
+
+  Finally, every program is threatened constantly by software patents.
+States should not allow patents to restrict development and use of
+software on general-purpose computers, but in those that do, we wish to
+avoid the special danger that patents applied to a free program could
+make it effectively proprietary.  To prevent this, the GPL assures that
+patents cannot be used to render the program non-free.
+
+  The precise terms and conditions for copying, distribution and
+modification follow.
+
+                       TERMS AND CONDITIONS
+
+  0. Definitions.
+
+  "This License" refers to version 3 of the GNU General Public License.
+
+  "Copyright" also means copyright-like laws that apply to other kinds of
+works, such as semiconductor masks.
+
+  "The Program" refers to any copyrightable work licensed under this
+License.  Each licensee is addressed as "you".  "Licensees" and
+"recipients" may be individuals or organizations.
+
+  To "modify" a work means to copy from or adapt all or part of the work
+in a fashion requiring copyright permission, other than the making of an
+exact copy.  The resulting work is called a "modified version" of the
+earlier work or a work "based on" the earlier work.
+
+  A "covered work" means either the unmodified Program or a work based
+on the Program.
+
+  To "propagate" a work means to do anything with it that, without
+permission, would make you directly or secondarily liable for
+infringement under applicable copyright law, except executing it on a
+computer or modifying a private copy.  Propagation includes copying,
+distribution (with or without modification), making available to the
+public, and in some countries other activities as well.
+
+  To "convey" a work means any kind of propagation that enables other
+parties to make or receive copies.  Mere interaction with a user through
+a computer network, with no transfer of a copy, is not conveying.
+
+  An interactive user interface displays "Appropriate Legal Notices"
+to the extent that it includes a convenient and prominently visible
+feature that (1) displays an appropriate copyright notice, and (2)
+tells the user that there is no warranty for the work (except to the
+extent that warranties are provided), that licensees may convey the
+work under this License, and how to view a copy of this License.  If
+the interface presents a list of user commands or options, such as a
+menu, a prominent item in the list meets this criterion.
+
+  1. Source Code.
+
+  The "source code" for a work means the preferred form of the work
+for making modifications to it.  "Object code" means any non-source
+form of a work.
+
+  A "Standard Interface" means an interface that either is an official
+standard defined by a recognized standards body, or, in the case of
+interfaces specified for a particular programming language, one that
+is widely used among developers working in that language.
+
+  The "System Libraries" of an executable work include anything, other
+than the work as a whole, that (a) is included in the normal form of
+packaging a Major Component, but which is not part of that Major
+Component, and (b) serves only to enable use of the work with that
+Major Component, or to implement a Standard Interface for which an
+implementation is available to the public in source code form.  A
+"Major Component", in this context, means a major essential component
+(kernel, window system, and so on) of the specific operating system
+(if any) on which the executable work runs, or a compiler used to
+produce the work, or an object code interpreter used to run it.
+
+  The "Corresponding Source" for a work in object code form means all
+the source code needed to generate, install, and (for an executable
+work) run the object code and to modify the work, including scripts to
+control those activities.  However, it does not include the work's
+System Libraries, or general-purpose tools or generally available free
+programs which are used unmodified in performing those activities but
+which are not part of the work.  For example, Corresponding Source
+includes interface definition files associated with source files for
+the work, and the source code for shared libraries and dynamically
+linked subprograms that the work is specifically designed to require,
+such as by intimate data communication or control flow between those
+subprograms and other parts of the work.
+
+  The Corresponding Source need not include anything that users
+can regenerate automatically from other parts of the Corresponding
+Source.
+
+  The Corresponding Source for a work in source code form is that
+same work.
+
+  2. Basic Permissions.
+
+  All rights granted under this License are granted for the term of
+copyright on the Program, and are irrevocable provided the stated
+conditions are met.  This License explicitly affirms your unlimited
+permission to run the unmodified Program.  The output from running a
+covered work is covered by this License only if the output, given its
+content, constitutes a covered work.  This License acknowledges your
+rights of fair use or other equivalent, as provided by copyright law.
+
+  You may make, run and propagate covered works that you do not
+convey, without conditions so long as your license otherwise remains
+in force.  You may convey covered works to others for the sole purpose
+of having them make modifications exclusively for you, or provide you
+with facilities for running those works, provided that you comply with
+the terms of this License in conveying all material for which you do
+not control copyright.  Those thus making or running the covered works
+for you must do so exclusively on your behalf, under your direction
+and control, on terms that prohibit them from making any copies of
+your copyrighted material outside their relationship with you.
+
+  Conveying under any other circumstances is permitted solely under
+the conditions stated below.  Sublicensing is not allowed; section 10
+makes it unnecessary.
+
+  3. Protecting Users' Legal Rights From Anti-Circumvention Law.
+
+  No covered work shall be deemed part of an effective technological
+measure under any applicable law fulfilling obligations under article
+11 of the WIPO copyright treaty adopted on 20 December 1996, or
+similar laws prohibiting or restricting circumvention of such
+measures.
+
+  When you convey a covered work, you waive any legal power to forbid
+circumvention of technological measures to the extent such circumvention
+is effected by exercising rights under this License with respect to
+the covered work, and you disclaim any intention to limit operation or
+modification of the work as a means of enforcing, against the work's
+users, your or third parties' legal rights to forbid circumvention of
+technological measures.
+
+  4. Conveying Verbatim Copies.
+
+  You may convey verbatim copies of the Program's source code as you
+receive it, in any medium, provided that you conspicuously and
+appropriately publish on each copy an appropriate copyright notice;
+keep intact all notices stating that this License and any
+non-permissive terms added in accord with section 7 apply to the code;
+keep intact all notices of the absence of any warranty; and give all
+recipients a copy of this License along with the Program.
+
+  You may charge any price or no price for each copy that you convey,
+and you may offer support or warranty protection for a fee.
+
+  5. Conveying Modified Source Versions.
+
+  You may convey a work based on the Program, or the modifications to
+produce it from the Program, in the form of source code under the
+terms of section 4, provided that you also meet all of these conditions:
+
+    a) The work must carry prominent notices stating that you modified
+    it, and giving a relevant date.
+
+    b) The work must carry prominent notices stating that it is
+    released under this License and any conditions added under section
+    7.  This requirement modifies the requirement in section 4 to
+    "keep intact all notices".
+
+    c) You must license the entire work, as a whole, under this
+    License to anyone who comes into possession of a copy.  This
+    License will therefore apply, along with any applicable section 7
+    additional terms, to the whole of the work, and all its parts,
+    regardless of how they are packaged.  This License gives no
+    permission to license the work in any other way, but it does not
+    invalidate such permission if you have separately received it.
+
+    d) If the work has interactive user interfaces, each must display
+    Appropriate Legal Notices; however, if the Program has interactive
+    interfaces that do not display Appropriate Legal Notices, your
+    work need not make them do so.
+
+  A compilation of a covered work with other separate and independent
+works, which are not by their nature extensions of the covered work,
+and which are not combined with it such as to form a larger program,
+in or on a volume of a storage or distribution medium, is called an
+"aggregate" if the compilation and its resulting copyright are not
+used to limit the access or legal rights of the compilation's users
+beyond what the individual works permit.  Inclusion of a covered work
+in an aggregate does not cause this License to apply to the other
+parts of the aggregate.
+
+  6. Conveying Non-Source Forms.
+
+  You may convey a covered work in object code form under the terms
+of sections 4 and 5, provided that you also convey the
+machine-readable Corresponding Source under the terms of this License,
+in one of these ways:
+
+    a) Convey the object code in, or embodied in, a physical product
+    (including a physical distribution medium), accompanied by the
+    Corresponding Source fixed on a durable physical medium
+    customarily used for software interchange.
+
+    b) Convey the object code in, or embodied in, a physical product
+    (including a physical distribution medium), accompanied by a
+    written offer, valid for at least three years and valid for as
+    long as you offer spare parts or customer support for that product
+    model, to give anyone who possesses the object code either (1) a
+    copy of the Corresponding Source for all the software in the
+    product that is covered by this License, on a durable physical
+    medium customarily used for software interchange, for a price no
+    more than your reasonable cost of physically performing this
+    conveying of source, or (2) access to copy the
+    Corresponding Source from a network server at no charge.
+
+    c) Convey individual copies of the object code with a copy of the
+    written offer to provide the Corresponding Source.  This
+    alternative is allowed only occasionally and noncommercially, and
+    only if you received the object code with such an offer, in accord
+    with subsection 6b.
+
+    d) Convey the object code by offering access from a designated
+    place (gratis or for a charge), and offer equivalent access to the
+    Corresponding Source in the same way through the same place at no
+    further charge.  You need not require recipients to copy the
+    Corresponding Source along with the object code.  If the place to
+    copy the object code is a network server, the Corresponding Source
+    may be on a different server (operated by you or a third party)
+    that supports equivalent copying facilities, provided you maintain
+    clear directions next to the object code saying where to find the
+    Corresponding Source.  Regardless of what server hosts the
+    Corresponding Source, you remain obligated to ensure that it is
+    available for as long as needed to satisfy these requirements.
+
+    e) Convey the object code using peer-to-peer transmission, provided
+    you inform other peers where the object code and Corresponding
+    Source of the work are being offered to the general public at no
+    charge under subsection 6d.
+
+  A separable portion of the object code, whose source code is excluded
+from the Corresponding Source as a System Library, need not be
+included in conveying the object code work.
+
+  A "User Product" is either (1) a "consumer product", which means any
+tangible personal property which is normally used for personal, family,
+or household purposes, or (2) anything designed or sold for incorporation
+into a dwelling.  In determining whether a product is a consumer product,
+doubtful cases shall be resolved in favor of coverage.  For a particular
+product received by a particular user, "normally used" refers to a
+typical or common use of that class of product, regardless of the status
+of the particular user or of the way in which the particular user
+actually uses, or expects or is expected to use, the product.  A product
+is a consumer product regardless of whether the product has substantial
+commercial, industrial or non-consumer uses, unless such uses represent
+the only significant mode of use of the product.
+
+  "Installation Information" for a User Product means any methods,
+procedures, authorization keys, or other information required to install
+and execute modified versions of a covered work in that User Product from
+a modified version of its Corresponding Source.  The information must
+suffice to ensure that the continued functioning of the modified object
+code is in no case prevented or interfered with solely because
+modification has been made.
+
+  If you convey an object code work under this section in, or with, or
+specifically for use in, a User Product, and the conveying occurs as
+part of a transaction in which the right of possession and use of the
+User Product is transferred to the recipient in perpetuity or for a
+fixed term (regardless of how the transaction is characterized), the
+Corresponding Source conveyed under this section must be accompanied
+by the Installation Information.  But this requirement does not apply
+if neither you nor any third party retains the ability to install
+modified object code on the User Product (for example, the work has
+been installed in ROM).
+
+  The requirement to provide Installation Information does not include a
+requirement to continue to provide support service, warranty, or updates
+for a work that has been modified or installed by the recipient, or for
+the User Product in which it has been modified or installed.  Access to a
+network may be denied when the modification itself materially and
+adversely affects the operation of the network or violates the rules and
+protocols for communication across the network.
+
+  Corresponding Source conveyed, and Installation Information provided,
+in accord with this section must be in a format that is publicly
+documented (and with an implementation available to the public in
+source code form), and must require no special password or key for
+unpacking, reading or copying.
+
+  7. Additional Terms.
+
+  "Additional permissions" are terms that supplement the terms of this
+License by making exceptions from one or more of its conditions.
+Additional permissions that are applicable to the entire Program shall
+be treated as though they were included in this License, to the extent
+that they are valid under applicable law.  If additional permissions
+apply only to part of the Program, that part may be used separately
+under those permissions, but the entire Program remains governed by
+this License without regard to the additional permissions.
+
+  When you convey a copy of a covered work, you may at your option
+remove any additional permissions from that copy, or from any part of
+it.  (Additional permissions may be written to require their own
+removal in certain cases when you modify the work.)  You may place
+additional permissions on material, added by you to a covered work,
+for which you have or can give appropriate copyright permission.
+
+  Notwithstanding any other provision of this License, for material you
+add to a covered work, you may (if authorized by the copyright holders of
+that material) supplement the terms of this License with terms:
+
+    a) Disclaiming warranty or limiting liability differently from the
+    terms of sections 15 and 16 of this License; or
+
+    b) Requiring preservation of specified reasonable legal notices or
+    author attributions in that material or in the Appropriate Legal
+    Notices displayed by works containing it; or
+
+    c) Prohibiting misrepresentation of the origin of that material, or
+    requiring that modified versions of such material be marked in
+    reasonable ways as different from the original version; or
+
+    d) Limiting the use for publicity purposes of names of licensors or
+    authors of the material; or
+
+    e) Declining to grant rights under trademark law for use of some
+    trade names, trademarks, or service marks; or
+
+    f) Requiring indemnification of licensors and authors of that
+    material by anyone who conveys the material (or modified versions of
+    it) with contractual assumptions of liability to the recipient, for
+    any liability that these contractual assumptions directly impose on
+    those licensors and authors.
+
+  All other non-permissive additional terms are considered "further
+restrictions" within the meaning of section 10.  If the Program as you
+received it, or any part of it, contains a notice stating that it is
+governed by this License along with a term that is a further
+restriction, you may remove that term.  If a license document contains
+a further restriction but permits relicensing or conveying under this
+License, you may add to a covered work material governed by the terms
+of that license document, provided that the further restriction does
+not survive such relicensing or conveying.
+
+  If you add terms to a covered work in accord with this section, you
+must place, in the relevant source files, a statement of the
+additional terms that apply to those files, or a notice indicating
+where to find the applicable terms.
+
+  Additional terms, permissive or non-permissive, may be stated in the
+form of a separately written license, or stated as exceptions;
+the above requirements apply either way.
+
+  8. Termination.
+
+  You may not propagate or modify a covered work except as expressly
+provided under this License.  Any attempt otherwise to propagate or
+modify it is void, and will automatically terminate your rights under
+this License (including any patent licenses granted under the third
+paragraph of section 11).
+
+  However, if you cease all violation of this License, then your
+license from a particular copyright holder is reinstated (a)
+provisionally, unless and until the copyright holder explicitly and
+finally terminates your license, and (b) permanently, if the copyright
+holder fails to notify you of the violation by some reasonable means
+prior to 60 days after the cessation.
+
+  Moreover, your license from a particular copyright holder is
+reinstated permanently if the copyright holder notifies you of the
+violation by some reasonable means, this is the first time you have
+received notice of violation of this License (for any work) from that
+copyright holder, and you cure the violation prior to 30 days after
+your receipt of the notice.
+
+  Termination of your rights under this section does not terminate the
+licenses of parties who have received copies or rights from you under
+this License.  If your rights have been terminated and not permanently
+reinstated, you do not qualify to receive new licenses for the same
+material under section 10.
+
+  9. Acceptance Not Required for Having Copies.
+
+  You are not required to accept this License in order to receive or
+run a copy of the Program.  Ancillary propagation of a covered work
+occurring solely as a consequence of using peer-to-peer transmission
+to receive a copy likewise does not require acceptance.  However,
+nothing other than this License grants you permission to propagate or
+modify any covered work.  These actions infringe copyright if you do
+not accept this License.  Therefore, by modifying or propagating a
+covered work, you indicate your acceptance of this License to do so.
+
+  10. Automatic Licensing of Downstream Recipients.
+
+  Each time you convey a covered work, the recipient automatically
+receives a license from the original licensors, to run, modify and
+propagate that work, subject to this License.  You are not responsible
+for enforcing compliance by third parties with this License.
+
+  An "entity transaction" is a transaction transferring control of an
+organization, or substantially all assets of one, or subdividing an
+organization, or merging organizations.  If propagation of a covered
+work results from an entity transaction, each party to that
+transaction who receives a copy of the work also receives whatever
+licenses to the work the party's predecessor in interest had or could
+give under the previous paragraph, plus a right to possession of the
+Corresponding Source of the work from the predecessor in interest, if
+the predecessor has it or can get it with reasonable efforts.
+
+  You may not impose any further restrictions on the exercise of the
+rights granted or affirmed under this License.  For example, you may
+not impose a license fee, royalty, or other charge for exercise of
+rights granted under this License, and you may not initiate litigation
+(including a cross-claim or counterclaim in a lawsuit) alleging that
+any patent claim is infringed by making, using, selling, offering for
+sale, or importing the Program or any portion of it.
+
+  11. Patents.
+
+  A "contributor" is a copyright holder who authorizes use under this
+License of the Program or a work on which the Program is based.  The
+work thus licensed is called the contributor's "contributor version".
+
+  A contributor's "essential patent claims" are all patent claims
+owned or controlled by the contributor, whether already acquired or
+hereafter acquired, that would be infringed by some manner, permitted
+by this License, of making, using, or selling its contributor version,
+but do not include claims that would be infringed only as a
+consequence of further modification of the contributor version.  For
+purposes of this definition, "control" includes the right to grant
+patent sublicenses in a manner consistent with the requirements of
+this License.
+
+  Each contributor grants you a non-exclusive, worldwide, royalty-free
+patent license under the contributor's essential patent claims, to
+make, use, sell, offer for sale, import and otherwise run, modify and
+propagate the contents of its contributor version.
+
+  In the following three paragraphs, a "patent license" is any express
+agreement or commitment, however denominated, not to enforce a patent
+(such as an express permission to practice a patent or covenant not to
+sue for patent infringement).  To "grant" such a patent license to a
+party means to make such an agreement or commitment not to enforce a
+patent against the party.
+
+  If you convey a covered work, knowingly relying on a patent license,
+and the Corresponding Source of the work is not available for anyone
+to copy, free of charge and under the terms of this License, through a
+publicly available network server or other readily accessible means,
+then you must either (1) cause the Corresponding Source to be so
+available, or (2) arrange to deprive yourself of the benefit of the
+patent license for this particular work, or (3) arrange, in a manner
+consistent with the requirements of this License, to extend the patent
+license to downstream recipients.  "Knowingly relying" means you have
+actual knowledge that, but for the patent license, your conveying the
+covered work in a country, or your recipient's use of the covered work
+in a country, would infringe one or more identifiable patents in that
+country that you have reason to believe are valid.
+
+  If, pursuant to or in connection with a single transaction or
+arrangement, you convey, or propagate by procuring conveyance of, a
+covered work, and grant a patent license to some of the parties
+receiving the covered work authorizing them to use, propagate, modify
+or convey a specific copy of the covered work, then the patent license
+you grant is automatically extended to all recipients of the covered
+work and works based on it.
+
+  A patent license is "discriminatory" if it does not include within
+the scope of its coverage, prohibits the exercise of, or is
+conditioned on the non-exercise of one or more of the rights that are
+specifically granted under this License.  You may not convey a covered
+work if you are a party to an arrangement with a third party that is
+in the business of distributing software, under which you make payment
+to the third party based on the extent of your activity of conveying
+the work, and under which the third party grants, to any of the
+parties who would receive the covered work from you, a discriminatory
+patent license (a) in connection with copies of the covered work
+conveyed by you (or copies made from those copies), or (b) primarily
+for and in connection with specific products or compilations that
+contain the covered work, unless you entered into that arrangement,
+or that patent license was granted, prior to 28 March 2007.
+
+  Nothing in this License shall be construed as excluding or limiting
+any implied license or other defenses to infringement that may
+otherwise be available to you under applicable patent law.
+
+  12. No Surrender of Others' Freedom.
+
+  If conditions are imposed on you (whether by court order, agreement or
+otherwise) that contradict the conditions of this License, they do not
+excuse you from the conditions of this License.  If you cannot convey a
+covered work so as to satisfy simultaneously your obligations under this
+License and any other pertinent obligations, then as a consequence you may
+not convey it at all.  For example, if you agree to terms that obligate you
+to collect a royalty for further conveying from those to whom you convey
+the Program, the only way you could satisfy both those terms and this
+License would be to refrain entirely from conveying the Program.
+
+  13. Use with the GNU Affero General Public License.
+
+  Notwithstanding any other provision of this License, you have
+permission to link or combine any covered work with a work licensed
+under version 3 of the GNU Affero General Public License into a single
+combined work, and to convey the resulting work.  The terms of this
+License will continue to apply to the part which is the covered work,
+but the special requirements of the GNU Affero General Public License,
+section 13, concerning interaction through a network will apply to the
+combination as such.
+
+  14. Revised Versions of this License.
+
+  The Free Software Foundation may publish revised and/or new versions of
+the GNU General Public License from time to time.  Such new versions will
+be similar in spirit to the present version, but may differ in detail to
+address new problems or concerns.
+
+  Each version is given a distinguishing version number.  If the
+Program specifies that a certain numbered version of the GNU General
+Public License "or any later version" applies to it, you have the
+option of following the terms and conditions either of that numbered
+version or of any later version published by the Free Software
+Foundation.  If the Program does not specify a version number of the
+GNU General Public License, you may choose any version ever published
+by the Free Software Foundation.
+
+  If the Program specifies that a proxy can decide which future
+versions of the GNU General Public License can be used, that proxy's
+public statement of acceptance of a version permanently authorizes you
+to choose that version for the Program.
+
+  Later license versions may give you additional or different
+permissions.  However, no additional obligations are imposed on any
+author or copyright holder as a result of your choosing to follow a
+later version.
+
+  15. Disclaimer of Warranty.
+
+  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
+APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
+HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY
+OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM
+IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF
+ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+
+  16. Limitation of Liability.
+
+  IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS
+THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY
+GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE
+USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF
+DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD
+PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),
+EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGES.
+
+  17. Interpretation of Sections 15 and 16.
+
+  If the disclaimer of warranty and limitation of liability provided
+above cannot be given local legal effect according to their terms,
+reviewing courts shall apply local law that most closely approximates
+an absolute waiver of all civil liability in connection with the
+Program, unless a warranty or assumption of liability accompanies a
+copy of the Program in return for a fee.
+
+                     END OF TERMS AND CONDITIONS
+
+            How to Apply These Terms to Your New Programs
+
+  If you develop a new program, and you want it to be of the greatest
+possible use to the public, the best way to achieve this is to make it
+free software which everyone can redistribute and change under these terms.
+
+  To do so, attach the following notices to the program.  It is safest
+to attach them to the start of each source file to most effectively
+state the exclusion of warranty; and each file should have at least
+the "copyright" line and a pointer to where the full notice is found.
+
+    <one line to give the program's name and a brief idea of what it does.>
+    Copyright (C) <year>  <name of author>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+Also add information on how to contact you by electronic and paper mail.
+
+  If the program does terminal interaction, make it output a short
+notice like this when it starts in an interactive mode:
+
+    <program>  Copyright (C) <year>  <name of author>
+    This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+    This is free software, and you are welcome to redistribute it
+    under certain conditions; type `show c' for details.
+
+The hypothetical commands `show w' and `show c' should show the appropriate
+parts of the General Public License.  Of course, your program's commands
+might be different; for a GUI interface, you would use an "about box".
+
+  You should also get your employer (if you work as a programmer) or school,
+if any, to sign a "copyright disclaimer" for the program, if necessary.
+For more information on this, and how to apply and follow the GNU GPL, see
+<https://www.gnu.org/licenses/>.
+
+  The GNU General Public License does not permit incorporating your program
+into proprietary programs.  If your program is a subroutine library, you
+may consider it more useful to permit linking proprietary applications with
+the library.  If this is what you want to do, use the GNU Lesser General
+Public License instead of this License.  But first, please read
+<https://www.gnu.org/licenses/why-not-lgpl.html>.
+
+-->
+<style id="jack22C142Styles">
+#j142Mp3{display:inline-flex;gap:6px;align-items:center;margin-left:8px}
+#j142Mp3 select{font-size:11px}
+</style>
+<script id="jack22C142Mp3">{{JW-MORCEAU:scripts/129-jack22c142mp3.js}}</script>
+<style id="jack22C143MontageStyle">{{JW-MORCEAU:styles/130-jack22c143montagestyle.css}}</style>
+<script id="jack22C143Montage">{{JW-MORCEAU:scripts/131-jack22c143montage.js}}</script>
+<style id="c145Style">{{JW-MORCEAU:styles/132-c145style.css}}</style>
+<script id="c145Script">{{JW-MORCEAU:scripts/133-c145script.js}}</script>
+<style id="c146Style">{{JW-MORCEAU:styles/134-c146style.css}}</style>
+<script id="c146Script">{{JW-MORCEAU:scripts/135-c146script.js}}</script>
+<style id="c147Style">{{JW-MORCEAU:styles/136-c147style.css}}</style>
+<script id="c147Script">{{JW-MORCEAU:scripts/137-c147script.js}}</script>
+<style id="c148Style">{{JW-MORCEAU:styles/138-c148style.css}}</style>
+<script id="c148Script">{{JW-MORCEAU:scripts/139-c148script.js}}</script>
+<style id="c149Style">{{JW-MORCEAU:styles/140-c149style.css}}</style>
+<script id="c149Script">{{JW-MORCEAU:scripts/141-c149script.js}}</script>
+<style id="c150Style">{{JW-MORCEAU:styles/142-c150style.css}}</style>
+<script id="c150Script">{{JW-MORCEAU:scripts/143-c150script.js}}</script>

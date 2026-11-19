@@ -1,0 +1,46 @@
+
+/* Claude — Piano Roll et piano d'après la maquette « Composition » : clavier vertical nommé, piano vert pâle,
+   touches qui s'allument dans la couleur de la note jouée. Aucun changement de son. */
+:root{--c116Lead:#22d3ee;--c116On:#f5a623}
+/* Clavier vertical du Piano Roll : touches blanches claires, noires sombres, toutes les notes nommées */
+html body #rollKeyCol#rollKeyCol{background:#15181b!important;box-shadow:inset -1px 0 0 #000}
+html body #rollKeyCol#rollKeyCol .roll-key{background:linear-gradient(90deg,#c9cec6 0%,#e4e8e1 100%)!important;color:#2b302b!important;font:600 9px/1 Consolas,"Cascadia Mono",monospace!important;border-bottom:1px solid #8f978d!important;box-sizing:border-box;display:flex!important;align-items:center;justify-content:flex-end;padding-right:4px!important;text-shadow:none!important}
+html body #rollKeyCol#rollKeyCol .roll-key.blk{background:linear-gradient(90deg,#0c0d0e 0%,#2a2e32 100%)!important;color:#9aa1a8!important;border-bottom-color:#000!important}
+html body #rollKeyCol#rollKeyCol .roll-key.c{background:linear-gradient(90deg,#d8ddd4 0%,#f3f6f0 100%)!important;color:#0d100d!important;font-weight:800!important;border-bottom:1px solid #4d554b!important}
+html body #rollKeyCol#rollKeyCol .roll-key:hover,html body #rollKeyCol#rollKeyCol .roll-key.c91Row{background:linear-gradient(90deg,#a9d9b4 0%,#d4f5dc 100%)!important;color:#0d100d!important}
+html body #rollKeyCol#rollKeyCol .roll-key.blk:hover,html body #rollKeyCol#rollKeyCol .roll-key.blk.c91Row{background:linear-gradient(90deg,#123a1f 0%,#2b6a3e 100%)!important;color:#d4f5dc!important}
+html body #rollKeyCol#rollKeyCol .roll-key.c116Lit{background:var(--c116C,var(--c116On))!important;color:#0b0b0b!important;box-shadow:0 0 12px var(--c116C,var(--c116On)),inset 0 0 6px rgba(255,255,255,.55)!important;position:relative;z-index:1}
+/* Cases du Piano Roll agrandies (36 x 22 px, constantes ROLL_CW / ROLL_RH changées à l'assemblage) */
+html body .roll-grid.roll-grid{--cw:36px}
+html body .roll-row.roll-row{height:22px!important}
+html body #rollKeyCol#rollKeyCol .roll-key{height:22px!important;line-height:22px!important;font-size:10.5px!important}
+html body #roll .rn.rn{height:21px!important;line-height:19px}
+/* Barre « Lecture du pattern / Retour au début » plus basse : plus de place pour la grille */
+html body #roll#roll>div:not([id]):not([class]) button{min-height:26px!important;padding:3px 10px!important}
+/* Notes du Piano Roll : une couleur par son, comme sur la maquette */
+html body #roll#roll .rn.p-lead{background:#9b5de5!important}
+html body #roll#roll .rn.p-bass{background:#e5484d!important}
+html body #roll#roll .rn.p-pad{background:#34d399!important}
+html body #roll#roll .rn.p-pluck{background:#f5a524!important}
+html body #roll#roll .rn.p-sub808{background:#ff6b6b!important}
+html body #roll#roll .rn.p-guitar{background:#f97316!important}
+/* Barre « Clavier » au-dessus du piano : tout le haut du synthé sur fond rouge sombre */
+html body #synth#synth{background:linear-gradient(180deg,#5a1a1e 0,#3e1114 var(--c116Bar,56px),#0c0e0d var(--c116Bar,56px))!important}
+html body #synth#synth .dockSynthToolbar{background:none!important;border:0!important;padding:0 4px!important;align-items:center}
+/* Lettres du clavier d'ordinateur : seulement au survol du piano (la maquette n'en montre pas) */
+html body #piano#piano .key .kk{opacity:0!important;transition:none}
+html body #piano#piano:hover .key .kk{opacity:.8!important}
+/* Message « Prêt… » des prises : il passait sous le piano ; caché au repos, affiché pendant une prise */
+html body #synth#synth #recStatus.c116Idle{display:none!important}
+html body #synth#synth .dockSynthToolbar::before{content:"Clavier";font:700 13px/1 system-ui,"Segoe UI",sans-serif;color:#f4ecec;margin-right:14px;padding-left:22px;background:linear-gradient(#f4ecec,#f4ecec) 0 2px/3px 10px no-repeat,linear-gradient(#f4ecec,#f4ecec) 6px 2px/3px 10px no-repeat,linear-gradient(#f4ecec,#f4ecec) 12px 2px/3px 10px no-repeat}
+/* Piano : touches vert pâle, chaque touche blanche nommée, touche jouée allumée dans la couleur de la note */
+html body #piano#piano{background:#0c0e0d!important;border-radius:6px;box-shadow:inset 0 0 0 1px #2c3a27!important}
+html body #piano#piano .key.white{background:linear-gradient(180deg,#d6e6c6 0%,#bed5aa 70%,#a9c493 100%)!important;border:1px solid #5f7a54!important;box-shadow:inset 0 -4px 0 rgba(0,0,0,.12)!important;color:#1f2a1a!important}
+html body #piano#piano .key.white::after{content:attr(aria-label);position:absolute;left:0;right:0;bottom:4px;text-align:center;font:600 11px/1 system-ui,"Segoe UI",sans-serif;color:#24301f;pointer-events:none}
+html body #piano#piano .key.white .kn{visibility:hidden}
+html body #piano#piano .key .kk{color:#3c4d34!important}
+html body #piano#piano .key.black{background:linear-gradient(180deg,#34373a 0%,#121314 60%,#050505 100%)!important;border:1px solid #000!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 2px 3px rgba(0,0,0,.6)!important}
+html body #piano#piano .key.black .kk{color:#a9b1aa!important}
+html body #piano#piano .key.white:hover{background:linear-gradient(180deg,#e4f1d7 0%,#c9dfb6 100%)!important}
+html body #piano#piano .key.down,html body #piano#piano .key.c116Lit{background:var(--c116C,var(--c116On))!important;box-shadow:0 0 16px var(--c116C,var(--c116On)),0 0 3px #fff,inset 0 0 10px rgba(255,255,255,.55)!important;border-color:rgba(0,0,0,.55)!important}
+html body #piano#piano .key.down::after,html body #piano#piano .key.c116Lit::after{color:#0b0b0b}

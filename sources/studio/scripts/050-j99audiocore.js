@@ -1,0 +1,8 @@
+
+/* Audio placement and crossfades. Final validation campaign pending. */
+(function(root){'use strict';
+function position(seconds,bpm,sr,bars){if(!Number.isFinite(seconds)||seconds<0||!Number.isFinite(bpm)||bpm<40||bpm>240||!Number.isFinite(sr)||sr<8000||sr>192000||!Number.isInteger(bars)||bars<1)throw Error('Position audio invalide.');const frames=Math.round(seconds*sr),steps=frames/sr/(60/bpm/4),bar=Math.floor(steps/16+1e-10),fine=Math.max(0,steps-bar*16);if(bar>=bars)throw Error('Position au-delà du morceau.');return{bar,fine,seconds:frames/sr};}
+function crossfade(a,b,offset,sr){if(!a?.channels?.length||!b?.channels?.length||!Number.isFinite(offset)||offset<=0||!Number.isFinite(sr)||sr<8000||sr>192000)throw Error('Fondu croisé invalide.');const da=a.channels[0].length/a.sr,db=b.channels[0].length/b.sr,overlap=da-offset;if(overlap<=0||overlap>5||db<overlap||offset+db>180)throw Error('Les clips doivent se chevaucher de cinq secondes au maximum, le second prolongeant le premier.');const length=Math.ceil((offset+db)*sr),out=[new Float32Array(length),new Float32Array(length)];const read=(src,ch,t)=>{if(t<0)return 0;const x=t*src.sr,index=Math.floor(x),buf=src.channels[Math.min(ch,src.channels.length-1)];if(index>=buf.length)return 0;return buf[index]*(1-(x-index))+(buf[Math.min(index+1,buf.length-1)]||0)*(x-index);};for(let ch=0;ch<2;ch++)for(let i=0;i<length;i++){const t=i/sr,blend=Math.max(0,Math.min(1,(t-offset)/overlap));out[ch][i]=read(a,ch,t)*(t<offset?1:1-blend)+read(b,ch,t-offset)*blend;}return{channels:out,sr,overlap};}
+root.J99AudioCore={position,crossfade};if(typeof module!=='undefined')module.exports=root.J99AudioCore;
+})(typeof window!=='undefined'?window:globalThis);
+

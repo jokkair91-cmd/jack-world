@@ -1,0 +1,1 @@
+body.j93Workspace #dockStage.j108Arrange:not(.j93Voice):not(.j93Mix){grid-template-rows:minmax(0,1fr)!important}body.j93Workspace.j107Instrument #dockStage.j108Notes:not(.j93Voice):not(.j93Mix){grid-template-rows:44px minmax(260px,1fr) 240px!important}body.j93Workspace #dockStage.j108Beat:not(.j93Voice):not(.j93Mix){grid-template-rows:44px minmax(0,1fr)!important}

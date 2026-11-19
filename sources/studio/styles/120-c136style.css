@@ -1,0 +1,35 @@
+
+/* 6.6 (Mission 0) — remplace le bloc c135 de la 6.5. Message de prise du Clavier (« Prise : 3 notes · 2 mesures… »).
+   - Clavier sur une ligne (fenêtre > 950 px environ) : message dans la place libre à gauche de « Clavier », comme en 6.5.
+   - S'il y reste moins de 90 px : pastille « ⓘ Prise » ; survol ou clavier (Tab) affichent le message entier. Plus jamais masqué.
+   - Clavier sur plusieurs lignes (fenêtre étroite) : le message garde sa ligne d'origine sous REC/STOP/PLAY (la 6.5 le masquait).
+   - Fenêtre étroite : un espace égal à la barre de lecture du bas est ajouté en fin de page, pour que la dernière ligne
+     ne reste plus cachée sous cette barre (défaut déjà présent avant).
+   Le studio range lui-même ce message à chaque changement de vue : il n'est jamais déplacé, seulement positionné. */
+html body #synth#synth.c136On #j108Performance{position:static!important}
+html body #synth#synth.c136On #j108Performance>#recStatus{position:absolute!important;left:var(--c136x,20px)!important;top:var(--c136y,8px)!important;width:var(--c136w,300px)!important;height:28px!important;line-height:28px!important;margin:0!important;padding:0!important;font-size:11px!important;min-height:0!important;color:var(--mut,#9aa1a9)!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;text-align:left!important;z-index:2}
+html body #synth#synth.c136On.c136Chip #j108Performance>#recStatus{width:auto!important;max-width:none!important;overflow:visible!important;font-size:0!important;outline-offset:2px;cursor:help}
+html body #synth#synth.c136On.c136Chip #j108Performance>#recStatus::before{content:"ⓘ Prise";font-size:11px;line-height:22px;display:inline-block;padding:0 7px;border-radius:11px;background:#22262b;border:1px solid #3a3f46;color:#e7e8ea}
+html body #synth#synth.c136On.c136Chip.c136Tip #j108Performance>#recStatus::after{content:attr(data-c136full);position:absolute;left:0;bottom:30px;width:300px;white-space:normal;font-size:12px;line-height:1.4;padding:8px 10px;border-radius:6px;background:#111316;border:1px solid #3a3f46;color:#e7e8ea;box-shadow:0 6px 18px rgba(0,0,0,.5);z-index:50}
+/* Chevauchement d'origine (environ 951 à 1199 px) : la barre « Clavier / Preset / Octave » et la zone REC/STOP/PLAY étaient
+   placées dans la même case ; Preset couvrait PLAY. La barre reprend la première colonne, restée vide. */
+html body.j93Workspace #dockStage#dockStage#dockStage>#synth#synth.c136Fix[data-j93-visible="true"]>.dockSynthToolbar{grid-area:1/1/2/2!important;min-width:0!important}
+/* « VOLUME SYNTHÉ » (mis sur une ligne en 6.4) : dans un espace étroit, son étiquette passait sous le bouton.
+   Le bloc prend la largeur de son contenu. */
+html body.c133 #synth#synth .dockVolumePlanet{min-width:max-content!important;width:auto!important;flex-wrap:nowrap!important;justify-content:center!important;overflow:visible!important}
+html body.c133 #synth#synth .dockVolumePlanet>*{flex:none!important;position:static!important;transform:none!important}
+html body.c133 #synth#synth .dockVolumePlanet>label{width:auto!important;min-width:max-content!important;max-width:none!important;overflow:visible!important}
+html body.c136Pad::after{content:"";display:block;height:var(--c136pad,52px)}
+/* Clavier écrasé (défaut déjà présent avant) : Piano Roll avec le panneau Samples ouvert, fenêtre de 951 à 1199 px.
+   Le Clavier passe sur plusieurs lignes mais gardait 106 px de haut : le clavier tombait à 5 px. Il reprend sa hauteur,
+   la grille du Piano Roll cède la place nécessaire. */
+html body.j93Workspace #dockStage#dockStage#dockStage.j108Notes:has(>#synth.c136Tall){grid-template-rows:34px minmax(0,1fr) auto!important}
+html body.j93Workspace #dockStage#dockStage#dockStage.j108Notes>#synth#synth.c136Tall[data-j93-visible="true"]{height:auto!important;max-height:none!important;grid-template-rows:auto auto auto 80px!important;overflow:visible!important}
+html body.j93Workspace #dockStage#dockStage#dockStage.j108Notes>#synth#synth.c136Tall[data-j93-visible="true"]>#piano#piano{height:76px!important;min-height:76px!important}
+/* Disposition sur deux rangées (colonne « Clavier » repliée, ex. 1249 px avec Samples) : la ligne du message est réservée
+   en permanence sous REC/STOP/PLAY, pour que rien ne bouge quand il apparaît, et le clavier passe dessous. */
+html body.j93Workspace #dockStage#dockStage#dockStage.j108Notes>#synth#synth.c136Tall[data-c136rows="2"][data-j93-visible="true"]{grid-template-rows:auto 60px!important}
+html body.j93Workspace #dockStage#dockStage#dockStage.j108Notes>#synth#synth.c136Tall[data-c136rows="2"][data-j93-visible="true"]>#piano#piano{height:56px!important;min-height:56px!important}
+html body #synth#synth.c136Tall #j108Performance{grid-template-rows:auto 24px!important;align-items:start!important}
+html body #synth#synth.c136Tall #j108Performance>#recStatus{display:block!important;height:24px!important;line-height:24px!important;margin:0!important;padding:0!important;min-height:0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+html body #synth#synth.c136Tall #j108Performance>#recStatus.c116Idle{visibility:hidden!important}

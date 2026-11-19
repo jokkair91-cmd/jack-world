@@ -32,6 +32,10 @@ J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance, Jack Bo
 
 Quand on recopie une appli depuis son dossier du Bureau, garder ces lignes dans sa page : le lien `manifest.webmanifest`, `jack-appli.js` et `jack-world-nav.js`.
 
+## JACK22 Studio et J-DJ : découpés en morceaux
+
+Depuis le 19 nov. 2026, `studio/studio/index.html` et `j-dj/console.html` sont **produits** à partir de `sources/` par `sources/assembler.ps1`. On modifie les morceaux dans `sources/studio` ou `sources/j-dj`, puis on relance l'assemblage (voir `sources/LISEZMOI.md`). Ne pas modifier ces deux pages à la main : la modification serait perdue au prochain assemblage.
+
 ## Mettre à jour une appli
 
 Remplacer le fichier de l'appli par la nouvelle version, sous le même nom (`studio/studio/index.html`, `j-dj/console.html` et `j-dj/downloads/J-DJ-CLUB-GRAPHITE.html`), puis envoyer la modification sur GitHub.
