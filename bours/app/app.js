@@ -9,15 +9,20 @@
   function lire(cle) { try { return JSON.parse(localStorage.getItem(cle)); } catch (e) { return null; } }
   function ecrire(cle, v) { try { localStorage.setItem(cle, JSON.stringify(v)); } catch (e) { } }
   function nouvelleProgression() { return { prenom: "", quiz: {}, tests: {}, lues: {}, cartes: {}, missions: {}, reglages: { voix: true, theme: "sombre", libre: false } }; }
-  function nouveauSimulateur() {
-    const m = M.creer();
-    return { m, cash: CAPITAL, positions: {}, ordres: [], histo: [], debut: m.jour, valeurs: [{ jour: m.jour, total: CAPITAL, indice: m.indice[m.indice.length - 1].c }], dividendes: 0, frais: 0, nextId: 1, selection: "ARA", vue: { n: 60, mm20: false, mm50: false, volume: true }, krach: null };
+  // Défi entre amis : un code = le même marché fictif pour tout le monde, 10 000 € chacun, DUREE_DEFI jours de bourse.
+  const CLE_D = "jackbours-defi-v1", DUREE_DEFI = 40;
+  function nouveauSimulateur(code) {
+    const m = M.creer(code);
+    const s = { m, cash: CAPITAL, positions: {}, ordres: [], histo: [], debut: m.jour, valeurs: [{ jour: m.jour, total: CAPITAL, indice: m.indice[m.indice.length - 1].c }], dividendes: 0, frais: 0, nextId: 1, selection: "ARA", vue: { n: 60, mm20: false, mm50: false, volume: true, marche: "tout" }, krach: null };
+    if (code) s.defi = { code: m.code, fin: m.jour + DUREE_DEFI };
+    return s;
   }
   let P = Object.assign(nouvelleProgression(), lire(CLE_P) || {});
   P.reglages = Object.assign(nouvelleProgression().reglages, P.reglages || {});
   let S = lire(CLE_S);
   if (!S || !S.m || !S.m.indice) S = nouveauSimulateur();
-  const sauverP = () => ecrire(CLE_P, P), sauverS = () => ecrire(CLE_S, S);
+  if (S.defi) S = nouveauSimulateur(); // sécurité : le simulateur normal n'est jamais un défi
+  const sauverP = () => ecrire(CLE_P, P), sauverS = () => ecrire(S.defi ? CLE_D : CLE_S, S);
   if (M.completer(S.m)) sauverS(); // ancienne sauvegarde : on ajoute le groupe Jack World
   S.vue.marche = S.vue.marche || "tout";
 
@@ -405,7 +410,10 @@
     S.ordres = garder.filter(o => o.sens === "achat" || S.positions[o.sym]);
   }
   function jourSuivant(nbJours, krach) {
+    if (S.defi && S.m.jour >= S.defi.fin) { arreterAuto(); toast("🏁 Le défi est terminé : regarde ton résultat dans « Défi entre amis »."); majSim(); return; }
+    if (S.defi) krach = false; // pas de krach à la demande pendant un défi : tout le monde a le même marché
     for (let k = 0; k < nbJours; k++) {
+      if (S.defi && S.m.jour >= S.defi.fin) break;
       const evts = M.avancer(S.m, krach && k === 0);
       evts.forEach(e => {
         if (e.type === "dividende" && S.positions[e.sym]) {
@@ -425,13 +433,79 @@
       executerOrdres();
       S.valeurs.push({ jour: S.m.jour, total: totalPortefeuille(), indice: S.m.indice[S.m.indice.length - 1].c });
     }
+    if (S.defi && S.m.jour >= S.defi.fin) {
+      arreterAuto();
+      const b = $("#bauto"); if (b) { b.textContent = "⏯ Lecture auto"; b.classList.remove("principal"); }
+      toast(`🏁 Défi terminé ! Résultat : <b>${pct((totalPortefeuille() / CAPITAL - 1) * 100)}</b>`, "or");
+      parler("Défi terminé. Compare ton résultat avec tes amis !");
+    }
     verifierMissions(); sauverS(); majSim();
+  }
+
+  /* ---------- défi entre amis ---------- */
+  function codeAleatoire() {
+    const L = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // sans 0/O ni 1/I, pour ne pas se tromper en recopiant
+    let c = ""; const t = new Uint32Array(6); (window.crypto || {}).getRandomValues ? crypto.getRandomValues(t) : t.forEach((_, i) => t[i] = Math.random() * 1e9);
+    t.forEach(x => c += L[x % L.length]);
+    return c;
+  }
+  const codePropre = c => String(c || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 12);
+  function lienApp() { return location.href.split("#")[0] + "#/simulateur"; }
+  function entrerDefi(code) {
+    code = codePropre(code);
+    if (code.length < 4) { toast("Le code d'un défi a au moins 4 lettres ou chiffres."); return; }
+    arreterAuto(); sauverS();
+    let d = lire(CLE_D);
+    if (!d || !d.defi || !d.m || d.defi.code !== code) {
+      if (d && d.defi && d.m && d.m.jour < d.defi.fin && !confirm(`Tu as déjà un défi en cours (code ${d.defi.code}). Le remplacer par le défi ${code} ?`)) return;
+      d = nouveauSimulateur(code);
+    }
+    S = d; sauverS();
+    toast(`🏆 Défi <b>${esc(code)}</b> : 10 000 € fictifs, ${DUREE_DEFI} jours de bourse. Bonne chance !`, "or");
+    vueSimulateur($("#vue"));
+  }
+  function quitterDefi() {
+    arreterAuto(); sauverS();
+    S = lire(CLE_S); if (!S || !S.m || !S.m.indice || S.defi) S = nouveauSimulateur();
+    M.completer(S.m); S.vue.marche = S.vue.marche || "tout";
+    vueSimulateur($("#vue"));
+  }
+  function copier(texte, ok) {
+    const fini = () => toast(ok, "vert");
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(texte).then(fini, () => prompt("Copie ce message :", texte));
+    else prompt("Copie ce message :", texte);
+  }
+  function majDefi() {
+    const z = $("#defi"); if (!z) return;
+    if (!S.defi) {
+      const d = lire(CLE_D), enCours = d && d.defi && d.m ? d : null;
+      z.innerHTML = `<p class="doux">Le même marché fictif pour tout le monde, 10 000 € chacun, ${DUREE_DEFI} jours de bourse : qui fera le mieux ? Crée un défi et envoie le code à tes amis.</p>
+        <div class="boutons"><button class="btn principal" id="d-creer">🏆 Créer un défi</button>${enCours ? `<button class="btn" id="d-reprendre">↩ Reprendre mon défi ${esc(enCours.defi.code)} (jour ${Math.min(DUREE_DEFI, enCours.m.jour - enCours.debut)}/${DUREE_DEFI})</button>` : ""}</div>
+        <label class="champ" style="margin-top:12px">J'ai reçu un code<span style="display:flex;gap:8px"><input id="d-code" maxlength="12" autocomplete="off" autocapitalize="characters" placeholder="Ex. K7PX2M" style="text-transform:uppercase;flex:1;min-width:0"><button class="btn" id="d-rejoindre">Rejoindre</button></span></label>`;
+      $("#d-creer").onclick = () => entrerDefi(codeAleatoire());
+      if ($("#d-reprendre")) $("#d-reprendre").onclick = () => entrerDefi(enCours.defi.code);
+      $("#d-rejoindre").onclick = () => entrerDefi($("#d-code").value);
+      $("#d-code").onkeydown = e => { if (e.key === "Enter") entrerDefi(e.target.value); };
+      return;
+    }
+    const code = S.defi.code, fait = Math.min(DUREE_DEFI, S.m.jour - S.debut), fini = S.m.jour >= S.defi.fin;
+    const perf = (totalPortefeuille() / CAPITAL - 1) * 100;
+    const invitation = `🏆 Je te défie sur Jack Bours ! Même marché fictif, 10 000 € chacun, ${DUREE_DEFI} jours de bourse. Code du défi : ${code}\nOuvre le simulateur et entre le code : ${lienApp()}\n(Argent fictif, juste pour apprendre.)`;
+    const resultat = `🏁 Défi Jack Bours ${code} terminé : j'ai fait ${pct(perf)} (${eur(totalPortefeuille())}). Et toi ? ${lienApp()}`;
+    z.innerHTML = `<div class="defi-tete"><b>Défi ${esc(code)}</b> · jour ${fait} / ${DUREE_DEFI}</div>
+      <div class="barre-defi" style="height:8px;border-radius:99px;background:var(--carte2);overflow:hidden;margin:8px 0"><i style="display:block;height:100%;width:${Math.round(fait / DUREE_DEFI * 100)}%;background:var(--jaune)"></i></div>
+      <p>${fini ? "🏁 <b>Défi terminé.</b> Ton résultat final" : "Ta performance pour l'instant"} : <b class="${signe(perf)}">${pct(perf)}</b> (${eur(totalPortefeuille())})</p>
+      <p class="doux petit">Pas de krach à la demande pendant un défi : tout le monde a exactement le même marché. Ton simulateur habituel t'attend, il n'est pas effacé.</p>
+      <div class="boutons">${fini ? `<button class="btn principal" id="d-resultat">📋 Copier mon résultat</button>` : `<button class="btn principal" id="d-inviter">📋 Copier l'invitation</button>`}<button class="btn" id="d-quitter">↩ Revenir à mon simulateur</button></div>`;
+    if ($("#d-inviter")) $("#d-inviter").onclick = () => copier(invitation, "Invitation copiée : colle-la dans un message à tes amis.");
+    if ($("#d-resultat")) $("#d-resultat").onclick = () => copier(resultat, "Résultat copié : envoie-le à tes amis !");
+    $("#d-quitter").onclick = quitterDefi;
   }
 
   function vueSimulateur(vue) {
     vue.innerHTML = `
       <div class="sim-barre carte">
-        <div><div class="doux petit">Jour de bourse</div><b id="sb-date"></b></div>
+        <div><div class="doux petit">${S.defi ? `🏆 Défi ${esc(S.defi.code)} · jour de bourse` : "Jour de bourse"}</div><b id="sb-date"></b></div>
         <div class="sim-temps">
           <button class="btn principal" id="b1">▶ Jour suivant</button>
           <button class="btn" id="b5">⏩ +5 jours</button>
@@ -462,11 +536,12 @@
         <section class="carte"><h3>📝 Ordres en attente</h3><div id="ordres"></div></section>
         <section class="carte"><h3>📰 Actualités</h3><div id="news"></div></section>
         <section class="carte large-2"><h3>🧾 Historique</h3><div id="histo"></div></section>
+        <section class="carte"><h3>🏆 Défi entre amis</h3><div id="defi"></div></section>
         <section class="carte"><h3>🧪 Entraînement</h3>
-          <p class="doux">Pour voir comment un portefeuille réagit à une crise, tu peux provoquer un krach (il dure quelques jours).</p>
-          <button class="btn ko" id="bkrach">💥 Provoquer un krach</button>
+          ${S.defi ? `<p class="doux">Pendant un défi, pas de krach à la demande ni de remise à zéro : tout le monde joue le même marché.</p>` : `<p class="doux">Pour voir comment un portefeuille réagit à une crise, tu peux provoquer un krach (il dure quelques jours).</p>
+          <button class="btn ko" id="bkrach">💥 Provoquer un krach</button>`}
           <p class="doux petit">Frais : 0,1 % par ordre (minimum 1 €). Écart achat/vente : 0,05 %. Dividendes tous les ${M.PERIODE_DIVIDENDE} jours de bourse.</p>
-          <button class="btn discret" id="breset">↺ Recommencer avec ${eur(CAPITAL, 0)}</button>
+          ${S.defi ? "" : `<button class="btn discret" id="breset">↺ Recommencer avec ${eur(CAPITAL, 0)}</button>`}
         </section>
       </div>
       <p class="avertissement">Marché 100 % fictif : les entreprises et les prix sont inventés, l'argent aussi. Pour apprendre, pas pour conseiller.</p>`;
@@ -478,8 +553,8 @@
       if (auto) { arreterAuto(); $("#bauto").textContent = "⏯ Lecture auto"; $("#bauto").classList.remove("principal"); }
       else { auto = setInterval(() => jourSuivant(1), 900); $("#bauto").textContent = "⏸ Pause"; $("#bauto").classList.add("principal"); }
     };
-    $("#bkrach").onclick = () => { if (S.m.choc) { toast("Un krach est déjà en cours !"); return; } jourSuivant(1, true); };
-    $("#breset").onclick = () => {
+    if ($("#bkrach")) $("#bkrach").onclick = () => { if (S.m.choc) { toast("Un krach est déjà en cours !"); return; } jourSuivant(1, true); };
+    if ($("#breset")) $("#breset").onclick = () => {
       if (!confirm("Recommencer le simulateur avec 10 000 € fictifs ? Le portefeuille, les ordres et l'historique seront effacés (pas tes missions ni tes leçons).")) return;
       arreterAuto(); S = nouveauSimulateur(); sauverS(); vueSimulateur(vue);
     };
@@ -506,6 +581,8 @@
     $("#sb-total").textContent = eur(total);
     $("#sb-perf").innerHTML = `<span class="${signe(perf)}">${pct(perf)}</span>`;
     if (S.m.choc) $("#sb-date").innerHTML += ` <span class="tag rouge">💥 Krach en cours</span>`;
+    majDefi();
+    if (S.defi && S.m.jour >= S.defi.fin) ["#b1", "#b5", "#bauto"].forEach(s => { if ($(s)) $(s).disabled = true; });
     // liste des actifs
     $$("#marches button").forEach(b => b.classList.toggle("on", b.dataset.m === S.vue.marche));
     const ligne = a => {
@@ -815,7 +892,7 @@
       };
       r.readAsText(f);
     };
-    $("#r-sim").onclick = () => { if (confirm("Effacer le simulateur et repartir avec 10 000 € fictifs ?")) { S = nouveauSimulateur(); sauverS(); toast("Simulateur remis à zéro."); } };
+    $("#r-sim").onclick = () => { if (confirm("Effacer le simulateur et repartir avec 10 000 € fictifs ? (Ton défi entre amis, s'il y en a un, est gardé.)")) { S = nouveauSimulateur(); sauverS(); toast("Simulateur remis à zéro."); } };
     $("#r-prog").onclick = () => { if (confirm("Effacer toute ta progression (quiz, tests, cartes, missions) ? C'est définitif.")) { const reg = P.reglages, pre = P.prenom; P = nouvelleProgression(); P.reglages = reg; P.prenom = pre; sauverP(); toast("Progression effacée."); } };
   }
 

@@ -49,12 +49,28 @@
   ];
   const CHOCS = ["Panique sur les marchés : une grande banque étrangère est en difficulté", "Krach : une crise sanitaire mondiale fait chuter toutes les Bourses", "Les taux d'intérêt s'envolent : les investisseurs vendent tout"];
 
-  function gauss() { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
-  const r2 = x => Math.round(x * 100) / 100;
-  const tirer = t => t[Math.floor(Math.random() * t.length)];
+  /* Hasard du marché. Marché normal : Math.random. Marché de défi (créé avec un code) : un hasard « à graine »,
+     rangé dans le marché lui-même (m.rng), pour que tous les joueurs du même code voient exactement les mêmes prix,
+     les mêmes actualités et les mêmes krachs, jour après jour. */
+  let rngM = null;
+  function alea() {
+    if (!rngM || typeof rngM.rng !== "number") return Math.random();
+    let t = rngM.rng = (rngM.rng + 0x6D2B79F5) | 0;
+    t = Math.imul(t ^ (t >>> 15), 1 | t);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  }
+  function graineDe(code) { let h = 2166136261; for (const ch of String(code).toUpperCase()) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return h | 0; }
+  function avec(m, f) { const avant = rngM; rngM = m; try { return f(); } finally { rngM = avant; } }
 
-  function creer() {
+  function gauss() { let u = 0, v = 0; while (!u) u = alea(); while (!v) v = alea(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+  const r2 = x => Math.round(x * 100) / 100;
+  const tirer = t => t[Math.floor(alea() * t.length)];
+
+  /* code (facultatif) : un code de défi. Le même code donne toujours le même marché. */
+  function creer(code) {
     const m = { jour: -1, pret: false, actifs: {}, indice: [], indiceJack: [], news: [], choc: null, dernierChoc: -999, dernierKrachFini: null };
+    if (code) { m.code = String(code).toUpperCase(); m.rng = graineDe(m.code); }
     TOUS.forEach(a => { m.actifs[a.sym] = { bougies: [], ref: a.prix, prixDepart: a.prix }; });
     for (let i = 0; i < JOURS_HISTO; i++) avancer(m);
     m.pret = true;
@@ -63,7 +79,8 @@
   }
 
   /* Ajoute à une ancienne sauvegarde les entreprises qui n'existaient pas encore (le groupe Jack), avec un historique complet. */
-  function completer(m) {
+  function completer(m) { return avec(m, () => completerSansHasard(m)); }
+  function completerSansHasard(m) {
     const manquants = TOUS.filter(a => !m.actifs[a.sym]);
     if (!manquants.length && m.indiceJack) return false;
     manquants.forEach(a => { m.actifs[a.sym] = { bougies: [], ref: a.prix, prixDepart: a.prix }; });
@@ -108,7 +125,7 @@
       } else {
         gap = gauss() * sd * 0.25;
         if (a.groupe === "jack" && ctx.groupe) gap += ctx.groupe;
-        if (ctx.news && ctx.news.sym === a.sym) { gap += ctx.news.ampleur; volMult = 3 + Math.random() * 2; }
+        if (ctx.news && ctx.news.sym === a.sym) { gap += ctx.news.ampleur; volMult = 3 + alea() * 2; }
         if (ctx.choc && a.sym === "LNS") gap += 0.01; // la santé résiste un peu mieux
         ret = a.tend / 252 + a.beta * ctx.marche + ctx.secteurs[a.secteur] + (a.groupe === "jack" ? ctx.fJack : 0) + gauss() * sd * 0.75;
       }
@@ -132,13 +149,14 @@
   }
 
   /* Fait passer un jour. Renvoie la liste des événements du jour. */
-  function avancer(m, forcerChoc) {
+  function avancer(m, forcerChoc) { return avec(m, () => avancerJour(m, forcerChoc)); }
+  function avancerJour(m, forcerChoc) {
     completer(m);
     m.jour++;
     const j = m.jour, evts = [];
     // Choc de marché (krach) : rare, ou déclenché à la main
-    if (!m.choc && (forcerChoc || (m.pret && j - m.dernierChoc > 100 && Math.random() < 0.005))) {
-      m.choc = { reste: 4 + Math.floor(Math.random() * 3), force: 0.025 + Math.random() * 0.02, debut: j };
+    if (!m.choc && (forcerChoc || (m.pret && j - m.dernierChoc > 100 && alea() < 0.005))) {
+      m.choc = { reste: 4 + Math.floor(alea() * 3), force: 0.025 + alea() * 0.02, debut: j };
       m.dernierChoc = j;
       evts.push({ type: "choc", texte: "💥 " + tirer(CHOCS) });
     }
@@ -148,18 +166,18 @@
       if (m.choc.reste <= 0) { evts.push({ type: "finchoc", texte: "😮‍💨 Le calme revient peu à peu sur les marchés." }); m.dernierKrachFini = j; m.choc = null; }
     }
     // Actualité d'une entreprise
-    if (Math.random() < 0.045) {
+    if (alea() < 0.045) {
       const a = tirer(TOUS.filter(x => !x.holding));
-      const plus = Math.random() < 0.55;
-      const ampleur = (0.04 + Math.random() * 0.09) * (plus ? 1 : -1);
+      const plus = alea() < 0.55;
+      const ampleur = (0.04 + alea() * 0.09) * (plus ? 1 : -1);
       const liste = a.groupe === "jack" ? (plus ? NEWS_PLUS_JACK : NEWS_MOINS_JACK) : (plus ? NEWS_PLUS : NEWS_MOINS);
       ctx.news = { sym: a.sym, ampleur };
       evts.push({ type: "news", sym: a.sym, texte: (plus ? "🟢 " : "🔴 ") + tirer(liste).replace("{nom}", a.nom) });
     }
     // Actualité qui touche tout le groupe Jack World (montre que les filiales sont corrélées)
-    if (Math.random() < 0.008) {
+    if (alea() < 0.008) {
       const [txt, s] = tirer(NEWS_GROUPE);
-      ctx.groupe = s * (0.02 + Math.random() * 0.03);
+      ctx.groupe = s * (0.02 + alea() * 0.03);
       evts.push({ type: "news", sym: "NDC", groupe: true, texte: (s > 0 ? "🟢 " : "🔴 ") + txt });
     }
     pasJour(m, j, TOUS, ctx, evts);

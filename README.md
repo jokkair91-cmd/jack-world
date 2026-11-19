@@ -28,6 +28,7 @@ J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance, Jack Bo
 - **Sauvegarder ma progression** : dans la languette « Changer de site » (`jack-world-nav.js`), un fichier `.json` avec la progression de toutes les applis de ce navigateur, et « Reprendre une sauvegarde ».
 - **J-DJ** : guide « Mon premier mix » (`j-dj/premier-mix.js`, branché en bas de `console.html`).
 - **Jack Finance** : import d'un relevé bancaire `.csv` (`releve.js`), aussi ajouté dans `Bureau/Jack Finance`.
+- **Jack Bours** : défis entre amis (un code = le même marché fictif pour tous, 40 jours de bourse). Le hasard du marché est « à graine » quand il y a un code (`marche.js`), l'écran est dans `app.js`. Fait aussi dans `Bureau/Jack Bours`. Attention : changer le calcul du marché dans `marche.js` change les marchés des codes existants.
 
 Quand on recopie une appli depuis son dossier du Bureau, garder ces lignes dans sa page : le lien `manifest.webmanifest`, `jack-appli.js` et `jack-world-nav.js`.
 
