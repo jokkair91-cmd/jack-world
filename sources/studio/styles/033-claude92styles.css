@@ -1,0 +1,60 @@
+
+/* 9.2 — Mode Pro (Claude) : les vrais panneaux du studio deviennent des fenêtres déplaçables et redimensionnables.
+   Hors mode Pro, aucune règle ne s'applique : l'accueil reste celui de la 8.9 validée. Couleurs de la charte JACK22. */
+#c92Bar{display:none}
+body.c92Pro #storeWarn,body.c92Pro #dockNav,body.c92Pro #workspace88,body.c92Pro #dockDrawer{display:none!important}
+body.c92Pro #c92Bar{display:flex;align-items:center;flex-wrap:wrap;gap:4px 6px;margin:4px 0;padding:5px 8px;background:#202124;border:1px solid #2c2e33;border-radius:8px;color:#a9aeb6;font-size:11px}
+#c92Bar strong{font:700 10.5px/1 Consolas,"Cascadia Mono",monospace;letter-spacing:1.8px;color:#f5b13f;margin-right:6px}
+#c92Bar button{min-height:24px;padding:2px 9px;font-size:11px;border:1px solid #3a3d43;border-radius:6px;background:#2a2c30;color:#eceef1;cursor:pointer}
+#c92Bar button[aria-pressed="true"]{border-color:#f5b13f;color:#f5b13f}
+#c92Bar button:disabled{opacity:.45;cursor:default}
+#c92Bar .c92Sep{width:1px;height:16px;background:#3a3d43;margin:0 3px}
+#c92Bar .c92Exit{margin-left:auto;border-color:#6b5420;color:#f5b13f}
+body.c92Pro #dockStage{position:fixed!important;left:8px;right:8px;bottom:8px;top:var(--c92Top,160px);display:block!important;height:auto!important;max-height:none!important;overflow:hidden!important;z-index:20;margin:0!important;background:#141516;border:1px solid #2c2e33;border-radius:8px}
+/* Position et taille par variables : elles priment sur les largeurs imposées par la mise en page d'origine (ex. arrangement à 100 %). */
+body.c92Pro #dockStage>.panel{position:absolute!important;left:var(--x,0px)!important;top:var(--y,0px)!important;width:var(--w,420px)!important;height:var(--h,300px)!important;margin:0!important;grid-area:auto!important;max-height:none!important;min-width:0;min-height:0;overflow:auto!important;box-sizing:border-box;box-shadow:0 8px 24px #000a}
+.c92Grip{display:none}
+body.c92Pro .c92Grip{display:block;position:absolute;width:16px;height:16px;cursor:nwse-resize;touch-action:none;background:linear-gradient(135deg,transparent 0 50%,#6b5420 50% 58%,transparent 58% 70%,#6b5420 70% 78%,transparent 78%);border-radius:0 0 7px 0}
+body.c92Pro .c92Grip:hover,body.c92Pro .c92Grip:focus-visible{background:linear-gradient(135deg,transparent 0 50%,#f5b13f 50% 58%,transparent 58% 70%,#f5b13f 70% 78%,transparent 78%);outline:none}
+body.c92Pro .c92Grip.c92Closed{display:none}
+body.c92Pro #dockStage>.panel{padding:0 10px 10px!important}
+body.c92Pro #dockStage>.panel.c92Front{border-color:#6b5420!important}
+body.c92Pro #dockStage>.panel.c92Closed{display:none!important}
+.c92WinBar{display:none}
+body.c92Pro .c92WinBar{position:sticky;top:0;z-index:6;display:flex;align-items:center;gap:6px;flex:none;height:26px;margin:0 -10px 8px;padding:0 6px 0 10px;background:#1b1c1e;border-bottom:1px solid #2c2e33;border-radius:6px 6px 0 0;cursor:move;user-select:none;touch-action:none}
+body.c92Pro .c92WinBar:focus-visible{outline:2px solid #f5b13f;outline-offset:-2px}
+.c92WinTitle{flex:1;font:700 10px/24px Consolas,"Cascadia Mono",monospace;letter-spacing:1.6px;text-transform:uppercase;color:#a9aeb6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c92Front .c92WinTitle{color:#eceef1}
+.c92WinClose{width:20px;height:20px;min-height:0!important;padding:0!important;border:1px solid #3a3d43!important;border-radius:5px!important;background:#2a2c30!important;color:#a9aeb6!important;font:13px/1 Consolas,monospace!important;cursor:pointer}
+/* Panneaux de composition dans le mode Pro : panneau sombre de la charte. */
+body.c92Pro #dockStage>#roll,body.c92Pro #dockStage>#dockBeat,body.c92Pro #dockStage>#patterns,body.c92Pro #dockStage>#recorder,body.c92Pro #dockStage>#cVoices,body.c92Pro #dockStage>#l3Editor,body.c92Pro #dockStage>#c92Inspector{font-size:12px}
+body.c92Pro #dockStage .compact88PanelActions{display:none!important}
+/* Titres en double : la barre de fenêtre suffit (les titres de marque GRAND STUDIO et ORBITE restent). */
+body.c92Pro #dockStage>.panel>h2,body.c92Pro #dockStage>.panel>.compact88Title>h2,body.c92Pro #dockStage>.panel>.cTopline>h2,body.c92Pro #timeline .dockTimelineBar>h2{display:none!important}
+body.c92Pro #dockStage>.dockSynth .dockSynthToolbar{top:40px!important}
+/* Allègement 9.1 également dans les fenêtres Pro. */
+body.c92Pro #dockStage .roll-key{font:500 9.5px/16px Consolas,"Cascadia Mono",monospace;padding-left:6px}
+body.c92Pro #dockStage .roll-key:not(.c){color:transparent}
+body.c92Pro #dockStage .roll-key.c{color:#a9aeb6;font-weight:700;border-top:1px solid #3a3d43}
+body.c92Pro #dockStage .roll-key:hover,body.c92Pro #dockStage .roll-key.c91Row{color:#f5b13f!important;background:#2a2c30!important}
+body.c92Pro #dockStage .rn.sel{outline:2px solid #f5b13f!important;box-shadow:0 0 0 3px #f5b13f33,0 0 12px #f5b13f66;z-index:3}
+body.c92Pro #dockStage .rn.sel::after,body.c92Pro #dockStage .rn:hover::after{content:attr(data-note);position:absolute;left:-1px;bottom:100%;margin-bottom:3px;padding:1px 5px;border-radius:3px;font:600 10px/14px Consolas,monospace;white-space:nowrap;pointer-events:none;z-index:4}
+body.c92Pro #dockStage .rn:hover::after{color:#eceef1;background:#202124;border:1px solid #3a3d43}
+body.c92Pro #dockStage .rn.sel::after{color:#241706;background:#f5b13f}
+body.c92Pro #dockStage #dockBeat .legend>div{font:500 10px/1.4 Consolas,monospace}
+body.c92Pro #dockStage #dockBeat .legend>div:not(:first-child){color:transparent}
+body.c92Pro #dockStage #dockBeat .legend>div:nth-child(4n+2){color:#7e848d}
+body.c92Pro #dockStage #dockBeat .legend>div.c91Col{color:#f5b13f!important}
+/* Inspecteur. */
+#c92Inspector dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:4px 0 8px;font-size:12px}
+#c92Inspector dt{color:#7e848d}#c92Inspector dd{margin:0;color:#eceef1;overflow-wrap:anywhere}
+#c92Inspector .c92Empty{color:#a9aeb6;font-size:12px;margin:4px 0 8px}
+#c92Inspector .dockSelection{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 8px!important}
+#c92Inspector button{min-height:26px}
+/* Écran étroit : fenêtres empilées, sans déplacement. */
+@media (max-width:899px){
+ body.c92Pro #dockStage{overflow:auto!important}
+ body.c92Pro #dockStage>.panel{position:relative!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important;margin:0 0 10px!important}
+ body.c92Pro .c92WinBar{cursor:default}
+ body.c92Pro .c92Grip{display:none!important}
+}

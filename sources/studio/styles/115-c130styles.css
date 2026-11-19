@@ -1,0 +1,9 @@
+
+#c130Dlg{width:min(1060px,95vw);max-height:90vh;overflow:auto;background:#181b1f;color:#ddd;border:1px solid #555;border-radius:12px;padding:16px;box-shadow:0 25px 100px #000b}
+#c130Dlg::backdrop{background:#0009}#c130Dlg header{display:flex;justify-content:space-between;align-items:center;gap:10px}#c130Dlg h2{font-size:18px;margin:0}#c130Dlg h3{font-size:14px;margin:18px 0 6px}
+#c130Dlg .c130Row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid #353a40}
+#c130Dlg label{display:flex;gap:5px;align-items:center;font-size:12px}#c130Dlg input[type=number]{width:72px}#c130Dlg input[type=text]{width:120px}#c130Dlg select{max-width:200px}
+#c130Dlg p{font-size:12px;line-height:1.5;margin:6px 0}#c130Status{color:#e2bb78;min-height:1.4em}#c130Dlg button{font-size:12px}
+#c130Dlg input[type=text],#c130Dlg input[type=number]{background:#101317;border:1px solid #4a5058;color:#e8e8e8;border-radius:4px;padding:3px 5px}
+/* 6.1 (essai à la main) : en mode Pro, l'en-tête (et ses menus Projet, Atelier…) passe au-dessus des fenêtres ; avant, la fenêtre au premier plan cachait le bas du menu Projet. */
+body.c92Pro #dockHeader{position:relative;z-index:900}

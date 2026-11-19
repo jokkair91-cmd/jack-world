@@ -1,0 +1,4 @@
+
+/* 7.6 — M5 « Effets et courbes par piste audio ». Bouton « FX » sur chaque piste audio (Arrangement et Montage). */
+#timeline .j99LaneLabel .c147Fx{margin-left:auto;font-size:10px;line-height:16px;padding:0 6px;min-height:0;border-radius:4px;background:#22262b;border:1px solid #3a3f46;color:#e7e8ea;cursor:pointer}
+#timeline .j99LaneLabel .c147Fx.on{background:#cf2f3b;border-color:#e0505a;color:#fff}

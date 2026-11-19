@@ -1,0 +1,57 @@
+
+/* Claude — écran Voix & texte d'après la maquette « Prises voix » : Micro & réglages, Prises voix, Paroles & prompteur.
+   Seulement la présentation et des affichages (niveau, chrono, lignes numérotées) : l'enregistrement ne change pas. */
+#dockStage.j109Voice{--c117Red:#d6343b;--c117RedDk:#7a1a1f;--c117Panel:#16181b;--c117Line:#2a2d32}
+/* Titres des trois colonnes, avec un repère rouge */
+#dockStage.j109Voice #j106Input>strong{font-size:0!important;letter-spacing:0!important}
+#dockStage.j109Voice #j106Input>strong::before{content:"Micro & réglages";font:700 14px/1.2 system-ui,"Segoe UI",sans-serif;color:#f1eded}
+#dockStage.j109Voice #cVoices .cTopline h2,#dockStage.j109Voice #cWords .cTopline h2{font:700 14px/1.2 system-ui,"Segoe UI",sans-serif!important;letter-spacing:0!important;text-transform:none!important;color:#f1eded!important}
+#dockStage.j109Voice #j106Input>strong::after,#dockStage.j109Voice #cVoices .cTopline h2::before,#dockStage.j109Voice #cWords .cTopline h2::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--c117Red);box-shadow:0 0 6px var(--c117Red);margin-right:8px;vertical-align:1px}
+#dockStage.j109Voice #j106Input>strong{display:flex!important;flex-direction:row-reverse;justify-content:flex-end;align-items:center}
+#dockStage.j109Voice #j106Input>strong::after{margin-right:8px}
+#dockStage.j109Voice .c117Label{display:block;margin:6px 0 3px;color:#a9aeb6;font:500 11.5px/1.2 system-ui,"Segoe UI",sans-serif}
+/* Réglages : interrupteurs rouges à droite, comme sur la maquette */
+#dockStage.j109Voice #j109Mic .cRow{display:flex;flex-direction:column;gap:8px;padding:8px 2px}
+#dockStage.j109Voice #j109Mic .cRow label{width:100%;box-sizing:border-box;display:flex!important;flex-direction:row-reverse;justify-content:space-between;align-items:center;gap:10px;color:#e6e6e6;font:500 12.5px/1.2 system-ui,"Segoe UI",sans-serif;padding:4px 0;border-bottom:1px solid var(--c117Line)}
+#dockStage.j109Voice #j109Mic .cRow input[type=checkbox]{appearance:none;-webkit-appearance:none;flex:none;width:34px;height:18px;border-radius:9px;background:#3a3d42;position:relative;cursor:pointer;margin:0;transition:background .15s}
+#dockStage.j109Voice #j109Mic .cRow input[type=checkbox]::before{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#d9dadc;transition:left .15s}
+#dockStage.j109Voice #j109Mic .cRow input[type=checkbox]:checked{background:var(--c117Red)}
+#dockStage.j109Voice #j109Mic .cRow input[type=checkbox]:checked::before{left:18px;background:#fff}
+#dockStage.j109Voice #j109Mic .cRow input[type=checkbox]:focus-visible{outline:2px solid #f5b13f;outline-offset:2px}
+/* Niveau d'entrée */
+#c117Meter{margin:10px 2px 4px}
+#c117Meter .c117Head{display:flex;justify-content:space-between;color:#e6e6e6;font:600 12.5px/1.2 system-ui,"Segoe UI",sans-serif;margin-bottom:6px}
+#c117Meter .c117Head span{color:#a9aeb6;font-weight:500}
+#c117Meter .c117Bar{position:relative;height:10px;border-radius:3px;background:#24272b;overflow:hidden}
+#c117Meter .c117Fill{position:absolute;inset:0;background:linear-gradient(90deg,#2fbf4a 0%,#9be22d 62%,#f5d020 80%,#f08a1c 90%,#e5303a 100%);clip-path:inset(0 100% 0 0)}
+#c117Meter .c117Scale{display:flex;justify-content:space-between;color:#7e848d;font:500 9.5px/1 Consolas,monospace;margin-top:3px}
+/* Prises voix : chrono, nom de la prise et petit vumètre à côté de REC / STOP */
+#dockStage.j109Voice #j113VoiceTransport{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#c117Clock{font:600 20px/1 Consolas,"Cascadia Mono",monospace;color:#f1eded;letter-spacing:.5px;margin-left:8px}
+#c117Take{color:#cfd2d6;font:500 12px/1.2 system-ui,"Segoe UI",sans-serif}
+#c117Mini{display:inline-flex;align-items:flex-end;gap:2px;height:16px;margin-left:auto}
+#c117Mini i{display:block;width:4px;background:#2e3a2e;border-radius:1px}
+#c117Mini i.on{background:#3fd15a}
+#c117Mini i.hot{background:#f5c518}
+#c117Clock.c117Rec{color:#ff5a60}
+/* Forme d'onde plus grande, règle de temps dessous */
+#dockStage.j109Voice #cVoices .cVoice canvas{height:64px!important;width:100%!important;background:#120d0e!important;border:1px solid #3a1c1f;border-radius:4px}
+/* La règle occupe toute la largeur de la carte (la carte de ChatGPT est une grille) et ne prend qu'une ligne */
+.c117Ruler{display:flex;justify-content:space-between;align-self:start;grid-column:1/-1;height:12px;color:#8a8f96;font:500 9.5px/12px Consolas,monospace;margin:2px 1px 4px}
+/* Paroles : lignes numérotées, sections en gras, ligne en cours encadrée en rouge */
+#dockStage.j109Voice #cWords .cLyricsGrid.c117Show #cLyrics{display:none!important}
+#c117Lines{position:static;box-sizing:border-box;width:100%;height:var(--c117H,360px);overflow:auto;background:var(--c117Panel);border:1px solid var(--c117Line);border-radius:6px;padding:8px 6px;font:500 13px/1.55 system-ui,"Segoe UI",sans-serif;color:#e6e6e6;cursor:text}
+#c117Lines[hidden]{display:none}
+#c117Lines .c117L{display:flex;gap:10px;padding:1px 6px;border:1px solid transparent;border-radius:3px;white-space:pre-wrap;word-break:break-word}
+#c117Lines .c117L b{flex:none;width:18px;text-align:right;color:#7e848d;font-weight:500;font-family:Consolas,monospace;font-size:12px;padding-top:1px}
+#c117Lines .c117L.sec span{font-weight:700;color:#fff}
+#c117Lines .c117L.cur{border-color:var(--c117Red);background:rgba(214,52,59,.12)}
+#c117Lines .c117L:hover{background:rgba(255,255,255,.04)}
+/* Vitesse du prompteur : − valeur % + */
+.c117Speed{display:inline-flex;align-items:center;gap:6px;color:#cfd2d6;font:500 12px/1 system-ui,"Segoe UI",sans-serif}
+.c117Speed output{min-width:46px;text-align:center;padding:4px 6px;border:1px solid var(--c117Line);border-radius:4px;background:#1b1d20;color:#f1eded}
+.c117Speed button{width:26px;height:26px;border-radius:4px;border:1px solid var(--c117Line);background:#24272b;color:#f1eded;cursor:pointer}
+/* Ligne des messages (« Prêt… », « Voir les derniers messages ») : seulement dans Studio ; ailleurs, place gagnée */
+body.j93Workspace.c117NoMsg #dockMessages{display:none!important}
+#c117Toast{position:fixed;left:50%;transform:translateX(-50%);z-index:80;max-width:min(520px,calc(100vw - 32px));padding:7px 12px;border-radius:6px;background:#1d2024;border:1px solid #3a3d43;border-left:3px solid #d6343b;color:#eceef1;font:500 12.5px/1.35 system-ui,"Segoe UI",sans-serif;box-shadow:0 6px 18px rgba(0,0,0,.45);pointer-events:none;opacity:0;transition:opacity .2s}
+#c117Toast.on{opacity:1}

@@ -1,0 +1,11 @@
+
+/* Only the Studio landing screen may grow with its visible instruments. */
+body.compact88 main.dockApp:has(#dockStage:not([hidden])){height:auto!important;min-height:100dvh;overflow:visible!important}
+body.compact88 main.dockApp:has(#dockStage:not([hidden])) #dockContent{height:auto;flex:none;overflow:visible}
+@media(min-width:951px){
+ body.compact88 #dockStage:not([hidden]):not(.compact88StudioFocus){height:auto!important;grid-template-rows:clamp(260px,30vh,350px) minmax(430px,auto)!important;overflow:visible}
+ body.compact88 #dockStage:not(.compact88StudioFocus)>.dockSynth,body.compact88 #dockStage:not(.compact88StudioFocus)>.dockMixer{min-height:430px;height:auto!important;overflow:visible}
+ body.compact88 #dockStage:not(.compact88StudioFocus)>.dockSynth .dockSynthCore{min-height:165px;flex:1}
+ body.compact88 #dockStage:not(.compact88StudioFocus)>.dockSynth #piano{flex:none;height:110px!important;min-height:110px!important}
+ body.compact88 #dockStage.compact88StudioFocus{height:max(650px,75vh)!important}
+}

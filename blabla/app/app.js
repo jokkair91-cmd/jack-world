@@ -233,7 +233,7 @@ function vueAccueil() {
       <div class="accueil-texte">
         <h1>Salut, moi c'est <span>Jack</span>&nbsp;!</h1>
         <div class="bulle">Le perroquet qui t'apprend à blablater 🦜</div>
-        <p class="accroche">Anglais, espagnol, allemand : du premier « bonjour » jusqu'au niveau professionnel, en 6 niveaux et un parcours de 6 mois. Leçons, quiz, conjugaison, et des conversations avec moi !</p>
+        <p class="accroche">Anglais, espagnol, allemand, italien, portugais : du premier « bonjour » jusqu'au niveau professionnel, en 6 niveaux et un parcours de 6 mois. Leçons, quiz, conjugaison, et des conversations avec moi !</p>
         <button class="btn" id="commencer">Choisir ma langue ↓</button>
       </div>
     </section>
@@ -247,7 +247,7 @@ function vueAccueil() {
           <span class="sous">${NIVEAUX[etat.debloque[code] || 0].emoji} Niveau ${NIVEAUX[etat.debloque[code] || 0].nom}</span>
         </button>`).join("")}
     </div>
-    <p class="muted" style="margin-top:22px">🇫🇷 <b>Français</b> : pour maîtriser l'orthographe, la grammaire et la conjugaison, comme avec un Bescherelle. Bientôt : chinois, italien…</p>`;
+    <p class="muted" style="margin-top:22px">🇫🇷 <b>Français</b> : pour maîtriser l'orthographe, la grammaire et la conjugaison, comme avec un Bescherelle. Bientôt : chinois…</p>`;
   document.getElementById("commencer").onclick = () =>
     document.getElementById("langues").scrollIntoView({ behavior: "smooth", block: "start" });
   app.querySelectorAll("[data-langue]").forEach((b) => b.onclick = () => {

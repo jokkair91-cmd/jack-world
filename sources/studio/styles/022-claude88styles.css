@@ -1,0 +1,6 @@
+
+/* Ajouts fonctionnels de Claude sur la 8.8 de ChatGPT : aucun changement de design. */
+/* Écran étroit : les prises voix (plus longues que 650 px) ne passent plus sous le panneau d'effets. */
+@media (max-width:950px){body.compact88 #dockVoices .compact88Grid>#cVoices:not(.compact88Focused){max-height:none!important}}
+.v8Keys button:disabled{opacity:.45;cursor:not-allowed}
+.claude88SampleHint{color:#e6c791;font-size:11px;margin:4px 0 0}

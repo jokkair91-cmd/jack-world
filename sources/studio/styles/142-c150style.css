@@ -1,0 +1,20 @@
+
+/* 7.9 — audit « Mute, MIDI et démarrage audio ». Le son des projets ne change pas tant qu'on ne touche à rien. */
+/* Ligne « PRISE SYNTHÉ » de l'arrangement (seulement quand une prise existe) : même aspect que les autres lignes. */
+#tlRows .c150TakeRow .tl-lane{pointer-events:none}
+html body #tlRows#tlRows .tl-row.c150TakeRow .tl-label>b{font-size:10px!important;letter-spacing:0!important}
+/* Grand Piano Roll : clavier replié → la grille prend toute la hauteur libérée, aussi en fenêtre étroite (≤ 950 px). */
+html body.j93Workspace.c118Big #dockStage#dockStage.j108Notes>#roll#roll{flex:1 1 auto!important;height:auto!important;max-height:none!important;min-height:0!important;align-self:stretch!important}
+/* Réglages du synthé (le réglage des harmoniques du 808 revient ici ; un seul bouton rond reste sur le clavier). */
+#synth details.c150Synth{position:relative;display:inline-block;margin-left:6px}
+#synth details.c150Synth>summary{list-style:none;cursor:pointer;height:28px;display:inline-flex;align-items:center;padding:0 10px;border-radius:6px;border:1px solid #3a3d43;background:#1d2024;color:#eceef1;font:600 12px/1 system-ui,"Segoe UI",sans-serif;white-space:nowrap}
+#synth details.c150Synth>summary::-webkit-details-marker{display:none}
+#synth details.c150Synth[open]>summary{border-color:#d6343b}
+/* Le panneau du clavier masque ce qui dépasse : le menu est donc placé par rapport à la fenêtre, au-dessus du bouton. */
+#synth .c150SynthBody{position:fixed;z-index:200;width:290px;padding:12px;border-radius:8px;border:1px solid #3a3d43;background:#15171a;box-shadow:0 10px 26px rgba(0,0,0,.55);color:#e6e6e6;font:500 12.5px/1.4 system-ui,"Segoe UI",sans-serif}
+#synth .c150Row{display:flex;align-items:center;gap:10px;margin:0 0 8px}
+#synth .c150Row span{flex:0 0 auto;color:#cfd2d6}
+#synth .c150Row input[type=range]{flex:1 1 auto;accent-color:#d6343b;min-width:0}
+#synth .c150Row output{flex:0 0 40px;text-align:right;font:600 12px/1 ui-monospace,Consolas,monospace;color:#f1eded}
+#synth .c150SynthBody button{height:28px;padding:0 10px;border-radius:6px;border:1px solid #3a3d43;background:#1d2024;color:#eceef1;font:600 12px/1 system-ui,"Segoe UI",sans-serif;cursor:pointer}
+#synth .c150Hint{margin:8px 0 0;color:#a9aeb6;font-size:11.5px}

@@ -173,6 +173,49 @@ MOTEURS.it = function (v, t) {
   }
 };
 
+// ---------------- PORTUGAIS ----------------
+// Portugais du Portugal. Six personnes : eu, tu, ele/ela, nós, vocês, eles/elas (vocês se conjugue comme eles).
+// radicalFutur : far-, dir-, trar- · participe : participe irrégulier (feito, dito, visto…)
+// formes.preterito des irréguliers sert aussi à fabriquer le subjonctif imparfait (fizeram → fizesse).
+MOTEURS.pt = function (v, t) {
+  const inf = v.inf, g = inf.slice(-2), rad = inf.slice(0, -2);   // ar, er, ir
+  const T = {
+    presente: { ar: ["o", "as", "a", "amos", "am", "am"], er: ["o", "es", "e", "emos", "em", "em"], ir: ["o", "es", "e", "imos", "em", "em"] },
+    preterito: { ar: ["ei", "aste", "ou", "ámos", "aram", "aram"], er: ["i", "este", "eu", "emos", "eram", "eram"], ir: ["i", "iste", "iu", "imos", "iram", "iram"] },
+    imperfeito: { ar: ["ava", "avas", "ava", "ávamos", "avam", "avam"], er: ["ia", "ias", "ia", "íamos", "iam", "iam"], ir: ["ia", "ias", "ia", "íamos", "iam", "iam"] },
+  };
+  // Orthographe : ficar → fiquei, pagar → paguei, começar → comecei ; conhecer → conheço, proteger → protejo
+  const devantE = (r) => r.replace(/c$/, "qu").replace(/g$/, "gu").replace(/ç$/, "c");
+  const colle = (r, f) => {
+    if (g === "ar" && f[0] === "e") return devantE(r) + f;
+    if (g !== "ar" && /^[oa]/.test(f)) { if (/c$/.test(r)) return r.slice(0, -1) + "ç" + f; if (/g$/.test(r)) return r.slice(0, -1) + "j" + f; }
+    return r + f;
+  };
+  const formes = (temps) => (v.formes && v.formes[temps]) || T[temps][g].map((f) => colle(rad, f));
+  const radF = v.radicalFutur || inf;
+  const pp = v.participe || rad + (g === "ar" ? "ado" : "ido");
+  const compose = (aux) => aux.map((a) => a + " " + pp);
+  switch (t) {
+    case "presente": case "preterito": case "imperfeito": return formes(t);
+    case "futuro": return v.formes?.futuro || ["ei", "ás", "á", "emos", "ão", "ão"].map((f) => radF + f);
+    case "condicional": return v.formes?.condicional || ["ia", "ias", "ia", "íamos", "iam", "iam"].map((f) => radF + f);
+    case "conjuntivo": {
+      if (v.formes?.conjuntivo) return v.formes.conjuntivo;
+      const eu = formes("presente")[0], r = eu.endsWith("o") ? eu.slice(0, -1) : rad;
+      return (g === "ar" ? ["e", "es", "e", "emos", "em", "em"] : ["a", "as", "a", "amos", "am", "am"]).map((f) => (g === "ar" ? devantE(r) : r) + f);
+    }
+    case "conjuntivo-imperfeito": {
+      if (v.formes?.["conjuntivo-imperfeito"]) return v.formes["conjuntivo-imperfeito"];
+      const st = formes("preterito")[5].slice(0, -3);                      // falaram → fala, fizeram → fize
+      const acc = { a: "á", i: "í", o: "ô", e: v.formes?.preterito ? "é" : "ê" };
+      const nos = st.slice(0, -1) + (acc[st.slice(-1)] || st.slice(-1)) + "ssemos"; // falássemos, comêssemos, fizéssemos
+      return [st + "sse", st + "sses", st + "sse", nos, st + "ssem", st + "ssem"];
+    }
+    case "mais-que-perfeito": return compose(["tinha", "tinhas", "tinha", "tínhamos", "tinham", "tinham"]);
+    case "condicional-composto": return compose(["teria", "terias", "teria", "teríamos", "teriam", "teriam"]);
+  }
+};
+
 function conjuguer(langue, verbe, temps) {
   if (verbe.formes && verbe.formes[temps]) return verbe.formes[temps];
   return MOTEURS[langue](verbe, temps);

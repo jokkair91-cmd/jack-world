@@ -1,0 +1,20 @@
+
+#c143Bar{display:none}
+html body.c143On #c143Bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:6px 0 8px;margin:0;border-bottom:1px solid var(--j-line2,#333);min-width:0}
+#c143Bar .c143Grp{display:flex;flex-wrap:wrap;align-items:center;gap:4px;min-width:0}
+#c143Bar .c143Grp>b{font-size:10px;letter-spacing:.06em;color:var(--j-muted,#a0a4ab);margin-right:2px;font-weight:600}
+#c143Bar button{font-size:11px;padding:5px 9px;min-height:28px;white-space:nowrap}
+#c143Bar button[aria-pressed="true"]{background:var(--j-red,#c8323a)!important;border-color:var(--j-red2,#db3d46)!important;color:#fff!important}
+#c143Pos{font:600 12px/1.2 ui-monospace,Consolas,monospace;color:var(--j-text,#e9e9ec);background:var(--j-surface,#1f2125);border:1px solid var(--j-line2,#333);border-radius:var(--j-r,6px);padding:6px 9px;white-space:nowrap}
+#c143Pos i{font-style:normal;color:var(--j-red2,#db3d46)}
+html body.c143On #c121Guide{display:none!important}
+html body.c143On #dockStage #timeline{min-height:calc(100vh - var(--j93Top,190px) - 14px)}
+html body.c143On #dockStage#dockStage#dockStage #timeline#timeline #tlRows .tl-row:not(.tl-ruler){flex:0 0 var(--c143h,52px)!important;height:var(--c143h,52px)!important;min-height:var(--c143h,52px)!important}
+html body.c143On #dockStage#dockStage#dockStage #timeline#timeline #tlRows .tl-row:not(.tl-ruler) .tl-lane{min-height:calc(var(--c143h,52px) - 2px)!important}
+html body.c143On #timeline .tl-ruler .tl-num{background-image:repeating-linear-gradient(90deg,transparent 0,transparent calc(var(--bw,56px)/4 - 1px),rgba(255,255,255,.17) calc(var(--bw,56px)/4 - 1px),rgba(255,255,255,.17) calc(var(--bw,56px)/4))!important;background-position:0 100%!important;background-size:100% 6px!important;background-repeat:no-repeat!important;text-align:left;padding-left:3px;overflow:hidden}
+html body.c143On #tlRows .dockEmptyVoice{display:none!important}
+html body.c143On #tlRows .dockEmptyAudio{display:flex!important}
+html body.c143On #timeline .tl-lane.tl-audio{cursor:crosshair}
+html body.c143On #timeline .tl-aud.sel{outline:2px solid var(--j-red2,#db3d46)!important;outline-offset:-2px}
+#c143Band{position:fixed;z-index:60;border:1px solid var(--j-red2,#db3d46);background:var(--j-redsoft,rgba(200,50,58,.16));pointer-events:none;display:none}
+#c143Tab[aria-pressed="true"]{color:#fff}

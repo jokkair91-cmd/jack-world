@@ -1,0 +1,10 @@
+
+#save .claude89Dot{display:none;margin-left:6px;color:#f5b13f;font-size:11px}
+#save.claude89Dirty .claude89Dot{display:inline}
+#storeWarn[hidden]{display:none!important}
+.claude89Reduce{font-size:10px;padding:2px 6px;margin-left:8px}
+.compact88Subnav .claude89Link{margin-left:auto}
+body #workspace88{display:none!important}
+body.referenceViews #workspace88:not([hidden]){display:flex!important}
+/* Preserve the reference Studio composition while fitting shorter desktop windows. */
+@media(min-width:951px){body:not(.c89Accueil) main.dockApp{height:100dvh;min-height:650px;overflow:hidden}body:not(.c89Accueil) #dockStage{grid-template-rows:minmax(190px,.98fr) minmax(260px,1fr)}#dockHeader{flex:none}#dockContent{min-height:0}#dockStage>.panel{min-height:0}}

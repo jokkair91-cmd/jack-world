@@ -1,0 +1,31 @@
+
+/* 6.4 (retouches demandées par Bob sur la 6.3) — CSS seulement, actif avec le style 6.3 (body.c133).
+   1. Plus de doublons : les onglets « Batterie / Piano Roll » de la barre de l'éditeur et l'onglet « Console » de Composition
+      (déjà en haut : sous-onglets et espace Console) sont masqués. Les originaux restent, un clic fait la même chose.
+   2. Console : l'en-tête tient sur une seule ligne (titre, Instruments/Voix, Racks & bus…), les faders gagnent la place.
+   3. Piano Roll : notes vertes comme la maquette ; la note choisie garde son contour. */
+html body.c133 #j105EditorBar #c119Head .c119Seg{display:none!important}
+html body.c133 #j93Nav .j93Subs button[data-c118-console]{display:none!important}
+
+html body.c133 #dockStage#dockStage#dockStage #mixer#mixer[data-j93-visible="true"]{display:grid!important;grid-template-columns:auto auto minmax(0,1fr)!important;grid-template-rows:auto minmax(0,1fr)!important;align-items:center!important;column-gap:10px!important;row-gap:8px!important}
+html body.c133 #dockStage#dockStage#dockStage #mixer#mixer>.skinTop,html body.c133 #dockStage#dockStage#dockStage #mixer#mixer>.dockBanks,html body.c133 #dockStage#dockStage#dockStage #mixer#mixer>#j106MixTools{grid-row:1!important;margin:0!important;padding:0!important;border:0!important;min-height:0!important}
+html body.c133 #dockStage#dockStage#dockStage #mixer#mixer>.skinTop{grid-column:1!important}html body.c133 #dockStage#dockStage#dockStage #mixer#mixer>.dockBanks{grid-column:2!important}
+html body.c133 #dockStage#dockStage#dockStage #mixer#mixer>#j106MixTools{grid-column:3!important;justify-self:end!important;flex-wrap:wrap!important;justify-content:flex-end!important;gap:6px!important}
+html body.c133 #dockStage#dockStage#dockStage #mixer#mixer>:not(.skinTop):not(.dockBanks):not(#j106MixTools){grid-column:1/-1!important;grid-row:2!important}
+html body.c133 #dockStage#dockStage#dockStage #mixer#mixer>#dockInstrumentBank,html body.c133 #dockStage#dockStage#dockStage #mixer#mixer>.dockVoiceBank{align-self:stretch!important;border-top:1px solid var(--ln)!important;padding-top:10px!important;min-height:0!important;box-sizing:border-box!important}
+html body.c133 #mixer .skinTop .skinFaders,html body.c133 #mixer .skinTop small{display:none!important}
+html body.c133 #mixer .skinTop .orbitMixerName,html body.c133 #mixer .skinTop .orbitMixerName>div{font-size:14px!important;line-height:28px!important;margin:0!important;padding:0!important;letter-spacing:.12em}
+html body.c133 #mixer>.dockBanks button,html body.c133 #mixer>#j106MixTools button{min-height:28px!important;padding-top:3px!important;padding-bottom:3px!important}
+
+html body.c133 #dockStage#dockStage #roll#roll .rn{background:#8fd6a0!important;border:1px solid #5fae74!important;border-radius:3px!important;box-shadow:none!important}
+html body.c133 #dockStage#dockStage #roll#roll .rn.sel{border:2px solid #f2b84b!important}
+/* 4. Clavier du bas en vert, comme la maquette (touches noires gris foncé). Les touches à gauche du Piano Roll ne changent pas. */
+html body.c133 #piano#piano .key.white{background:linear-gradient(#c4e6bc,#a9d7a2 70%,#8fc788)!important;border-color:#5f9a5c!important;color:#1d3320!important}
+/* 5. Volume synthé (bouton rond rouge à droite du Clavier) : au style graphite, comme les boutons de la Console ;
+      étiquette, bouton et valeur sur une ligne (avant : l'étiquette et le « 80 % » étaient coupés). Même curseur, même réglage. */
+html body.c133 #synth#synth .dockVolumePlanet{flex-direction:row!important;align-items:center!important;gap:7px!important;height:auto!important}
+html body.c133 #synth#synth .dockVolumePlanet>label{font-size:10px!important;line-height:12px!important;letter-spacing:.06em!important;color:var(--mut)!important;white-space:nowrap!important;margin:0!important}
+html body.c133 #synth#synth .dockVolumePlanet .skinDial.skinRed{background:radial-gradient(circle at 35% 30%,#3a3f46,#1b1e22 70%)!important;border:2px solid #cf2f3b!important;box-shadow:0 1px 3px rgba(0,0,0,.5)!important;width:26px!important;height:26px!important}
+html body.c133 #synth#synth .dockVolumePlanet .skinDial.skinRed::after{background:#e7e8ea!important}
+html body.c133 #synth#synth .dockVolumePlanet .master-val{font-size:11px!important;line-height:14px!important;color:var(--txt)!important;font-family:ui-monospace,Consolas,monospace!important;min-width:32px}
+html body.c133 #piano#piano .key.black{background:linear-gradient(#2a2e33,#141619)!important}

@@ -1,0 +1,13 @@
+
+/* Keep the green keyboard, planets and orbital control intact. */
+.j103Editorial,.skinMixerNote,.j102Help,.compact88Help,.skinHelp:not(.dockSynthHelp){display:none!important}
+body.j93Workspace #dockStage>.panel:not(#synth),body.j93Workspace #j93Library,body.j93Workspace #c92Inspector{background:#191d21!important;background-image:none!important;box-shadow:none!important;border-color:#353c43!important}
+body.j93Workspace #j93Nav{background:#202429!important;background-image:none!important;box-shadow:none!important;border-bottom:1px solid #414951!important}
+body.j93Workspace #j93Nav .j93Groups button[aria-pressed=true],body.j93Workspace #j93Nav .j93Subs button[aria-pressed=true]{background:#9e3044!important;border-color:#c24b60!important;color:#fff!important;box-shadow:none!important}
+body.j93Workspace #dockStage button:not(.dockPresetPlanet):not(.key),.j102Dialog button{box-shadow:none!important}
+body.j93Workspace #patterns .pat-group{padding:8px!important;margin:5px 0!important}
+.j102Dialog,.j102Dialog>header,.j102Dialog :is(.j97Row,.j98Row,.j99Row,.j100Row,.j101Row,.j97Card,.j100Fx){background-image:none!important;box-shadow:none!important}
+.j102Dialog>header{background:#232930!important;border-top-color:#b63c52!important}
+.j102Dialog .j102Primary{background:#9e3044!important}
+body.j93Workspace #timeline .tl-label small{display:none!important}
+body.j93Workspace #timeline .tl-label{line-height:1.4!important}

@@ -1,0 +1,17 @@
+
+body.j93Workspace #dockStage#dockStage{
+ position:relative!important;inset:auto!important;margin:0!important;
+ height:max(380px,calc(100dvh - var(--j93Top,180px) - 12px))!important;
+}
+body.j93Workspace #dockStage#dockStage.j111Patterns #roll:not([data-j93-visible=true]){
+ display:none!important;
+}
+body.j93Workspace #dockStage#dockStage.j108Notes #rollWrap{
+ height:auto!important;max-height:none!important;flex:1 1 0!important;
+}
+body.j93Workspace #dockStage#dockStage.j108Notes #roll>.roll-bar{
+ flex:0 0 auto!important;
+}
+@media(max-width:950px){
+ body.j93Workspace #dockStage#dockStage{height:auto!important}
+}

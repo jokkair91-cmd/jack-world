@@ -1,0 +1,14 @@
+
+#workspace87{display:flex;flex-wrap:wrap;align-items:center;gap:7px;padding:9px 12px;background:#202329;border:1px solid #41454d;border-radius:10px;margin:8px 0;color:#e6e9ef;font:13px system-ui}
+#workspace87 button,.workspace87Toggle{font:inherit;min-height:32px;padding:5px 10px;border:1px solid #555b65;border-radius:7px;background:#2d323a;color:#f2f4f8;cursor:pointer}
+#workspace87 button[aria-pressed="true"]{border-color:#88d3ad;background:#244537}
+.workspace87Toggle{float:right;margin:0 0 5px 8px;font-size:12px}
+.workspace87Folded>:not(h2):not(.workspace87Toggle){display:none!important}
+.workspace87Folded{min-height:0!important;height:auto!important;align-self:start}
+body.workspace87Compact #dockStage{gap:10px!important}
+body.workspace87Compact .dockPane>.panel{padding:12px!important;margin-bottom:10px!important}
+body.workspace87Compact .cRow{gap:8px}
+#dockStage.workspace87Focus{display:block!important}
+#dockStage.workspace87Focus>section{display:none!important}
+#dockStage.workspace87Focus>section.workspace87Selected{display:block!important;width:100%!important;max-width:none!important}
+#workspace87 button:focus-visible,.workspace87Toggle:focus-visible{outline:3px solid #a0e5bf;outline-offset:2px}

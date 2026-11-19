@@ -1,0 +1,4 @@
+
+#j138Peak{display:inline-block;min-width:58px;margin-left:4px;padding:1px 5px;border:1px solid #3a3d42;border-radius:4px;font-size:10px;line-height:15px;text-align:center;color:#9aa0a6;background:#16171a;white-space:nowrap;font-variant-numeric:tabular-nums}
+#j138Peak.hot{color:#fff;background:var(--red,#cf2f3b);border-color:var(--red,#cf2f3b)}
+#j138Peak.warm{color:#f1d2a0;border-color:#7a5b2c}

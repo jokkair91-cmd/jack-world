@@ -1,0 +1,9 @@
+
+(()=>{'use strict';const stage=document.getElementById('dockStage'),wrap=document.getElementById('rollWrap'),panel=document.getElementById('roll');if(!stage||!wrap||!panel)return;let wasVisible=false,pattern=null,frame=null;
+function check(){const visible=document.body.classList.contains('j93Workspace')&&panel.dataset.j93Visible==='true';if(!visible){wasVisible=false;return}const now=activePat(rollTrack);if(wasVisible&&pattern===now)return;wasVisible=true;pattern=now;if(frame!==null)cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{frame=null;let midi=60;if(roll.notes.length){const pitches=roll.notes.map(rollMidi);midi=Math.round((Math.min(...pitches)+Math.max(...pitches))/2)}wrap.scrollTop=Math.max(0,(ROLL_HI-midi)*ROLL_RH-wrap.clientHeight/2+ROLL_RH/2)})}
+// Les commandes restent entièrement dans la fenêtre, même lorsque le menu est long.
+const tools=document.getElementById('j94Tools'),menu=tools?.querySelector('.j94Menu');
+function fitMenu(){if(!tools?.open||!menu)return;menu.style.maxHeight=Math.max(120,Math.min(innerHeight-20,Math.floor(innerHeight*.6)))+'px';const r=tools.querySelector('summary').getBoundingClientRect();menu.style.left=Math.max(8,Math.min(innerWidth-menu.offsetWidth-8,r.right-menu.offsetWidth))+'px';menu.style.top=Math.max(8,Math.min(innerHeight-menu.offsetHeight-8,r.bottom+5))+'px'}
+if(tools&&menu){tools.addEventListener('toggle',()=>requestAnimationFrame(fitMenu));window.addEventListener('resize',fitMenu);window.addEventListener('scroll',fitMenu,true);new ResizeObserver(fitMenu).observe(menu);fitMenu()}
+new MutationObserver(check).observe(stage,{subtree:true,childList:true,attributes:true,attributeFilter:['data-j93-visible']});new MutationObserver(check).observe(document.body,{attributes:true,attributeFilter:['class']});check();
+})();

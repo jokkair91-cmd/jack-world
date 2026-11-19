@@ -1,0 +1,8 @@
+
+/* Logo identique au site JACK22 Studio : Jackbot + JACK22 / STUDIO */
+#dockHeader .skinBrand{align-items:center}
+#dockHeader .skinRobot,body.j93Workspace #dockHeader .skinRobot{width:46px!important;height:46px!important;margin:0 4px 0 0!important;object-fit:contain;filter:drop-shadow(0 0 10px #d81f3588)}
+#dockHeader .skinBrand h1{font-family:Arial,Helvetica,sans-serif!important;font-size:28px!important;font-weight:900!important;letter-spacing:-1.8px!important;line-height:.9!important;color:#f3f3f5!important;white-space:nowrap;display:inline-block;margin:0}
+html body #dockHeader .skinBrand h1 span,html body #dockHeader h1 span{color:#d81f35!important}
+#dockHeader .skinBrand h1 small{display:block;font-weight:500;font-size:8px;letter-spacing:5px;text-align:right;margin-top:8px;color:#f3f3f5}
+#dockHeader .skinBrand .sub{display:none}

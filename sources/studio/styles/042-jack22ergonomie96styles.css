@@ -1,0 +1,21 @@
+
+/* Correctifs observés dans le navigateur, limités à l'espace organisé. */
+body.j93Workspace #dockStage>#synth[data-j93-visible=true]{grid-template-columns:68px minmax(225px,.85fr) minmax(280px,1.15fr)!important;grid-template-rows:64px 95px auto!important;overflow:visible!important}
+body.j93Workspace #synth>.skinTop{grid-column:1!important;grid-row:1!important}
+body.j93Workspace #synth>.dockSynthToolbar{grid-column:2!important;grid-row:1!important;position:static!important;max-width:none!important;align-self:center;min-width:0}
+body.j93Workspace #synth>.dockSynthCore{grid-column:3!important;grid-row:1!important;justify-content:center!important}
+body.j93Workspace #synth #piano{grid-column:1/-1!important;grid-row:2!important}
+body.j93Workspace #synth>.dockSynthHelp{grid-column:1/-1!important;grid-row:3!important}
+body.j93Workspace #dockStage>#j93Library>h2{display:block!important;margin:0 0 5px!important;letter-spacing:.4px!important;font:600 12px/1.5 Arial,sans-serif!important}
+body.j93Workspace #dockStage>#j93Library input{padding:7px;border-radius:5px;border:1px solid #3d4348;background:#202328;color:#e3e7e8;min-width:0}
+body.j93Workspace #c92Inspector:before{content:'Sélection';display:block;font:600 12px/1.5 Arial,sans-serif;color:#e3e7e8;padding-bottom:9px;border-bottom:1px solid #35383b;margin-bottom:8px}
+body.j93Workspace #timeline .tl-label small{white-space:normal!important;font-size:9px!important;line-height:1.2}
+body.j93Workspace #timeline .tl-label b{font-size:10px!important}
+@media(max-width:1199px){
+ body.j93Workspace #dockStage>#synth[data-j93-visible=true]{grid-template-columns:68px minmax(0,1fr)!important;grid-template-rows:46px 54px 95px auto!important}
+ body.j93Workspace #synth>.dockSynthToolbar{grid-column:2!important;grid-row:1!important}
+ body.j93Workspace #synth>.dockSynthCore{grid-column:1/-1!important;grid-row:2!important}
+ body.j93Workspace #synth #piano{grid-row:3!important}
+ body.j93Workspace #synth>.dockSynthHelp{grid-row:4!important}
+}
+@media(max-width:950px){body.j93Workspace #dockStage>#synth[data-j93-visible=true]{overflow:visible!important}}

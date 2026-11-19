@@ -1,0 +1,28 @@
+
+/* 9.1 — interface allégée (Claude). Uniquement l'onglet Composer et les vues détaillées du Studio :
+   l'accueil (Studio complet) n'est jamais concerné. Couleurs de la charte JACK22. */
+
+/* Piano Roll : un seul repère par octave (les « C »), les autres noms de notes au survol. */
+#dockComposer .roll-key{font:500 9.5px/16px Consolas,"Cascadia Mono",monospace;letter-spacing:.3px;padding-left:6px}
+#dockComposer .roll-key:not(.c){color:transparent}
+#dockComposer .roll-key.c{color:#a9aeb6;font-weight:700;border-top:1px solid #3a3d43}
+#dockComposer .roll-key:hover,#dockComposer .roll-key.c91Row{color:#f5b13f!important;background:#2a2c30!important}
+/* Notes : contour ambre et nom de la note pour la sélection ; nom discret au survol. */
+#dockComposer .rn.sel{outline:2px solid #f5b13f!important;outline-offset:0;box-shadow:0 0 0 3px #f5b13f33,0 0 12px #f5b13f66;z-index:3}
+#dockComposer .rn.sel::after,#dockComposer .rn:hover::after{content:attr(data-note);position:absolute;left:-1px;bottom:100%;margin-bottom:3px;padding:1px 5px;border-radius:3px;font:600 10px/14px Consolas,"Cascadia Mono",monospace;white-space:nowrap;pointer-events:none;z-index:4}
+#dockComposer .rn:hover::after{color:#eceef1;background:#202124;border:1px solid #3a3d43}
+#dockComposer .rn.sel::after{color:#241706;background:#f5b13f;border:1px solid #f5b13f}
+
+/* Batterie : numéros des temps seulement (1, 5, 9, 13), le pas survolé s'affiche ; pistes collées à la règle. */
+#dockComposer #dockBeat .legend>div{font:500 10px/1.4 Consolas,"Cascadia Mono",monospace}
+#dockComposer #dockBeat .legend>div:not(:first-child){color:transparent}
+#dockComposer #dockBeat .legend>div:nth-child(4n+2){color:#7e848d}
+#dockComposer #dockBeat .legend>div.c91Col{color:#f5b13f!important}
+#dockComposer #dockBeat #tracks{flex:none!important;justify-content:flex-start!important;align-content:flex-start!important}
+#dockComposer #dockBeat .step:hover{outline:1px solid #f5b13f;outline-offset:1px}
+
+/* Vue détaillée Orbite : touches sans lettres ni noms ; repère C conservé ; note et lettre au survol ou à l'appui. */
+#dockStage.compact88StudioFocus #piano .kk{opacity:0}
+#dockStage.compact88StudioFocus #piano .kn{opacity:.55}
+#dockStage.compact88StudioFocus #piano .key:hover .kk,#dockStage.compact88StudioFocus #piano .key.down .kk{opacity:1}
+#dockStage.compact88StudioFocus #piano .key:hover::after,#dockStage.compact88StudioFocus #piano .key.down::after{content:attr(aria-label);position:absolute;left:50%;top:6px;transform:translateX(-50%);padding:1px 5px;border-radius:3px;font:600 10px/14px Consolas,"Cascadia Mono",monospace;color:#241706;background:#f5b13f;pointer-events:none;z-index:5}

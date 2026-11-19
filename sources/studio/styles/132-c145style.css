@@ -1,0 +1,5 @@
+
+/* 7.4 — « Pistes audio » : les 32 pistes audio existantes (module j99) deviennent utilisables directement depuis l'Arrangement et le Montage. Thème noir et rouge inchangé. */
+#c145Tools{display:inline-flex;align-items:center;gap:6px;margin-left:6px}
+#c145Tools select{max-width:160px}
+#timeline .tl-row.c145Target>.tl-label{box-shadow:inset 0 0 0 2px #cf2f3b}

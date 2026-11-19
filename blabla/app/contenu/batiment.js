@@ -134,4 +134,36 @@
         { who: "toi", choices: ["Te lo mando entro giovedì sera.", "Te la mando entro giovedì sera.", "Ti lo mando entro giovedì sera."], fr: "Je te l'envoie d'ici jeudi soir." },
       ] },
   ]);
+
+  // ---------------- PORTUGAIS ----------------
+  ajouter("pt", [
+    { id: "chantier", niveau: 1, titre: "Sur le chantier", emoji: "🦺",
+      mots: [["Le chantier", "A obra"], ["Le casque", "O capacete"], ["Les chaussures de sécurité", "As botas de segurança"],
+        ["Le gilet fluo", "O colete refletor"], ["Les gants", "As luvas"], ["L'échafaudage", "O andaime"], ["L'échelle", "A escada"],
+        ["La brique", "O tijolo"], ["Le ciment", "O cimento"], ["Le béton", "O betão"], ["Le marteau", "O martelo"], ["La perceuse", "O berbequim"],
+        ["La grue", "A grua"], ["La brouette", "O carrinho de mão"], ["Le mur", "A parede"], ["Le toit", "O telhado"], ["Attention !", "Cuidado!"]],
+      dialogue: [
+        { who: "jack", txt: "Bom dia! És o novo trabalhador?", fr: "Bonjour ! Tu es le nouvel ouvrier ?" },
+        { who: "toi", choices: ["Sim, começo hoje.", "Sim, começas hoje.", "Sim, comecei amanhã."], fr: "Oui, je commence aujourd'hui." },
+        { who: "jack", txt: "Onde está o teu capacete? Na obra é obrigatório.", fr: "Où est ton casque ? Il est obligatoire sur le chantier." },
+        { who: "toi", choices: ["Desculpa, ponho-o já.", "Desculpa, ponho-a já.", "Desculpa, o ponho já."], fr: "Pardon, je le mets tout de suite." },
+        { who: "jack", txt: "Muito bem. Podes trazer-me tijolos com o carrinho de mão?", fr: "Très bien. Tu peux m'apporter des briques avec la brouette ?" },
+        { who: "toi", choices: ["Claro, de quantos precisas?", "Claro, de quantas precisas?", "Claro, onde está a grua?"], fr: "Bien sûr, il t'en faut combien ?" },
+      ] },
+    { id: "chantier-pro", niveau: 4, titre: "Diriger un chantier", emoji: "🏗️",
+      mots: [["Le chef de chantier", "O encarregado de obra"], ["Le conducteur de travaux", "O diretor de obra"],
+        ["Le maître d'ouvrage (le client)", "O dono de obra"], ["Le maître d'œuvre (l'architecte)", "O projetista / a fiscalização"],
+        ["Le planning", "O planeamento"], ["Le retard", "O atraso"], ["Le délai", "O prazo"], ["Le devis", "O orçamento"],
+        ["La réunion de chantier", "A reunião de obra"], ["Le sous-traitant", "O subempreiteiro"], ["Les plans", "As plantas"],
+        ["Couler le béton", "Fazer a betonagem"], ["La réception des travaux", "A receção da obra"], ["Les défauts à reprendre (réserves)", "As reservas / os defeitos a corrigir"],
+        ["Le budget est dépassé", "O orçamento foi ultrapassado"], ["La sécurité avant tout", "A segurança acima de tudo"], ["Livrer à temps", "Entregar dentro do prazo"]],
+      dialogue: [
+        { who: "jack", txt: "A betoneira está outra vez atrasada. O que fazemos?", fr: "La toupie à béton est encore en retard. Qu'est-ce qu'on fait ?" },
+        { who: "toi", choices: ["Adiamos a betonagem para amanhã de manhã e avisamos os subempreiteiros.", "Adiamos a betonagem para amanhã de manhã e avisar os subempreiteiros.", "Adiámos a betonagem para amanhã passado."], fr: "On reporte le coulage à demain matin et on prévient les sous-traitants." },
+        { who: "jack", txt: "Isso vai atrasar a entrega?", fr: "Est-ce que ça va retarder la livraison ?" },
+        { who: "toi", choices: ["Não, podemos recuperar o tempo nos acabamentos.", "Não, podemos recuperado o tempo nos acabamentos.", "Não, recuperamos o tempo ontem nos acabamentos."], fr: "Non, on peut rattraper le temps sur les finitions." },
+        { who: "jack", txt: "Ótimo. Envia-me o planeamento atualizado até sexta-feira.", fr: "Parfait. Envoie-moi le planning mis à jour d'ici vendredi." },
+        { who: "toi", choices: ["Envio-to até quinta à noite.", "Envio-te-o até quinta à noite.", "Te o envio até quinta à noite."], fr: "Je te l'envoie d'ici jeudi soir." },
+      ] },
+  ]);
 })();

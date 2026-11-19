@@ -1,0 +1,53 @@
+
+/* 6.3 : le design de la 6.2 appliqué à l'agencement d'origine. Rien n'est déplacé ; CSS seulement.
+   Actif par défaut. « ?style=origine » dans l'adresse remet l'ancien style (pour comparer). */
+body.c133{--g0:#0d0f12;--g1:#111316;--g2:#16191d;--g3:#1b1e22;--g4:#22262b;--ln:#2d3238;--ln2:#363b42;--red:#cf2f3b;--txt:#e7e8ea;--mut:#9aa1a9;background:var(--g1)!important}
+html body.c133 main.dockApp{background:var(--g1)!important}
+/* En-tête */
+html body.c133 #dockHeader{background:var(--g0)!important;border:0!important;border-bottom:1px solid var(--ln)!important;border-radius:0!important;box-shadow:none!important}
+html body.c133 #dockHeader .skinBrand{font-family:system-ui,"Segoe UI",sans-serif!important}
+/* Boutons : gris graphite, bord fin, coins 5 px ; actif = rouge plein */
+html body.c133 main.dockApp button:not(.step):not(.key):not(.rn):not(.dockRowMute):not([class*="c119Rec"]){background:var(--g4)!important;border:1px solid var(--ln2)!important;border-radius:5px!important;color:var(--txt)!important;box-shadow:none!important;font-family:system-ui,"Segoe UI",sans-serif!important;font-weight:600!important}
+html body.c133 main.dockApp button[aria-pressed="true"]:not(.step):not(.dockRowMute),html body.c133 #j93Nav .j93Groups button[aria-pressed="true"],html body.c133 #j93Nav .j93Subs button[aria-pressed="true"]{background:var(--red)!important;border-color:var(--red)!important;color:#fff!important}
+html body.c133 #play{background:var(--g4)!important;color:#7fe0a0!important}
+html body.c133 main.dockApp details>summary{background:var(--g4)!important;border:1px solid var(--ln2)!important;border-radius:5px!important;color:var(--txt)!important}
+html body.c133 main.dockApp input:not([type=checkbox]):not([type=range]),html body.c133 main.dockApp select{background:var(--g3)!important;border:1px solid var(--ln2)!important;border-radius:5px!important;color:var(--txt)!important}
+/* Bandeaux : barre des espaces, messages, premiers pas */
+html body.c133 #j93Nav,html body.c133 #dockMessages{background:var(--g0)!important;border:0!important;border-bottom:1px solid var(--ln)!important;border-radius:0!important;box-shadow:none!important}
+html body.c133 #j93Nav .j93Subs{background:var(--g3)!important;border:1px solid var(--ln)!important;border-radius:6px!important;padding:2px!important}
+html body.c133 #j93Nav .j93Subs button{background:transparent!important;border:0!important}
+html body.c133 #c121Guide{background:var(--g2)!important;border:1px solid var(--ln)!important;border-left:1px solid var(--ln)!important;border-radius:6px!important}
+html body.c133 #c121Guide .c121Step b{background:#2c3036!important}html body.c133 #c121Guide .c121Step.next b{background:var(--red)!important}html body.c133 #c121Guide .c121Step.done b{background:#2f8a4e!important}
+/* Panneaux */
+html body.c133 #dockStage>.panel,html body.c133 #dockStage>#j105EditorBar{background:var(--g2)!important;border:1px solid var(--ln)!important;border-radius:6px!important;box-shadow:none!important}
+html body.c133 #c119Bar{background:var(--g0)!important;border-top:1px solid var(--ln)!important}
+html body.c133 #c119Pos{background:var(--g3)!important;border:1px solid var(--ln)!important;border-radius:6px!important;font-family:ui-monospace,Consolas,monospace!important}
+/* Arrangement : numéros de pistes, tête de lecture rouge avec triangle */
+html body.c133 #tlRows{counter-reset:c133}html body.c133 #tlRows .tl-row:not(.tl-ruler) .tl-label b::before{counter-increment:c133;content:counter(c133)"  ";color:var(--mut);font-weight:500;margin-right:6px}
+html body.c133 #timeline .tl-label{background:var(--g2)!important}html body.c133 #timeline .tl-lane{background-color:var(--g1)!important}html body.c133 #timeline .tl-ruler{background:var(--g0)!important}
+html body.c133 #tlHead{background:var(--red)!important;width:2px!important;opacity:1!important}html body.c133 #tlHead::before{content:"";position:absolute;top:0;left:-6px;border:7px solid transparent;border-top:9px solid var(--red)}
+/* Batterie : pas gris, actifs rouges, une couleur par ligne */
+html body.c133 #dockStage#dockStage #dockBeat#dockBeat .track button.step{background:#2a2e34!important;border:1px solid #363b42!important;border-radius:4px!important;box-shadow:none!important}
+html body.c133 #dockStage#dockStage #dockBeat#dockBeat .track button.step.beat{background:#30353c!important}
+html body.c133 #dockStage#dockStage #dockBeat#dockBeat .track button.step:is(.active,.on,[aria-pressed="true"]){background:#cf2f3b!important;border-color:#e0505a!important}
+/* Arrangement : rangées serrées (34 px), bouton de prise voix en ● rond, comme la 6.2 — sans rien déplacer */
+html body.c133 #dockStage#dockStage#dockStage #timeline#timeline #tlRows .tl-row{height:34px!important;min-height:34px!important}html body.c133 #dockStage#dockStage#dockStage #timeline#timeline #tlRows .tl-lane{height:32px!important;min-height:32px!important}html body.c133 #dockStage#dockStage#dockStage #timeline#timeline #tlRows .tl-label{height:34px!important;min-height:34px!important;padding-top:0!important;padding-bottom:0!important;align-items:center!important}html body.c133 #dockStage#dockStage#dockStage #timeline#timeline .tl-block{top:3px!important;height:26px!important;border-radius:3px!important;font-size:11px!important}
+/* L'arrangement remplit toute la hauteur du panneau : les rangées s'étirent à parts égales (34 px minimum, défilement au-delà) */
+html body.c133 #dockStage#dockStage#dockStage #timeline#timeline #tlWrap #tlInner{display:flex!important;flex-direction:column!important;min-height:100%!important}
+html body.c133 #dockStage#dockStage#dockStage #timeline#timeline #tlWrap #tlRows{display:flex!important;flex-direction:column!important;flex:1 1 auto!important}
+html body.c133 #dockStage#dockStage#dockStage #timeline#timeline #tlRows .tl-row:not(.tl-ruler){flex:1 1 34px!important;height:auto!important;min-height:34px!important;align-items:stretch!important}
+html body.c133 #dockStage#dockStage#dockStage #timeline#timeline #tlRows .tl-row:not(.tl-ruler) .tl-lane{height:auto!important;min-height:32px!important;align-self:stretch!important}
+html body.c133 #dockStage#dockStage#dockStage #timeline#timeline #tlRows .tl-row:not(.tl-ruler) .tl-label{height:auto!important;align-self:stretch!important}
+html body.c133 #dockStage#dockStage#dockStage #timeline#timeline #tlRows .tl-row:not(.tl-ruler) .tl-block{top:4px!important;bottom:4px!important;height:auto!important}
+html body.c133 #dockStage#dockStage#dockStage #timeline#timeline .tl-label small,html body.c133 #dockStage#dockStage#dockStage #timeline#timeline .tl-label span:not(:first-child),html body.c133 #dockStage#dockStage#dockStage #timeline#timeline .tl-label em{display:none!important}
+html body.c133 #dockStage#dockStage#dockStage #timeline#timeline #tlRows .tl-label{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;gap:6px!important}
+html body.c133 #dockStage#dockStage#dockStage #timeline#timeline #tlRows .tl-label>b{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body.c133 #dockStage#dockStage#dockStage #timeline#timeline #tlRows .tl-label>button:not(.dockRowMute){font-size:0!important;width:22px!important;height:22px!important;min-height:22px!important;padding:0!important;border-radius:50%!important;flex:none;display:inline-grid;place-items:center;background:#22262b!important;border:1px solid #3a3f46!important}
+html body.c133 #dockStage#dockStage#dockStage #timeline#timeline #tlRows .tl-label>button:not(.dockRowMute)::before{content:"●";font-size:11px;color:#e2414c}
+html body.c133 #dockBeat .track{position:relative}html body.c133 #dockBeat .track .track-label{padding-left:12px;font-weight:700}
+html body.c133 #dockBeat .track .track-label::before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:4px;border-radius:2px;background:var(--c133row,#cf2f3b)}
+html body.c133 #dockBeat .track:nth-child(2){--c133row:#4a90d9}html body.c133 #dockBeat .track:nth-child(3){--c133row:#e2b83c}html body.c133 #dockBeat .track:nth-child(4){--c133row:#9b6bd6}
+html body.c133 #dockStage#dockStage#dockStage #timeline#timeline,html body.c133 #dockStage#dockStage#dockStage #timeline#timeline #tlRows,html body.c133 #dockStage#dockStage#dockStage #timeline#timeline #tlWrap#tlWrap{background:var(--g1)!important}
+/* Piano Roll */
+html body.c133 #roll .roll-bar{background:var(--g2)!important}
+html body.c133 #dockStage#dockStage#dockStage #roll#roll #rollWrap#rollWrap{background:var(--g1)!important}

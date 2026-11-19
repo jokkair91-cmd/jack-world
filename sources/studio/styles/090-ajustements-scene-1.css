@@ -1,0 +1,22 @@
+
+body.j93Workspace #dockStage#dockStage:is(.j111Patterns,.j109Voice){gap:5px!important;background:#111214!important}
+body.j93Workspace #dockStage#dockStage.j111Patterns.j108Notes{grid-template-rows:40px minmax(0,1fr) 122px!important}
+body.j93Workspace #dockStage#dockStage.j111Patterns #synth[data-j93-visible=true]{padding:5px 8px!important;grid-template-rows:34px minmax(0,1fr)!important;background:#222326!important}
+body.j93Workspace #dockStage#dockStage.j111Patterns #synth #piano{height:100%!important;min-height:0!important}
+body.j93Workspace #dockStage#dockStage.j111Patterns #roll{display:flex!important;flex-direction:column;gap:4px;padding:6px!important}
+body.j93Workspace #dockStage#dockStage.j111Patterns #rollWrap{flex:1 1 0;min-height:70px!important;margin:0!important}
+body.j93Workspace #dockStage#dockStage.j111Patterns #j105EditorBar{background:#222326!important;border-color:#424246!important}
+body.j93Workspace #dockStage#dockStage.j111Patterns #j93Library{display:grid!important;grid-template-rows:auto auto minmax(0,1fr);align-content:start}
+body.j93Workspace #dockStage#dockStage.j111Patterns #j93Library:not([data-j93-visible=true]){display:none!important}
+#j93Library .j93LibraryList{align-content:start;overflow:auto}
+#j93Library .j93LibraryList button{min-height:30px!important;padding:5px 9px!important}
+body.j93Workspace #dockStage#dockStage.j109Voice :is(#j109Mic,#cVoices,#cWords){padding:10px!important;border-top:2px solid #7f2833!important}
+body.j93Workspace #dockStage#dockStage.j109Voice #cWords textarea{background:#161719!important;color:#eee!important}
+body.j93Workspace #dockStage#dockStage.j109Voice .cVoice:not([hidden]){display:grid!important;grid-template-columns:1fr 1fr;gap:8px;padding:10px!important}
+body.j93Workspace #dockStage#dockStage.j109Voice .cVoice :is(h3,.cVoiceInfo,canvas,.cActions){grid-column:1/-1}
+body.j93Workspace #dockStage#dockStage.j109Voice .cVoice canvas{height:110px;margin:0}
+body.j93Workspace #dockStage#dockStage.j109Voice:has(#j113VoiceTransport:not([hidden])) .cVoice [data-action=record]{display:none!important}
+@media(max-width:950px){
+ body.j93Workspace #dockStage#dockStage.j111Patterns #synth[data-j93-visible=true]{min-height:150px!important}
+ body.j93Workspace #dockStage#dockStage.j111Patterns #synth #piano{height:84px!important}
+}

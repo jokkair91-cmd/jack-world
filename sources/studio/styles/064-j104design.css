@@ -1,0 +1,80 @@
+
+:root{--j104-bg:#101419;--j104-surface:#1b222a;--j104-line:#35414d;--j104-ink:#e4eaf0;--j104-muted:#93a4b6;--j104-red:#bd3f58}
+body,button,input,select,textarea{font-family:'JACK Sans','Segoe UI',sans-serif!important;font-variant-numeric:tabular-nums}
+button,input,select,textarea{font-size:12px;letter-spacing:0}
+button,summary{touch-action:manipulation}
+body.j93Workspace{background:var(--j104-bg)!important;color:var(--j104-ink)}
+body.j93Workspace #dockHeader{background:#151b22;border-bottom:1px solid #35414d}
+body.j93Workspace #dockHeader h1{font-family:'JACK Sans','Segoe UI',sans-serif!important;font-size:28px;font-weight:700;letter-spacing:-1px;text-shadow:none}
+body.j93Workspace #dockHeader .sub{font-size:8px;letter-spacing:1.5px}
+body.j93Workspace #dockMessages{min-height:25px;font-size:11px;background:#11171e;color:#a8b9c7}
+body.j93Workspace #j93Nav{margin:0!important;border:0!important;border-radius:0!important;padding:8px 12px!important;gap:8px;background:#1b222b!important;box-shadow:none!important}
+body.j93Workspace #j93Nav .j93Groups{margin:0 auto;background:#10161e;border-radius:6px;padding:3px}
+body.j93Workspace #j93Nav button{min-height:31px;font-size:12px!important;border-radius:5px;padding:6px 13px!important}
+body.j93Workspace #j93Nav .j93Subs{padding:5px 0 0!important;border-top:1px solid #303d49;gap:4px}
+body.j93Workspace #j93Nav .j93Subs button{background:transparent!important;border:1px solid transparent!important;color:#a4b4c4!important}
+body.j93Workspace #j93Nav .j93Subs button[aria-pressed=true]{color:#fff!important;border-color:#536171!important;background:#293643!important;box-shadow:inset 0 -2px #bd3f58!important}
+body.j93Workspace #dockStage{border-radius:0!important;border:0!important;grid-template-columns:168px minmax(0,1fr) 210px!important;grid-template-rows:minmax(180px,1fr) minmax(210px,1.2fr) 172px!important;gap:1px!important;background:#34404c!important;bottom:8px!important}
+body.j93Workspace #dockStage>.panel:not(#synth){padding:12px!important;background:#191f27!important;border:0!important}
+body.j93Workspace #j93Library{background:#141b23!important}
+body.j93Workspace #j93Library h2,body.j93Workspace #c92Inspector h2{font-size:11px!important;text-transform:uppercase;letter-spacing:1.3px;color:#9db0c1}
+body.j93Workspace #j93Library .j93LibraryList{gap:4px}
+body.j93Workspace #j93Library .j93LibraryList button{border:1px solid #303e4c;background:#202b36;min-height:35px;border-radius:5px;padding:8px 10px}
+body.j93Workspace #j93Library input{background:#0f1720;color:#dce6ee;border:1px solid #354656;border-radius:5px;padding:9px;min-width:0}
+body.j93Workspace #c92Inspector{font-size:12px;line-height:1.55}
+body.j93Workspace #c92Inspector button{min-height:30px;font-size:11px;padding:6px 9px}
+body.j93Workspace #timeline .dockTimelineBar{min-height:34px;align-items:center;gap:6px;padding:0 0 9px!important}
+body.j93Workspace #timeline .tl-label{width:132px;min-width:132px;max-width:132px;padding:8px 9px}
+body.j93Workspace #timeline .tl-label b{font-size:11px;line-height:1.4}
+body.j93Workspace #timeline .tl-label small{display:none!important}
+body.j93Workspace #timeline .tl-row,body.j93Workspace #timeline .tl-lane{min-height:42px;height:42px}
+body.j93Workspace #timeline .tl-block{height:31px;top:5px;box-shadow:none;border-radius:4px}
+body.j93Workspace #timeline #tlWrap{border:1px solid #334351;border-radius:5px;background:#121a22}
+body.j93Workspace #dockStage button:not(.dockPresetPlanet):not(.key),body.j93Workspace #dockStage select{border-color:#3a4856;border-radius:5px;box-shadow:none;background-color:#26313d}
+body.j93Workspace #dockStage button:focus-visible{outline:2px solid #8ad0b7;outline-offset:2px}
+body.j93Workspace #roll .roll-bar{align-items:center;gap:8px;flex-wrap:wrap;font-size:10px;min-height:35px}
+body.j93Workspace #roll .roll-bar select{min-height:30px;padding:5px 8px;background:#101923;color:#e2eaf0}
+body.j93Workspace #rollWrap{border-radius:5px;background:#121d26!important}
+body.j93Workspace #dockStage>#synth[data-j93-visible=true]{background:#171e25!important;padding:10px 14px!important;grid-template-rows:50px 92px!important;grid-template-columns:minmax(250px,1fr) minmax(280px,1fr)!important;align-content:start!important;overflow:auto!important;gap:6px!important}
+body.j93Workspace #synth .skinTop{grid-column:1;grid-row:1;display:flex!important;align-items:center;gap:12px}
+body.j93Workspace #synth .orbitSynthName{font-family:'JACK Sans',sans-serif!important;font-size:13px!important;letter-spacing:2px}
+body.j93Workspace #synth .dockSynthToolbar{gap:6px;align-items:center}
+body.j93Workspace #synth .dockSynthCore{grid-column:2;grid-row:1;justify-content:flex-end;height:50px!important;gap:12px}
+body.j93Workspace #synth #piano{grid-row:2;width:100%!important;height:90px!important;min-height:90px!important;max-width:1000px!important}
+body.j93Workspace #synth>.dockSynthHelp{display:none!important}
+/* Preserve all key paint, reflections, planet materials and orbital animation. */
+body.j93Workspace #dockStage.j93Mix{grid-template-columns:minmax(360px,.9fr) minmax(420px,1.1fr)!important;grid-template-rows:minmax(0,1fr)!important;gap:1px!important}
+body.j93Workspace #mixer .skinTop{display:flex!important;justify-content:space-between;min-height:38px;align-items:center;flex:none}
+body.j93Workspace #mixer .orbitMixerName>div{font-size:13px!important;letter-spacing:1px}
+body.j93Workspace #mixer .orbitMixerName small{font-size:9px;letter-spacing:1px}
+body.j93Workspace #mixer .skinFaders{width:46px;height:30px}
+body.j93Workspace #mixer .dockBanks{margin:5px 0 12px}
+body.j93Workspace #mixer .mix-row{display:flex!important;align-items:stretch!important;align-self:stretch!important;max-width:none!important;width:100%!important;box-sizing:border-box;flex:1!important;min-height:280px!important;max-height:580px!important;padding:8px!important;gap:6px!important;background:#111923!important;border:1px solid #344454!important}
+body.j93Workspace #mixer .strip{flex:1 1 0!important;width:auto!important;min-width:0!important;max-width:none!important;background:#202b35!important;border:1px solid #384754!important;border-top:3px solid var(--strip)!important;border-radius:4px!important;padding:8px 4px!important;gap:10px!important;overflow:hidden!important;align-items:center!important}
+body.j93Workspace #mixer .mn{width:100%!important;box-sizing:border-box;font-size:10px!important;min-height:27px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:transparent!important;color:var(--strip)!important;border:0!important;box-shadow:none!important;letter-spacing:.1px}
+body.j93Workspace #mixer input.fader{flex:1!important;height:auto!important;min-height:150px!important;max-height:400px!important}
+body.j93Workspace #mixer .mv{font-size:11px;background:#10171f!important;border-color:#384652!important}
+body.j93Workspace #fx .dockFxTabs{flex:none;display:flex;min-height:36px;margin-bottom:12px}
+body.j93Workspace #fx .dockFxTabs button{flex:1;min-height:36px;font-size:12px}
+body.j93Workspace #fx .fx-grid{min-height:0!important;overflow:auto!important;flex:1!important}
+body.j93Workspace #fx .fx-card{padding:16px!important;border:1px solid #384858!important;border-radius:7px!important;background:#202a34!important}
+body.j93Workspace #fx .fx-head{min-height:32px;margin-bottom:12px}
+body.j93Workspace #fx h3{font-size:12px!important;letter-spacing:1px}
+body.j93Workspace #fx .dockEqPlot svg{width:100%;height:clamp(140px,26vh,240px)!important;display:block}
+body.j93Workspace #fx .dockEqPlot small{font-size:10px;color:#95a9ba}
+body.j93Workspace #dockStage.j93Voice{gap:1px!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr)!important}
+body.j93Workspace #cWords{gap:12px!important;overflow:auto!important;min-width:0!important}
+body.j93Workspace #cWords .cTopline{display:flex!important;position:static!important;align-items:center;flex-wrap:wrap;gap:8px;min-height:35px;margin:0!important;flex:none}
+body.j93Workspace #cWords .cTopline h2{font-size:13px!important;letter-spacing:1px;margin:0!important}
+body.j93Workspace #cWords .cTopline p{display:none!important}
+body.j93Workspace #cWords .cLyricsGrid{position:static!important;display:flex!important;flex-direction:column;flex:1!important;min-height:220px;gap:12px}
+body.j93Workspace #cWords #cLyrics{position:static!important;width:100%!important;min-height:220px!important;flex:1;background:#101923;border:1px solid #374b5d;color:#e3ebf2;padding:18px;font-size:15px;line-height:1.8;border-radius:6px}
+body.j93Workspace #cWords #cPrompt{position:static!important;min-height:200px!important;flex:1;font-size:22px!important;line-height:1.7!important;background:#111b25;border:1px solid #354b5f;border-radius:6px;padding:24px;overflow:auto;box-sizing:border-box}
+body.j93Workspace #cWords>.cRow{position:static!important;display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:14px!important;min-height:44px;flex:none!important;margin:0!important;padding:10px!important;background:#222d38;border-radius:6px}
+body.j93Workspace #cWords>.cRow>label{display:flex!important;align-items:center;gap:10px;font-size:11px;position:static!important}
+body.j93Workspace #cWords #cSpeed{position:static!important;width:140px!important;max-width:40vw}
+body.j93Workspace #cWords #cPromptToggle{position:static!important;min-height:34px!important;white-space:nowrap}
+.j102Dialog{font-family:'JACK Sans','Segoe UI',sans-serif!important;border-radius:9px!important}
+.j102Dialog :is(button,input,select,textarea,label,h2,h3){font-family:'JACK Sans','Segoe UI',sans-serif!important}
+@media(min-width:951px) and (max-width:1199px){body.j93Workspace #dockStage{grid-template-columns:140px minmax(0,1fr) 170px!important;grid-template-rows:minmax(170px,1fr) minmax(190px,1fr) 210px!important}body.j93Workspace #dockStage>#synth[data-j93-visible=true]{grid-template-columns:1fr!important;grid-template-rows:35px 46px 90px!important}body.j93Workspace #synth .dockSynthCore{grid-column:1;grid-row:2;justify-content:center;height:46px!important}body.j93Workspace #synth #piano{grid-row:3}body.j93Workspace #synth .skinTop{justify-content:space-between}}
+@media(max-width:950px){body.j93Workspace #dockStage,body.j93Workspace #dockStage.j93Mix,body.j93Workspace #dockStage.j93Voice{display:flex!important;flex-direction:column!important;position:relative!important;top:auto!important;bottom:auto!important;gap:1px!important}body.j93Workspace #dockStage>.panel[data-j93-visible=true]{min-height:0!important;padding:12px!important}body.j93Workspace #dockStage>#synth[data-j93-visible=true]{display:flex!important;flex-direction:column!important;min-height:230px!important;height:auto!important}body.j93Workspace #synth .skinTop{flex-wrap:wrap}body.j93Workspace #synth .dockSynthCore{justify-content:center;flex-wrap:wrap;min-height:55px;height:auto!important}body.j93Workspace #synth #piano{width:100%!important;min-height:90px!important}body.j93Workspace #mixer .mix-row{min-height:330px!important;flex:none!important}body.j93Workspace #mixer input.fader{height:200px!important;min-height:200px!important}body.j93Workspace #mixer .mn{font-size:9px!important}body.j93Workspace #fx .fx-grid{min-height:340px!important}body.j93Workspace #cWords{min-height:450px!important}body.j93Workspace #j93Nav .j93Groups{order:2;flex-basis:100%}body.j93Workspace #j93Nav .j93Subs{order:3}body.j93Workspace #j93Library{display:none!important}}

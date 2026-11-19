@@ -11,7 +11,7 @@ J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance, Jack Bo
 | `radio/index.html` | Site vitrine Jack Radio | créé le 18 nov. 2026 (identité de la radio) |
 | `radio/studio.html` | Jack Radio (l'appli) | `Jack Radio/jack-radio/dist` (13 nov. 2026) |
 | `blabla/` | Site vitrine Jack Blabla | créé le 14 nov. 2026 (couleurs et polices de l'appli) |
-| `blabla/app/` | Jack Blabla (l'appli) | copie de `Jack Blabla/` du 19 nov. 2026 (italien, thèmes bâtiment, cours écrits ; sans le dossier versions/), + icônes et bouton « Changer de site » |
+| `blabla/app/` | Jack Blabla (l'appli) | copie de `Jack Blabla/` du 19 nov. 2026 (italien, portugais, thèmes bâtiment, cours écrits ; sans le dossier versions/), + icônes et bouton « Changer de site » |
 | `fusion/index.html` | Site vitrine Jack Fusion | créé le 18 nov. 2026 (logo et couleurs de l'appli) |
 | `fusion/app/` | Jack Fusion (l'appli) | v0.8 « Atelier » bêta (`Documents/Codex/…/JACK-FUSION`, 18 nov. 2026), sans les .exe ni les tests, + icônes et bouton « Changer de site » |
 | `finance/index.html` | Site vitrine Jack Finance | créé le 18 nov. 2026 (vert nuit, or et monogramme JF de l'appli) |
@@ -31,6 +31,10 @@ J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance, Jack Bo
 - **Jack Bours** : défis entre amis (un code = le même marché fictif pour tous, 40 jours de bourse). Le hasard du marché est « à graine » quand il y a un code (`marche.js`), l'écran est dans `app.js`. Fait aussi dans `Bureau/Jack Bours`. Attention : changer le calcul du marché dans `marche.js` change les marchés des codes existants.
 
 Quand on recopie une appli depuis son dossier du Bureau, garder ces lignes dans sa page : le lien `manifest.webmanifest`, `jack-appli.js` et `jack-world-nav.js`.
+
+## JACK22 Studio et J-DJ : découpés en morceaux
+
+Depuis le 19 nov. 2026, `studio/studio/index.html` et `j-dj/console.html` sont **produits** à partir de `sources/` par `sources/assembler.ps1`. On modifie les morceaux dans `sources/studio` ou `sources/j-dj`, puis on relance l'assemblage (voir `sources/LISEZMOI.md`). Ne pas modifier ces deux pages à la main : la modification serait perdue au prochain assemblage.
 
 ## Mettre à jour une appli
 
