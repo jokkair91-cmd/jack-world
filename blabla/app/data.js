@@ -33,6 +33,12 @@ const LANGUES = {
     nomLocal: "Italiano", adj: "italienne", perso: "🍕", persoNom: "Pizza napolitaine", couleur: "#009246",
     drapeau: svgDrapeau(`<rect width="20" height="40" fill="#009246"/><rect x="20" width="20" height="40" fill="#fff"/><rect x="40" width="20" height="40" fill="#CE2B37"/>`),
   },
+  // Portugais du Portugal (les différences du Brésil sont signalées dans les leçons)
+  pt: {
+    nom: "Portugais", voix: "pt-PT", bonjour: "Olá!", accents: ["á", "à", "â", "ã", "é", "ê", "í", "ó", "ô", "õ", "ú", "ç"],
+    nomLocal: "Português", adj: "portugaise", perso: "🐓", persoNom: "Coq de Barcelos", couleur: "#046A38",
+    drapeau: svgDrapeau(`<rect width="60" height="40" fill="#DA291C"/><rect width="24" height="40" fill="#046A38"/><circle cx="24" cy="20" r="7.5" fill="#FFE100"/><circle cx="24" cy="20" r="4.6" fill="#DA291C"/><rect x="21.6" y="16.6" width="4.8" height="6.4" rx="1.2" fill="#fff"/>`),
+  },
   // Pour les francophones : maîtriser l'orthographe, la grammaire et la conjugaison (façon Bescherelle)
   fr: {
     nom: "Français", voix: "fr-FR", bonjour: "Bonjour !", accents: ["é", "è", "ê", "à", "â", "ù", "û", "ç", "ô", "î", "ï", "ë", "œ"],

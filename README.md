@@ -11,7 +11,7 @@ J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance, Jack Bo
 | `radio/index.html` | Site vitrine Jack Radio | créé le 18 nov. 2026 (identité de la radio) |
 | `radio/studio.html` | Jack Radio (l'appli) | `Jack Radio/jack-radio/dist` (13 nov. 2026) |
 | `blabla/` | Site vitrine Jack Blabla | créé le 14 nov. 2026 (couleurs et polices de l'appli) |
-| `blabla/app/` | Jack Blabla (l'appli) | copie de `Jack Blabla/` du 19 nov. 2026 (italien, thèmes bâtiment, cours écrits ; sans le dossier versions/), + icônes et bouton « Changer de site » |
+| `blabla/app/` | Jack Blabla (l'appli) | copie de `Jack Blabla/` du 19 nov. 2026 (italien, portugais, thèmes bâtiment, cours écrits ; sans le dossier versions/), + icônes et bouton « Changer de site » |
 | `fusion/index.html` | Site vitrine Jack Fusion | créé le 18 nov. 2026 (logo et couleurs de l'appli) |
 | `fusion/app/` | Jack Fusion (l'appli) | v0.8 « Atelier » bêta (`Documents/Codex/…/JACK-FUSION`, 18 nov. 2026), sans les .exe ni les tests, + icônes et bouton « Changer de site » |
 | `finance/index.html` | Site vitrine Jack Finance | créé le 18 nov. 2026 (vert nuit, or et monogramme JF de l'appli) |
