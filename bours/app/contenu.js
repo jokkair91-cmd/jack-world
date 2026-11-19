@@ -493,6 +493,74 @@ window.JB_NIVEAUX = [
     ]
   }
   ]
+},
+{
+  /* Parcours bonus, toujours ouvert : le groupe Jack World (NEW DUC et ses filiales), coté pour de faux. */
+  id: "jw", nom: "Jack World", emoji: "🌍", sousTitre: "Le groupe NEW DUC en Bourse (pour de faux)", bonus: true,
+  lecons: [
+  {
+    id: "jw-groupe", titre: "Une maison mère et ses filiales", emoji: "🏛️", mission: "maison-mere",
+    texte: [
+      "Dans le simulateur, le groupe Jack World a sa propre Bourse imaginaire. En vrai, aucune de ces entreprises n'est cotée : les prix sont inventés pour s'entraîner sur des noms qu'on connaît.",
+      "À la tête du groupe, il y a NEW DUC : c'est la maison mère, ou « holding ». Elle possède les filiales : JACK22 Studio, J-DJ, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance et Jack Bours.",
+      "Acheter une action NEW DUC, c'est donc posséder un petit bout de toutes les filiales d'un coup. Son cours suit à peu près la moyenne de ses filiales. C'est un peu comme un ETF, mais limité à un seul groupe.",
+      "Dans la vraie vie, une holding vaut souvent un peu moins que la somme de ses filiales : on appelle ça la « décote de holding ». Les investisseurs paient moins cher parce qu'ils ne choisissent pas eux-mêmes les filiales et qu'il y a des frais de structure."
+    ],
+    retenir: ["Holding = maison mère qui possède des filiales.", "Acheter la holding = un bout de tout le groupe.", "Une holding se paie souvent avec une décote."],
+    cartes: [
+      { r: "Holding (maison mère)", v: "Entreprise qui possède d'autres entreprises, ses filiales. Ex. : NEW DUC dans le simulateur." },
+      { r: "Filiale", v: "Entreprise contrôlée par une maison mère. Ex. : J-DJ est une filiale de NEW DUC." },
+      { r: "Décote de holding", v: "Écart entre la valeur des filiales et le prix de la holding, souvent moins chère que la somme de ses parties." }
+    ],
+    quiz: [
+      { q: "Dans le simulateur, quelle entreprise est la maison mère du groupe Jack ?", c: ["NEW DUC", "Jack Radio", "J-DJ"], b: 0, p: "NEW DUC est la holding : elle possède toutes les autres." },
+      { q: "Acheter une action de la holding, c'est…", c: ["posséder un bout de toutes ses filiales", "prêter de l'argent aux filiales", "acheter une seule filiale au choix"], b: 0, p: "La holding détient les filiales : vous en avez donc un petit morceau indirectement." },
+      { q: "Qu'appelle-t-on la « décote de holding » ?", c: ["La holding vaut moins que la somme de ses filiales", "Une réduction sur les frais", "Une baisse du dividende"], b: 0, p: "Les investisseurs acceptent rarement de payer le plein prix pour une structure qu'ils ne contrôlent pas." },
+      { q: "Les entreprises du groupe Jack sont-elles vraiment cotées en Bourse ?", c: ["Non, leurs cours sont inventés pour s'entraîner", "Oui, à Paris", "Oui, à New York"], b: 0, p: "Tout est fictif dans le simulateur : les prix comme l'argent." }
+    ]
+  },
+  {
+    id: "jw-croissance", titre: "Croissance ou rendement ?", emoji: "🚀", mission: "croissance-rendement",
+    texte: [
+      "Toutes les filiales n'ont pas le même profil. J-DJ et JACK22 Studio sont des entreprises de croissance : les ventes grimpent vite, elles ne versent pas de dividende et réinvestissent tout. Leur PER est élevé, car on paie aujourd'hui les bénéfices espérés demain.",
+      "Jack Fusion est encore en version bêta : elle ne gagne pas d'argent pour l'instant. Pas de bénéfice, donc pas de PER du tout. Son prix repose uniquement sur l'espoir : c'est l'action la plus agitée du groupe.",
+      "À l'inverse, Jack Radio et Jack Finance sont des entreprises plus mûres : elles gagnent de l'argent régulièrement, grandissent plus lentement et en reversent une partie en dividendes. Leur PER est plus bas et leur cours plus calme.",
+      "Aucun profil n'est « meilleur ». Les actions de croissance peuvent beaucoup monter… ou beaucoup baisser si la croissance déçoit. Les actions de rendement rapportent un revenu régulier mais montent moins vite. Beaucoup d'investisseurs mélangent les deux."
+    ],
+    retenir: ["Croissance : PER élevé, peu ou pas de dividende, prix agité.", "Pas de bénéfice = pas de PER (Jack Fusion).", "Rendement : PER plus bas, dividende, prix plus calme."],
+    cartes: [
+      { r: "Action de croissance", v: "Entreprise dont les bénéfices grandissent vite. Souvent PER élevé et peu de dividende. Ex. : J-DJ." },
+      { r: "Action de rendement", v: "Entreprise mûre qui verse un dividende régulier. Ex. : Jack Radio." },
+      { r: "Pourquoi pas de PER ?", v: "Le PER divise le prix par le bénéfice. Sans bénéfice (Jack Fusion en bêta), il ne veut rien dire." }
+    ],
+    quiz: [
+      { q: "Pourquoi Jack Fusion n'a-t-elle pas de PER dans le simulateur ?", c: ["Elle ne fait pas encore de bénéfice", "Elle est trop chère", "Elle verse trop de dividendes"], b: 0, p: "PER = prix ÷ bénéfice. Sans bénéfice, le calcul n'a pas de sens." },
+      { q: "Une action de croissance a en général…", c: ["un PER élevé et peu de dividende", "un PER bas et un gros dividende", "aucun risque"], b: 0, p: "On paie cher les bénéfices futurs, et l'entreprise garde son argent pour grandir." },
+      { q: "Laquelle est plutôt une action de rendement ?", c: ["Jack Radio", "J-DJ", "Jack Fusion"], b: 0, p: "Jack Radio gagne de l'argent régulièrement et verse un dividende." },
+      { q: "Si la croissance d'une entreprise au PER élevé déçoit, son cours…", c: ["peut chuter fortement", "monte forcément", "ne bouge pas"], b: 0, p: "Le prix contenait beaucoup d'espoir : quand l'espoir baisse, le prix aussi." }
+    ]
+  },
+  {
+    id: "jw-ensemble", titre: "Quand tout le groupe bouge ensemble", emoji: "🔗", mission: "jack-et-jungle",
+    texte: [
+      "Les filiales d'un même groupe ont souvent des points communs : la même marque, les mêmes clients, la même direction. Dans le simulateur, une bonne ou une mauvaise nouvelle pour Jack World fait bouger toutes ses filiales un peu dans le même sens. On dit qu'elles sont corrélées.",
+      "Avoir cinq actions du groupe Jack, ce n'est donc pas aussi diversifié qu'avoir cinq entreprises de secteurs et de groupes différents. Si le groupe traverse une mauvaise passe, tout le portefeuille plonge en même temps.",
+      "Pour le voir, comparez l'indice JACK WORLD (la moyenne des filiales) à l'indice JUNGLE 10 dans le simulateur. Ils ne montent et ne baissent pas toujours en même temps : c'est justement ce qui rend le mélange intéressant.",
+      "Bonne pratique : mélanger plusieurs groupes et plusieurs secteurs, et éviter qu'un seul groupe pèse trop lourd dans le portefeuille."
+    ],
+    retenir: ["Les filiales d'un groupe sont corrélées : elles bougent souvent ensemble.", "5 actions du même groupe ≠ vraie diversification.", "Mélanger groupes et secteurs."],
+    cartes: [
+      { r: "Corrélation", v: "Tendance de deux actions à monter ou baisser en même temps." },
+      { r: "Indice JACK WORLD", v: "Dans le simulateur, la moyenne des 7 filiales du groupe NEW DUC." },
+      { r: "Risque de concentration", v: "Danger d'avoir trop d'argent dans un seul groupe, secteur ou pays." }
+    ],
+    quiz: [
+      { q: "Que veut dire « deux actions corrélées » ?", c: ["Elles bougent souvent dans le même sens", "Elles ont le même prix", "Elles versent le même dividende"], b: 0, p: "La corrélation mesure à quel point deux prix évoluent ensemble." },
+      { q: "Un portefeuille 100 % groupe Jack est…", c: ["peu diversifié", "parfaitement diversifié", "sans risque"], b: 0, p: "Si le groupe va mal, toutes les lignes baissent ensemble." },
+      { q: "Pour mieux diversifier, il vaut mieux…", c: ["mélanger plusieurs groupes et secteurs", "acheter toutes les filiales d'un seul groupe", "tout mettre sur l'action qui a le plus monté"], b: 0, p: "Des entreprises qui ne bougent pas pareil amortissent les chocs." }
+    ]
+  }
+  ]
 }
 ];
 
@@ -508,5 +576,9 @@ window.JB_MISSIONS = [
   { id: "toucher-dividende", titre: "Rentier en herbe", texte: "Touchez votre premier dividende (versé tous les 60 jours de bourse).", emoji: "💶" },
   { id: "plus-value", titre: "Premier gain", texte: "Vendez une action avec une plus-value.", emoji: "🟢" },
   { id: "survivre-krach", titre: "Tenir le choc", texte: "Traversez un krach en ayant des actions, et gardez au moins 90 % de votre capital de départ.", emoji: "💥" },
-  { id: "battre-indice", titre: "Plus fort que l'indice", texte: "Après au moins 60 jours de bourse, faites mieux que l'indice JUNGLE 10.", emoji: "🏆" }
+  { id: "battre-indice", titre: "Plus fort que l'indice", texte: "Après au moins 60 jours de bourse, faites mieux que l'indice JUNGLE 10.", emoji: "🏆" },
+  { id: "action-jack", titre: "Dans la famille Jack", texte: "Achetez une action d'une entreprise du groupe Jack World.", emoji: "🌍" },
+  { id: "maison-mere", titre: "Tout le groupe d'un coup", texte: "Achetez NEW DUC, la maison mère qui possède toutes les filiales.", emoji: "🏛️" },
+  { id: "croissance-rendement", titre: "Fusée et tirelire", texte: "Ayez en même temps une action Jack de croissance (sans dividende) et une action Jack qui verse un dividende.", emoji: "🚀" },
+  { id: "jack-et-jungle", titre: "Deux mondes", texte: "Ayez en même temps au moins 2 entreprises du groupe Jack et 2 entreprises du JUNGLE 10.", emoji: "🔗" }
 ];

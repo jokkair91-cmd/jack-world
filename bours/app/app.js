@@ -18,6 +18,8 @@
   let S = lire(CLE_S);
   if (!S || !S.m || !S.m.indice) S = nouveauSimulateur();
   const sauverP = () => ecrire(CLE_P, P), sauverS = () => ecrire(CLE_S, S);
+  if (M.completer(S.m)) sauverS(); // ancienne sauvegarde : on ajoute le groupe Jack World
+  S.vue.marche = S.vue.marche || "tout";
 
   /* ---------- outils ---------- */
   const $ = (s, el = document) => el.querySelector(s), $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
@@ -69,10 +71,12 @@
   const niveauIndex = id => N.findIndex(n => n.id === id);
   const trouverLecon = (nid, lid) => { const n = N.find(x => x.id === nid); return n ? { n, l: n.lecons.find(x => x.id === lid) } : {}; };
   const leconReussie = l => (P.quiz[l.id] || 0) >= REUSSITE;
-  function niveauDebloque(i) { return P.reglages.libre || i === 0 || (P.tests[N[i - 1].id] || 0) >= REUSSITE; }
+  function niveauDebloque(i) { return P.reglages.libre || i === 0 || !!(N[i] && N[i].bonus) || (P.tests[N[i - 1].id] || 0) >= REUSSITE; }
+  const NB_NIVEAUX = N.filter(n => !n.bonus).length;
   function avancementNiveau(n) { return Math.round(n.lecons.filter(leconReussie).length / n.lecons.length * 100); }
   function prochaineLecon() {
     for (let i = 0; i < N.length; i++) {
+      if (N[i].bonus) continue;
       if (!niveauDebloque(i)) return null;
       const l = N[i].lecons.find(x => !leconReussie(x));
       if (l) return { n: N[i], l };
@@ -101,6 +105,10 @@
   function verifierMissions() {
     const secteurs = new Set(Object.keys(S.positions).filter(s => s !== "JB10").map(s => M.info(s).secteur));
     if (secteurs.size >= 3) reussirMission("diversifier");
+    const jack = Object.keys(S.positions).map(M.info).filter(a => a.groupe === "jack");
+    const jungle = Object.keys(S.positions).map(M.info).filter(a => a.groupe === "jungle" && !a.etf);
+    if (jack.some(a => !a.div) && jack.some(a => a.div > 0)) reussirMission("croissance-rendement");
+    if (jack.length >= 2 && jungle.length >= 2) reussirMission("jack-et-jungle");
     if (S.m.jour - S.debut >= 60) {
       const v = S.valeurs[S.valeurs.length - 1], v0 = S.valeurs[0];
       if (v.total / CAPITAL > v.indice / v0.indice) reussirMission("battre-indice");
@@ -108,9 +116,10 @@
   }
 
   /* ---------- navigation ---------- */
-  const NAV = [["accueil", "🏠", "Accueil"], ["apprendre", "📚", "Apprendre"], ["cartes", "🃏", "Réviser"], ["simulateur", "📈", "Simulateur"], ["glossaire", "🔎", "Glossaire"], ["reglages", "⚙️", "Réglages"]];
+  const NAV = [["accueil", "🏠", "Accueil"], ["apprendre", "📚", "Apprendre"], ["cartes", "🃏", "Réviser"], ["simulateur", "📈", "Simulateur"], ["jackworld", "🌍", "Jack World"], ["glossaire", "🔎", "Glossaire"], ["reglages", "⚙️", "Réglages"]];
   function majNav(v) {
-    const actif = ["lecon", "quiz", "test"].includes(v) ? "apprendre" : v;
+    const h = location.hash;
+    const actif = ["lecon", "quiz", "test"].includes(v) ? (/\/jw(\/|$)/.test(h) ? "jackworld" : "apprendre") : v;
     $$(".nav a").forEach(a => a.classList.toggle("on", a.dataset.v === actif));
   }
   function route() {
@@ -120,7 +129,7 @@
     majNav(v);
     const vue = $("#vue");
     vue.className = "vue vue-" + v;
-    ({ accueil: vueAccueil, apprendre: vueApprendre, lecon: () => vueLecon(h[1], h[2]), quiz: () => vueQuiz("lecon", h[1], h[2]), test: () => vueQuiz("test", h[1]), cartes: vueCartes, glossaire: vueGlossaire, simulateur: vueSimulateur, reglages: vueReglages }[v] || vueAccueil)(vue);
+    ({ accueil: vueAccueil, apprendre: vueApprendre, lecon: () => vueLecon(h[1], h[2]), quiz: () => vueQuiz("lecon", h[1], h[2]), test: () => vueQuiz("test", h[1]), cartes: vueCartes, glossaire: vueGlossaire, simulateur: vueSimulateur, jackworld: vueJackWorld, reglages: vueReglages }[v] || vueAccueil)(vue);
     window.scrollTo(0, 0);
   }
 
@@ -163,6 +172,11 @@
           <a class="btn ${dues ? "principal" : ""} large" href="#/cartes">${dues ? "Réviser maintenant" : "Voir les cartes"}</a>
         </section>
       </div>
+      <a class="carte jw-banniere" href="#/jackworld">
+        <img src="images/jack/jw.png" alt="">
+        <div><b>🌍 Espace Jack World</b><small>NEW DUC, JACK22 Studio, J-DJ, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance et Jack Bours en Bourse… pour de faux. Un cours, puis la pratique.</small></div>
+        <span class="a-prix">${nb(S.m.indiceJack[S.m.indiceJack.length - 1].c)} pts<small class="${signe(M.variation(S.m, "IJW"))}">${pct(M.variation(S.m, "IJW"))}</small></span>
+      </a>
       <section class="carte">
         <h2>🏅 Missions <span class="doux">${nbM} / ${MISSIONS.length}</span></h2>
         <div class="missions">${MISSIONS.map(m => `<div class="mission ${P.missions[m.id] ? "faite" : ""}"><span class="em">${P.missions[m.id] ? "✅" : m.emoji}</span><div><b>${esc(m.titre)}</b><small>${esc(m.texte)}</small></div></div>`).join("")}</div>
@@ -173,11 +187,11 @@
   /* ================= APPRENDRE ================= */
   function vueApprendre(vue) {
     vue.innerHTML = `<h1>📚 Apprendre</h1>
-      <p class="doux">5 niveaux. Pour débloquer le suivant, réussis le test de passage (7/10). Chaque leçon a son quiz : 70 % pour la valider.</p>
+      <p class="doux">${NB_NIVEAUX} niveaux, plus un parcours bonus Jack World toujours ouvert. Pour débloquer le niveau suivant, réussis le test de passage (7/10). Chaque leçon a son quiz : 70 % pour la valider.</p>
       ${N.map((n, i) => {
         const ok = niveauDebloque(i), t = P.tests[n.id];
-        return `<section class="niveau carte ${ok ? "" : "verrou"}">
-          <div class="niveau-tete"><span class="em">${ok ? n.emoji : "🔒"}</span><div><h2>Niveau ${i + 1} · ${esc(n.nom)}</h2><p class="doux">${esc(n.sousTitre)}</p></div>
+        return `<section class="niveau carte ${ok ? "" : "verrou"} ${n.bonus ? "bonus" : ""}">
+          <div class="niveau-tete"><span class="em">${ok ? n.emoji : "🔒"}</span><div><h2>${n.bonus ? "Bonus" : "Niveau " + (i + 1)} · ${esc(n.nom)}</h2><p class="doux">${esc(n.sousTitre)}</p></div>
             <div class="niveau-test">${ok ? `<a class="btn ${avancementNiveau(n) === 100 && !(t >= REUSSITE) ? "principal" : ""}" href="#/test/${n.id}">🎓 Test de passage${t != null ? " · " + Math.round(t / 10) + "/10" : ""}</a>` : `<span class="doux">Réussis le test du niveau ${i} pour débloquer</span>`}</div></div>
           <div class="lecons">${n.lecons.map(l => {
             const s = P.quiz[l.id];
@@ -207,7 +221,7 @@
     const idx = n.lecons.indexOf(l), prec = n.lecons[idx - 1], suiv = n.lecons[idx + 1];
     const mission = l.mission && MISSIONS.find(m => m.id === l.mission);
     vue.innerHTML = `
-      <nav class="fil"><a href="#/apprendre">Apprendre</a> › ${n.emoji} ${esc(n.nom)} › ${esc(l.titre)}</nav>
+      <nav class="fil"><a href="${n.bonus ? "#/jackworld" : "#/apprendre"}">${n.bonus ? "Espace Jack World" : "Apprendre"}</a> › ${n.emoji} ${esc(n.nom)} › ${esc(l.titre)}</nav>
       <article class="lecon carte">
         <h1><span class="em">${l.emoji}</span> ${esc(l.titre)}</h1>
         <div class="actions-voix"><button class="btn" id="ecouter">🔊 Jack m'explique</button><button class="btn discret" id="stop">⏹ Stop</button></div>
@@ -239,7 +253,7 @@
     } else {
       titre = "Test de passage · " + n.emoji + " " + n.nom;
       const tout = []; n.lecons.forEach(l => l.quiz.forEach(q => tout.push(preparer(q, l))));
-      questions = melanger(tout).slice(0, 10); retour = "#/apprendre"; cleScore = n.id;
+      questions = melanger(tout).slice(0, 10); retour = n.bonus ? "#/jackworld" : "#/apprendre"; cleScore = n.id;
     }
     let i = 0, bons = 0;
     function afficher() {
@@ -270,20 +284,21 @@
       const cible = mode === "lecon" ? P.quiz : P.tests, avant = cible[cleScore];
       if (avant == null || score > avant) cible[cleScore] = score;
       sauverP();
-      const debloque = mode === "test" && reussi && N[ni + 1] && !(avant >= REUSSITE);
+      const NS = N[ni + 1] && !N[ni + 1].bonus ? N[ni + 1] : null;
+      const debloque = mode === "test" && reussi && NS && !(avant >= REUSSITE);
       let suite = "";
       if (mode === "lecon") {
         const l = n.lecons.find(x => x.id === lid), idx = n.lecons.indexOf(l), suiv = n.lecons[idx + 1];
         suite = reussi ? (suiv ? `<a class="btn principal large" href="#/lecon/${n.id}/${suiv.id}">Leçon suivante : ${esc(suiv.titre)} →</a>` : `<a class="btn principal large" href="#/test/${n.id}">🎓 Passer le test du niveau</a>`) : `<a class="btn principal large" href="${retour}">Relire la leçon</a>`;
       } else {
-        suite = reussi ? (N[ni + 1] ? `<a class="btn principal large" href="#/apprendre">Découvrir le niveau ${esc(N[ni + 1].nom)} ${N[ni + 1].emoji}</a>` : `<a class="btn principal large" href="#/simulateur">Tout est validé ! Direction le simulateur</a>`) : `<a class="btn principal large" href="#/apprendre">Revoir les leçons</a>`;
+        suite = reussi ? (NS ? `<a class="btn principal large" href="#/apprendre">Découvrir le niveau ${esc(NS.nom)} ${NS.emoji}</a>` : n.bonus ? `<a class="btn principal large" href="#/jackworld">Retour à l'espace Jack World</a>` : `<a class="btn principal large" href="#/simulateur">Tout est validé ! Direction le simulateur</a>`) : `<a class="btn principal large" href="${n.bonus ? "#/jackworld" : "#/apprendre"}">Revoir les leçons</a>`;
       }
-      const msg = reussi ? (debloque ? `🎉 Niveau ${esc(N[ni + 1].nom)} débloqué !` : "Bravo, c'est validé !") : `Il faut ${REUSSITE} % pour valider. Relis la leçon et réessaie, tu vas y arriver.`;
+      const msg = reussi ? (debloque ? `🎉 Niveau ${esc(NS.nom)} débloqué !` : "Bravo, c'est validé !") : `Il faut ${REUSSITE} % pour valider. Relis la leçon et réessaie, tu vas y arriver.`;
       vue.innerHTML = `<section class="quiz carte fin-quiz">
         <div class="score ${reussi ? "hausse" : "baisse"}">${bons} / ${questions.length}</div>
         ${jack(msg, reussi ? "ok" : "ko")}
         <div class="bas-lecon">${suite}<button class="btn" id="refaire">🔁 Recommencer</button></div></section>`;
-      parler(reussi ? (debloque ? "Bravo ! Niveau " + N[ni + 1].nom + " débloqué !" : "Bravo, c'est validé !") : "Il faut 70 pour cent pour valider. Tu vas y arriver.");
+      parler(reussi ? (debloque ? "Bravo ! Niveau " + NS.nom + " débloqué !" : "Bravo, c'est validé !") : "Il faut 70 pour cent pour valider. Tu vas y arriver.");
       $("#refaire").onclick = () => vueQuiz(mode, nid, lid, vue);
     }
     afficher();
@@ -345,7 +360,6 @@
   /* ================= SIMULATEUR ================= */
   let auto = null, graph = null, courbe = null, sens = "achat";
   function arreterAuto() { if (auto) { clearInterval(auto); auto = null; } }
-  const prixActuel = sym => sym === "INDICE" ? S.m.indice[S.m.indice.length - 1].c : M.prix(S.m, sym);
   const frais = montant => Math.max(FRAIS_MIN, montant * FRAIS_TAUX);
 
   function acheter(sym, qte, px, type) {
@@ -357,6 +371,8 @@
     S.histo.unshift({ jour: S.m.jour, sym, op: "achat", type, qte, prix: px, frais: f });
     reussirMission("premier-achat");
     if (sym === "JB10") reussirMission("acheter-etf");
+    if (M.info(sym).groupe === "jack") reussirMission("action-jack");
+    if (sym === "NDC") reussirMission("maison-mere");
     if (type === "limite") reussirMission("ordre-limite");
     return true;
   }
@@ -404,7 +420,7 @@
           if (totalPortefeuille() >= CAPITAL * 0.9) reussirMission("survivre-krach");
           S.krach = null;
         }
-        if (e.type === "news" && S.positions[e.sym]) toast(esc(e.texte));
+        if (e.type === "news" && (S.positions[e.sym] || (e.groupe && Object.keys(S.positions).some(s => M.info(s).groupe === "jack")))) toast(esc(e.texte));
       });
       executerOrdres();
       S.valeurs.push({ jour: S.m.jour, total: totalPortefeuille(), indice: S.m.indice[S.m.indice.length - 1].c });
@@ -424,7 +440,9 @@
         <div class="sim-total"><div class="doux petit">Valeur totale</div><b id="sb-total"></b> <span id="sb-perf"></span></div>
       </div>
       <div class="sim-grille">
-        <aside class="carte sim-liste"><h3>Le marché <small class="doux">(fictif)</small></h3><div id="liste"></div></aside>
+        <aside class="carte sim-liste"><h3>Le marché <small class="doux">(fictif)</small></h3>
+          <div class="segm segm-marche" id="marches">${[["tout", "Tout"], ["jungle", "🌴 Jungle"], ["jack", "🌍 Jack"]].map(([v, t]) => `<button data-m="${v}">${t}</button>`).join("")}</div>
+          <div id="liste"></div></aside>
         <section class="carte sim-centre">
           <div id="entete"></div>
           <div class="outils-graph">
@@ -470,6 +488,7 @@
     const coche = () => { S.vue.mm20 = $("#c-mm20").checked; S.vue.mm50 = $("#c-mm50").checked; S.vue.volume = $("#c-vol").checked; sauverS(); if (S.vue.mm20 && S.vue.mm50) reussirMission("voir-mm"); majGraph(); };
     ["#c-mm20", "#c-mm50", "#c-vol"].forEach(s => $(s).onchange = coche);
     $("#liste").onclick = e => { const r = e.target.closest("[data-sym]"); if (r) choisir(r.dataset.sym); };
+    $$("#marches button").forEach(b => b.onclick = () => { S.vue.marche = b.dataset.m; sauverS(); majSim(); });
     $("#port").onclick = e => { const r = e.target.closest("[data-sym]"); if (r) { choisir(r.dataset.sym); $(".sim-centre").scrollIntoView({ behavior: "smooth" }); } };
     $("#ordres").onclick = e => {
       const b = e.target.closest("[data-annuler]"); if (!b) return;
@@ -488,26 +507,27 @@
     $("#sb-perf").innerHTML = `<span class="${signe(perf)}">${pct(perf)}</span>`;
     if (S.m.choc) $("#sb-date").innerHTML += ` <span class="tag rouge">💥 Krach en cours</span>`;
     // liste des actifs
-    const lignes = [["INDICE", "JUNGLE 10", "Indice"]].concat(M.tous().map(a => [a.sym, a.nom, a.secteur]));
-    $("#liste").innerHTML = lignes.map(([sym, nom, sect]) => {
-      const b = sym === "INDICE" ? S.m.indice : M.bougies(S.m, sym), der = b[b.length - 1], v = (der.c / b[b.length - 2].c - 1) * 100;
-      const pos = S.positions[sym];
-      return `<button class="actif ${S.selection === sym ? "on" : ""} ${sym === "INDICE" ? "indice" : ""}" data-sym="${sym}">
-        <span class="a-nom"><b>${sym === "INDICE" ? "📊" : sym}</b> ${esc(nom)}<small>${esc(sect)}${pos ? " · 💼 " + pos.qte : ""}</small></span>
+    $$("#marches button").forEach(b => b.classList.toggle("on", b.dataset.m === S.vue.marche));
+    const ligne = a => {
+      const sym = a.sym, v = M.variation(S.m, sym), pos = S.positions[sym], idx = M.estIndice(sym);
+      return `<button class="actif ${S.selection === sym ? "on" : ""} ${idx ? "indice" : ""}" data-sym="${sym}">
+        <span class="a-nom"><b>${idx ? "📊" : a.img ? `<img class="a-ico" src="images/jack/${a.img}.png" alt="">` + sym : sym}</b> ${esc(idx ? a.court : a.nom)}<small>${esc(a.secteur)}${pos ? " · 💼 " + pos.qte : ""}</small></span>
         <canvas class="spark" data-spark="${sym}"></canvas>
-        <span class="a-prix">${nb(der.c)}<small class="${signe(v)}">${pct(v)}</small></span></button>`;
-    }).join("");
+        <span class="a-prix">${nb(M.prix(S.m, sym))}<small class="${signe(v)}">${pct(v)}</small></span></button>`;
+    };
+    const jungle = [M.INDICES.INDICE].concat(M.ACTIFS, [M.ETF]), jackL = [M.INDICES.IJW, M.HOLDING].concat(M.FILIALES);
+    $("#liste").innerHTML = (S.vue.marche !== "jack" ? (S.vue.marche === "tout" ? `<div class="liste-titre">🌴 Marché de la jungle</div>` : "") + jungle.map(ligne).join("") : "") +
+      (S.vue.marche !== "jungle" ? `<div class="liste-titre">🌍 Groupe Jack World <small>cotation inventée</small></div>` + jackL.map(ligne).join("") : "");
     $$("canvas[data-spark]").forEach(cv => {
-      const sym = cv.dataset.spark, b = sym === "INDICE" ? S.m.indice : M.bougies(S.m, sym), vals = b.slice(-30).map(x => x.c);
+      const sym = cv.dataset.spark, b = M.bougies(S.m, sym), vals = b.slice(-30).map(x => x.c);
       G.mini(cv, vals, vals[vals.length - 1] >= vals[0] ? getComputedStyle(document.documentElement).getPropertyValue("--vert") : getComputedStyle(document.documentElement).getPropertyValue("--rouge"));
     });
     majEntete(); majGraph(); majTicket(); majPortefeuille(); majOrdres(); majNews(); majHisto(); majCourbe();
   }
   function majEntete() {
-    const sym = S.selection, idx = sym === "INDICE";
-    const info = idx ? { nom: "Indice JUNGLE 10", secteur: "Indice", desc: "L'indice qui résume tout le marché fictif : la moyenne des 10 entreprises (dividendes réinvestis). On ne peut pas l'acheter directement : pour ça, il y a l'ETF JB10." } : M.info(sym);
-    const b = idx ? S.m.indice : M.bougies(S.m, sym), der = b[b.length - 1], v = (der.c / b[b.length - 2].c - 1) * 100;
-    $("#entete").innerHTML = `<div class="entete-actif"><div><h2>${esc(info.nom)} <small class="doux">${idx ? "" : sym}</small></h2><span class="tag">${esc(info.secteur)}</span></div>
+    const sym = S.selection, idx = M.estIndice(sym), info = M.info(sym);
+    const b = M.bougies(S.m, sym), der = b[b.length - 1], v = M.variation(S.m, sym);
+    $("#entete").innerHTML = `<div class="entete-actif"><div><h2>${info.img ? `<img class="titre-ico" src="images/jack/${info.img}.png" alt="">` : ""}${esc(info.nom)} <small class="doux">${idx ? "" : sym}</small></h2><span class="tag">${esc(info.secteur)}</span>${info.profil ? ` <span class="tag">${esc(info.profil)}</span>` : ""}${info.groupe === "jack" ? ` <span class="tag jw">🌍 Groupe Jack World</span>` : ""}</div>
       <div class="entete-prix"><b>${idx ? nb(der.c) + " pts" : eur(der.c)}</b><span class="${signe(v)}">${pct(v)} aujourd'hui</span></div></div>`;
     const per = idx ? null : M.per(S.m, sym), rdt = idx ? 0 : M.rendement(sym), pos = S.positions[sym];
     const b20 = b.slice(-20), haut20 = Math.max(...b20.map(x => x.h)), bas20 = Math.min(...b20.map(x => x.l));
@@ -517,14 +537,14 @@
         <div><small>Sur 1 mois</small><b class="${signe(v20)}">${pct(v20)}</b></div>
         <div><small>Plus haut 1 mois</small><b>${nb(haut20)}</b></div>
         <div><small>Plus bas 1 mois</small><b>${nb(bas20)}</b></div>
-        ${per ? `<div title="Prix ÷ bénéfice par action"><small>PER</small><b>${nb(per, 1)}</b></div>` : ""}
+        ${per ? `<div title="Prix ÷ bénéfice par action"><small>PER</small><b>${nb(per, 1)}</b></div>` : !idx && !info.etf ? `<div title="Pas de bénéfice : le PER ne veut rien dire"><small>PER</small><b>aucun (pas de bénéfice)</b></div>` : ""}
         ${!idx && !info.etf ? `<div title="Dividende annuel ÷ prix"><small>Rendement dividende</small><b>${rdt ? nb(rdt, 1) + " %" : "aucun"}</b></div>` : ""}
         ${pos ? `<div><small>Ma position</small><b>${pos.qte} × PRU ${nb(pos.pru)}</b></div>` : ""}
       </div>`;
   }
   function majGraph() {
     if (!graph) return;
-    const sym = S.selection, data = sym === "INDICE" ? S.m.indice : M.bougies(S.m, sym);
+    const sym = S.selection, data = M.bougies(S.m, sym);
     const lignes = [];
     const pos = S.positions[sym];
     if (pos) lignes.push({ prix: pos.pru, couleur: getComputedStyle(document.documentElement).getPropertyValue("--jaune"), texte: "Mon prix de revient " + nb(pos.pru) });
@@ -539,6 +559,11 @@
     if (sym === "INDICE") {
       t.innerHTML = `<h3>🛒 Passer un ordre</h3>${jack("On ne peut pas acheter un indice directement. Pour avoir tout le JUNGLE 10 d'un coup, achète l'<b>ETF JB10</b> : il le copie.")}<button class="btn principal large" id="vers-etf">Voir l'ETF JB10</button>`;
       $("#vers-etf").onclick = () => choisir("JB10");
+      return;
+    }
+    if (sym === "IJW") {
+      t.innerHTML = `<h3>🛒 Passer un ordre</h3>${jack("L'indice JACK WORLD ne s'achète pas. Pour avoir un bout de tout le groupe d'un coup, achète la maison mère, <b>NEW DUC</b> : elle possède toutes les filiales.")}<button class="btn principal large" id="vers-ndc">Voir NEW DUC</button>`;
+      $("#vers-ndc").onclick = () => choisir("NDC");
       return;
     }
     if (!S.positions[sym] && sens === "vente") sens = "achat";
@@ -581,7 +606,7 @@
     return +$("#t-prix").value || px;
   }
   function majTicket() {
-    if (!$("#t-type") || S.selection === "INDICE") return;
+    if (!$("#t-type") || M.estIndice(S.selection)) return;
     const type = $("#t-type").value, sym = S.selection, cours = M.prix(S.m, sym);
     const pl = $("#t-prix-l"); pl.hidden = type === "marche";
     $("#t-prix-txt").textContent = type === "stop" ? "Seuil de déclenchement (€)" : sens === "achat" ? "Prix maximum (€)" : "Prix minimum (€)";
@@ -675,6 +700,75 @@
   }
   let redim = null;
   window.addEventListener("resize", () => { clearTimeout(redim); redim = setTimeout(() => { if (graph && $("#graph")) { graph.redessiner(); courbe.redessiner(); } }, 150); });
+
+  /* ================= ESPACE JACK WORLD ================= */
+  function vueJackWorld(vue) {
+    const nj = N.find(n => n.bonus), ni = N.indexOf(nj), t = P.tests[nj.id];
+    const mJack = MISSIONS.filter(m => ["action-jack", "maison-mere", "croissance-rendement", "jack-et-jungle"].includes(m.id));
+    const cs = getComputedStyle(document.documentElement);
+    const carte = (a, grande) => {
+      const v = M.variation(S.m, a.sym), v3 = M.variation(S.m, a.sym, 60), per = M.per(S.m, a.sym), pos = S.positions[a.sym];
+      return `<article class="jw-ent ${grande ? "grande" : ""}">
+        <div class="jw-ent-tete"><img src="images/jack/${a.img}.png" alt=""><div><b>${esc(a.nom)}</b><small>${a.sym} · ${esc(a.secteur)}</small></div><span class="tag">${esc(a.profil)}</span></div>
+        <div class="jw-ent-prix"><b>${eur(M.prix(S.m, a.sym))}</b><span class="${signe(v)}">${pct(v)}</span></div>
+        <canvas class="jw-spark" data-jwspark="${a.sym}"></canvas>
+        <p class="doux petit">${esc(a.desc)}</p>
+        <div class="stats">
+          <div><small>Sur 3 mois</small><b class="${signe(v3)}">${pct(v3)}</b></div>
+          <div><small>PER</small><b>${per ? nb(per, 1) : "aucun"}</b></div>
+          <div><small>Dividende</small><b>${a.div ? nb(a.div * 100, 1) + " %" : "aucun"}</b></div>
+          ${pos ? `<div><small>Ma position</small><b>${pos.qte} × ${nb(pos.pru)}</b></div>` : ""}
+        </div>
+        <button class="btn principal large" data-trader="${a.sym}">📈 Trader ${esc(a.nom)}</button>
+      </article>`;
+    };
+    const ij = M.variation(S.m, "IJW", 60), ij10 = M.variation(S.m, "INDICE", 60);
+    vue.innerHTML = `
+      <section class="carte jw-hero">
+        <img src="images/jack/jw.png" alt="" class="jw-logo">
+        <div><h1>🌍 Espace Jack World</h1>
+          <p>Le groupe <b>NEW DUC</b> et ses filiales ont leur propre Bourse… pour de faux. Apprends avec le cours, puis entraîne-toi à acheter et vendre leurs actions avec tes 10 000 € fictifs.</p>
+          <p class="doux petit">⚠️ Aucune de ces entreprises n'est vraiment cotée : les prix, les PER et les dividendes sont inventés pour s'entraîner.</p></div>
+        <div class="jw-temps"><div class="doux petit">${dateJour(S.m.jour, true)}</div><button class="btn" id="jw-1">▶ Jour suivant</button><a class="btn principal" href="#/simulateur" id="jw-sim">📈 Ouvrir le simulateur</a></div>
+      </section>
+
+      <section class="carte">
+        <h2>📚 Le cours <span class="doux">${nj.lecons.filter(leconReussie).length} / ${nj.lecons.length} leçons</span></h2>
+        <div class="lecons">${nj.lecons.map(l => { const s = P.quiz[l.id];
+          return `<a class="lecon-tuile" href="#/lecon/${nj.id}/${l.id}"><span class="em">${l.emoji}</span><b>${esc(l.titre)}</b><small>${s != null ? (s >= REUSSITE ? "✅ " : "🔁 ") + "Quiz : " + s + " %" : P.lues[l.id] ? "Lue · quiz à faire" : "Nouvelle"}</small></a>`; }).join("")}
+          <a class="lecon-tuile" href="#/test/${nj.id}"><span class="em">🎓</span><b>Test Jack World</b><small>${t != null ? (t >= REUSSITE ? "✅ " : "🔁 ") + Math.round(t / 10) + "/10" : "10 questions"}</small></a>
+        </div>
+      </section>
+
+      <section class="carte">
+        <h2>📊 Le groupe contre le marché <span class="doux">sur 6 mois</span></h2>
+        <p class="doux">L'indice JACK WORLD (moyenne des 7 filiales) comparé à l'indice JUNGLE 10. Sur 3 mois : <b class="${signe(ij)}">${pct(ij)}</b> pour Jack World, <b class="${signe(ij10)}">${pct(ij10)}</b> pour la jungle.</p>
+        <div class="courbe-zone"><canvas id="jw-courbe"></canvas></div>
+        <div class="legende"><span><i style="background:var(--violet)"></i>Indice JACK WORLD</span><span><i style="background:var(--bleu)"></i>Indice JUNGLE 10</span></div>
+      </section>
+
+      <h2 class="jw-titre">🏛️ La maison mère</h2>
+      ${carte(M.HOLDING, true)}
+      <h2 class="jw-titre">🧩 Les 7 filiales</h2>
+      <div class="jw-grille">${M.FILIALES.map(a => carte(a)).join("")}</div>
+
+      <section class="carte">
+        <h2>🏅 Missions Jack World <span class="doux">${mJack.filter(m => P.missions[m.id]).length} / ${mJack.length}</span></h2>
+        <div class="missions">${mJack.map(m => `<div class="mission ${P.missions[m.id] ? "faite" : ""}"><span class="em">${P.missions[m.id] ? "✅" : m.emoji}</span><div><b>${esc(m.titre)}</b><small>${esc(m.texte)}</small></div></div>`).join("")}</div>
+      </section>
+      <p class="avertissement">Cotations inventées : NEW DUC et ses filiales ne sont pas en Bourse. Jack Bours sert à apprendre, ce n'est pas un conseil en investissement.</p>`;
+
+    $$("canvas[data-jwspark]").forEach(cv => {
+      const vals = M.bougies(S.m, cv.dataset.jwspark).slice(-60).map(x => x.c);
+      G.mini(cv, vals, cs.getPropertyValue(vals[vals.length - 1] >= vals[0] ? "--vert" : "--rouge"));
+    });
+    const c = G.creerCourbes($("#jw-courbe")), n = 120;
+    const serie = sym => { const b = M.bougies(S.m, sym).slice(-n), v0 = b[0].c; return b.map(x => (x.c / v0 - 1) * 100); };
+    c.maj([{ nom: "JUNGLE 10", couleur: cs.getPropertyValue("--bleu"), valeurs: serie("INDICE") }, { nom: "JACK WORLD", couleur: cs.getPropertyValue("--violet"), valeurs: serie("IJW") }], { suffixe: " %", zero: true });
+    $$("[data-trader]").forEach(b => b.onclick = () => { S.selection = b.dataset.trader; S.vue.marche = "jack"; sens = "achat"; sauverS(); location.hash = "#/simulateur"; });
+    $("#jw-sim").onclick = () => { S.vue.marche = "jack"; if (M.info(S.selection).groupe !== "jack") S.selection = "NDC"; sauverS(); };
+    $("#jw-1").onclick = () => { jourSuivant(1); const y = window.scrollY; vueJackWorld(vue); window.scrollTo(0, y); };
+  }
 
   /* ================= RÉGLAGES ================= */
   function vueReglages(vue) {

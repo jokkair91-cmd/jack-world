@@ -45,7 +45,7 @@ button, input, select { font: inherit; color: inherit; }
 img.logo-clair { display: none; }
 [data-theme="light"] img.logo-sombre { display: none; } [data-theme="light"] img.logo-clair { display: block; }
 .nav { display: flex; gap: 4px; margin-left: auto; }
-.nav a { display: flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 10px; color: var(--doux); text-decoration: none; font-weight: 800; }
+.nav a { display: flex; align-items: center; gap: 6px; padding: 8px 12px; white-space: nowrap; border-radius: 10px; color: var(--doux); text-decoration: none; font-weight: 800; }
 .nav a:hover { color: var(--texte); background: var(--carte2); }
 .nav a.on { color: var(--texte); background: var(--carte2); box-shadow: inset 0 -3px 0 var(--jaune); }
 .vue { max-width: 1280px; margin: 0 auto; padding: 22px 20px 90px; }
@@ -204,8 +204,38 @@ tr.clic { cursor: pointer; } tr.clic:hover td { background: var(--carte2); }
 .toast.part { opacity: 0; transform: translateX(20px); }
 @keyframes entre { from { opacity: 0; transform: translateY(10px); } }
 
+/* ---------- groupe Jack World ---------- */
+.segm-marche { display: flex; margin: 0 0 8px; } .segm-marche button { flex: 1; padding: 5px 4px; font-size: .78rem; }
+.liste-titre { font-size: .78rem; font-weight: 900; text-transform: uppercase; letter-spacing: .04em; color: var(--doux); padding: 10px 8px 4px; }
+.liste-titre small { text-transform: none; letter-spacing: 0; font-weight: 700; margin-left: 4px; }
+.a-ico { width: 18px; height: 18px; border-radius: 5px; vertical-align: -4px; margin-right: 5px; }
+.titre-ico { width: 30px; height: 30px; border-radius: 8px; vertical-align: -6px; margin-right: 8px; }
+.tag.jw { background: var(--jaune-fond); color: var(--texte); border-color: transparent; }
+.niveau.bonus { border-color: var(--violet); }
+.jw-banniere { display: grid; grid-template-columns: 56px 1fr auto; gap: 14px; align-items: center; text-decoration: none; color: var(--texte); border: 1px solid var(--violet); }
+.jw-banniere:hover { background: var(--carte2); }
+.jw-banniere img { width: 56px; height: 56px; border-radius: 14px; }
+.jw-banniere small { display: block; color: var(--doux); }
+.jw-banniere .a-prix { text-align: right; font-weight: 900; } .jw-banniere .a-prix small { display: block; }
+.jw-hero { display: grid; grid-template-columns: 96px 1fr auto; gap: 18px; align-items: center; border: 1px solid var(--violet); }
+.jw-hero h1 { margin: 0 0 6px; } .jw-hero p { margin: 4px 0; }
+.jw-logo { width: 96px; height: 96px; border-radius: 22px; }
+.jw-temps { display: grid; gap: 8px; text-align: center; }
+.jw-titre { margin: 26px 0 12px; }
+.jw-grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.jw-ent { background: var(--carte); border: 1px solid var(--bord); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.jw-ent.grande { border-color: var(--violet); }
+.jw-ent-tete { display: grid; grid-template-columns: 48px 1fr auto; gap: 10px; align-items: center; }
+.jw-ent-tete img { width: 48px; height: 48px; border-radius: 12px; }
+.jw-ent-tete small { display: block; color: var(--doux); font-size: .8rem; }
+.jw-ent-prix { display: flex; align-items: baseline; gap: 10px; } .jw-ent-prix b { font-size: 1.5rem; }
+.jw-spark { width: 100%; height: 56px; display: block; }
+.jw-ent p { margin: 0; }
+.jw-ent .btn.large { margin-top: auto; }
+
 /* ---------- écrans moyens et petits ---------- */
 @media (max-width: 1180px) {
+  .nav { gap: 0; } .nav a { padding: 8px 7px; gap: 4px; font-size: .86rem; }
   .sim-grille { grid-template-columns: 250px minmax(0, 1fr); }
   .sim-ticket { grid-column: 1 / -1; position: static; }
 }
@@ -225,6 +255,10 @@ tr.clic { cursor: pointer; } tr.clic:hover td { background: var(--carte2); }
   .logo { height: 46px; }
   h1 { font-size: 1.4rem; }
   .sim-barre { position: static; } .sim-total { text-align: left; } .sim-temps { margin: 0; }
+  .nav a { font-size: .62rem; padding: 6px 1px; } .nav a .em { font-size: 1.1rem; }
+  .jw-hero { grid-template-columns: 64px 1fr; } .jw-logo { width: 64px; height: 64px; } .jw-temps { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; } .jw-temps .doux { grid-column: 1 / -1; }
+  .jw-banniere { grid-template-columns: 44px 1fr; } .jw-banniere img { width: 44px; height: 44px; } .jw-banniere .a-prix { grid-column: 1 / -1; text-align: left; }
+  .jw-grille { grid-template-columns: minmax(0, 1fr); }
   #graph { height: 300px; }
   .boites { grid-template-columns: repeat(3, 1fr); }
   .niveau-mini { grid-template-columns: 28px 1fr 60px 40px; }
