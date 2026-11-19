@@ -33,7 +33,11 @@
     t.textContent = msg; t.classList.add("vu");
     clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove("vu"), 2600);
   }
-  function parcours(id) { return id === "autocad" ? AUTOCAD : METIERS.find((m) => m.id === id); }
+  const COURS_DEVIS = window.COURS_DEVIS || { id: "devis", modules: [] };
+  AUTOCAD.retour = "#/autocad";
+  COURS_DEVIS.retour = "#/prix/cours";
+  function parcours(id) { return id === "autocad" ? AUTOCAD : id === "devis" ? COURS_DEVIS : METIERS.find((m) => m.id === id); }
+  const accueilDe = (p) => p.retour || `#/metier/${p.id}`;
   function scoreModule(pid, mid) { return etat.quiz[pid + "/" + mid]; }
   function avancement(p) {
     const ok = p.modules.filter((m) => (scoreModule(p.id, m.id) || 0) >= SEUIL_MODULE).length;
@@ -69,7 +73,8 @@
     const h = (location.hash || "#/").slice(2).split("/").filter(Boolean);
     document.querySelectorAll(".nav-haut a").forEach((a) => {
       const cible = a.getAttribute("href").slice(2);
-      a.classList.toggle("actif", cible === "" ? (h.length === 0 || (h[0] === "metier" && h[1] !== "autocad")) : (h[0] === cible || (cible === "autocad" && h[1] === "autocad")));
+      const section = h[0] === "metier" ? (h[1] === "autocad" ? "autocad" : h[1] === "devis" ? "prix" : "") : (h[0] || "");
+      a.classList.toggle("actif", cible === section);
     });
     try {
       if (h.length === 0) return vueAccueil();
@@ -83,7 +88,7 @@
         }
         if (h[2] === "examen") return vueExamen(p);
         if (h[2] === "attestation") return vueAttestation(p);
-        return p.id === "autocad" ? vueAutocad("cours") : vueMetier(p);
+        return p.id === "autocad" ? vueAutocad("cours") : p.id === "devis" ? vuePrix("cours") : vueMetier(p);
       }
       if (h[0] === "autocad") return vueAutocad(h[1] || "cours");
       if (h[0] === "outils") {
@@ -92,6 +97,7 @@
         return vueOutils();
       }
       if (h[0] === "glossaire") return vueGlossaire();
+      if (h[0] === "prix") return vuePrix(["cours", "bibliotheque", "devis", "calcul"].includes(h[1]) ? h[1] : "cours");
       vueIntrouvable();
     } finally {
       window.scrollTo(0, 0);
@@ -131,6 +137,7 @@
       <h2 style="margin-top:26px">🧰 Et aussi</h2>
       <div class="grille">
         <a class="carte tuile" href="#/autocad"><span class="emoji">📐</span><h3>AutoCAD</h3><p class="muted petit">${ac.ok}/${ac.total} cours validés · commandes, raccourcis, simulateur de dessin.</p></a>
+        <a class="carte tuile" href="#/prix"><span class="emoji">💶</span><h3>Prix et devis</h3><p class="muted petit">Apprendre à faire un devis, prix indicatifs des ouvrages, devis estimatif, calcul d'un prix de vente.</p></a>
         <a class="carte tuile" href="#/outils"><span class="emoji">🧮</span><h3>Boîte à outils</h3><p class="muted petit">Calculs de béton, surfaces, pentes, escaliers, durées + check-lists imprimables.</p></a>
         <a class="carte tuile" href="#/glossaire"><span class="emoji">📖</span><h3>Glossaire BTP</h3><p class="muted petit">Le vocabulaire du chantier et des marchés, expliqué simplement.</p></a>
       </div>
@@ -196,7 +203,7 @@
   function vueModule(p, m) {
     const i = p.modules.indexOf(m);
     const suivant = p.modules[i + 1];
-    const base = p.id === "autocad" ? "#/autocad" : `#/metier/${p.id}`;
+    const base = accueilDe(p);
     const sections = m.sections.map((s) => `
       <h2>${esc(s.titre)}</h2>
       ${(s.texte || []).map((x) => `<p>${fmt(x)}</p>`).join("")}
@@ -295,7 +302,7 @@
               <a class="btn sec" href="#/metier/${p.id}/module/${m.id}">Relire la leçon</a>
               <button class="btn sec" id="rejouer">Refaire le quiz</button>
               ${reussi && suivant ? `<a class="btn" href="#/metier/${p.id}/module/${suivant.id}">Module suivant →</a>` : ""}
-              ${reussi && !suivant ? `<a class="btn" href="${p.id === "autocad" ? "#/autocad" : `#/metier/${p.id}`}">Retour au parcours</a>` : ""}
+              ${reussi && !suivant ? `<a class="btn" href="${accueilDe(p)}">Retour au parcours</a>` : ""}
             </div>
           </div>${recapErreurs(erreurs)}`;
         document.getElementById("rejouer").onclick = () => vueQuiz(p, m);
@@ -308,7 +315,7 @@
     const toutes = [];
     p.modules.forEach((m) => m.quiz.forEach((q) => toutes.push(Object.assign({ source: "Module : " + m.titre }, q))));
     const tirage = melange(toutes).slice(0, Math.min(NB_EXAMEN, toutes.length));
-    const retour = p.id === "autocad" ? "#/autocad" : `#/metier/${p.id}`;
+    const retour = accueilDe(p);
     lancerQuiz({
       questions: tirage, titre: "Examen final — " + p.nom, retour,
       fin: (pct, erreurs) => {
@@ -332,7 +339,7 @@
 
   function vueAttestation(p) {
     const ex = etat.examen[p.id];
-    const retour = p.id === "autocad" ? "#/autocad" : `#/metier/${p.id}`;
+    const retour = accueilDe(p);
     if (!(ex >= SEUIL_EXAMEN)) {
       app.innerHTML = `<a class="retour" href="${retour}">← ${esc(p.nom)}</a><div class="carte"><h2>Pas encore d'attestation</h2><p>Réussis l'examen final (${SEUIL_EXAMEN} %) pour l'obtenir.</p><a class="btn" href="#/metier/${p.id}/examen">Passer l'examen</a></div>`;
       return;
@@ -578,6 +585,188 @@
     document.getElementById("notes").oninput = enreg;
     document.getElementById("imp").onclick = () => window.print();
     document.getElementById("vider").onclick = () => { app.querySelectorAll(".checklist input").forEach((x) => { x.checked = false; }); enreg(); toast("Check-list remise à zéro"); };
+  }
+
+  /* ---------- Prix : bibliothèque, devis, calcul d'un prix ---------- */
+  const PRIX = window.PRIX || { categories: [], tva: [] };
+  const tousItems = () => PRIX.categories.flatMap((c) => c.items.map((i) => Object.assign({ cat: c.nom }, i)));
+  const itemPar = (id) => tousItems().find((i) => i.id === id);
+  const prixDe = (it) => {
+    const p = (etat.prix && etat.prix.perso || {})[it.id];
+    return p != null && p !== "" ? nombre(p) : Math.round((it.min + it.max) / 2);
+  };
+  const euros = (n) => Number(n).toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
+  function prixEtat() {
+    etat.prix = etat.prix || {};
+    etat.prix.perso = etat.prix.perso || {};
+    etat.prix.devis = etat.prix.devis || { objet: "", lignes: [], tva: 20, aleas: 0 };
+    return etat.prix;
+  }
+
+  function vuePrix(onglet) {
+    prixEtat();
+    const tabs = [["cours", "🎓 Apprendre à faire un devis"], ["bibliotheque", "📚 Bibliothèque de prix"], ["devis", "🧾 Faire un devis"], ["calcul", "🧮 Calculer un prix"]];
+    const nb = etat.prix.devis.lignes.length;
+    const entete = `
+      <section class="hero"><span style="font-size:3.2rem" aria-hidden="true">💶</span>
+        <div><h1>Prix du bâtiment</h1>
+        <p>Des prix indicatifs d'ouvrages courants, un outil pour monter un devis et la méthode pour calculer un prix de vente à partir du déboursé sec.</p></div></section>
+      <nav class="onglets">${tabs.map(([id, t]) => `<a href="#/prix/${id}" class="${onglet === id ? "actif" : ""}">${t}${id === "devis" && nb ? ` (${nb})` : ""}</a>`).join("")}</nav>
+      <div class="encadre danger petit" style="margin-bottom:14px">⚠️ <b>Ordres de grandeur seulement</b> (France métropolitaine, HT, fourniture et pose, ${esc(PRIX.maj || "")}). Les prix réels varient beaucoup selon la région, l'accès, les quantités, la gamme et la conjoncture. Remplace-les par <b>tes propres prix</b> (colonne « Mon prix ») : ils sont gardés dans ce navigateur. Pour un chiffrage professionnel, base-toi sur les prix de ton entreprise et les devis fournisseurs.</div>`;
+
+    if (onglet === "cours") {
+      const a = avancement(COURS_DEVIS);
+      app.innerHTML = entete + `
+        <p class="muted petit">${a.ok}/${a.total} cours validés. Chaque cours se termine par un quiz, puis un examen final et une attestation.</p>
+        <div class="pile">${listeModules(COURS_DEVIS)}</div>
+        ${blocExamen(COURS_DEVIS)}`;
+      return;
+    }
+    if (onglet === "devis") return vueDevis(entete);
+    if (onglet === "calcul") return vueCalculPrix(entete);
+
+    app.innerHTML = entete + `
+      <input class="champ" id="cherche" placeholder="Chercher un ouvrage : dalle, cloison, carrelage, benne…" autocomplete="off">
+      <div id="liste" class="pile" style="margin-top:14px"></div>`;
+    const liste = document.getElementById("liste");
+    const norm = (s) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+    const remplir = (f) => {
+      const n = norm(f || "");
+      liste.innerHTML = PRIX.categories.map((c) => {
+        const items = c.items.filter((i) => !n || norm(i.nom + " " + c.nom).includes(n));
+        if (!items.length) return "";
+        return `<div class="carte"><h3>${c.emoji} ${esc(c.nom)}</h3><div class="table-wrap"><table>
+          <thead><tr><th>Ouvrage</th><th>Unité</th><th>Fourchette HT</th><th>Mon prix HT</th><th></th></tr></thead><tbody>
+          ${items.map((i) => `<tr>
+            <td>${esc(i.nom)}</td><td>${esc(i.unite)}</td>
+            <td style="white-space:nowrap">${euros(i.min)} – ${euros(i.max)}</td>
+            <td><input class="champ" style="width:96px;padding:6px 8px" inputmode="decimal" data-prix="${i.id}" value="${etat.prix.perso[i.id] != null ? esc(etat.prix.perso[i.id]) : ""}" placeholder="${Math.round((i.min + i.max) / 2)}" aria-label="Mon prix pour ${esc(i.nom)}"></td>
+            <td><button class="btn sec" style="padding:6px 10px" data-ajout="${i.id}" title="Ajouter au devis">+ Devis</button></td></tr>`).join("")}
+          </tbody></table></div></div>`;
+      }).join("") || `<p class="muted">Aucun ouvrage trouvé.</p>`;
+      liste.querySelectorAll("[data-prix]").forEach((inp) => {
+        inp.oninput = () => { const v = inp.value.trim(); if (v === "") delete etat.prix.perso[inp.dataset.prix]; else etat.prix.perso[inp.dataset.prix] = v.replace(",", "."); sauver(); };
+      });
+      liste.querySelectorAll("[data-ajout]").forEach((b) => {
+        b.onclick = () => {
+          const l = etat.prix.devis.lignes.find((x) => x.id === b.dataset.ajout);
+          if (l) l.q = nombre(l.q) + 1; else etat.prix.devis.lignes.push({ id: b.dataset.ajout, q: 1 });
+          sauver(); toast("Ajouté au devis ✓");
+          const t = document.querySelector('.onglets a[href="#/prix/devis"]');
+          if (t) t.textContent = `🧾 Faire un devis (${etat.prix.devis.lignes.length})`;
+        };
+      });
+    };
+    remplir("");
+    document.getElementById("cherche").oninput = (e) => remplir(e.target.value);
+  }
+
+  function vueDevis(entete) {
+    const d = etat.prix.devis;
+    const options = PRIX.categories.map((c) => `<optgroup label="${esc(c.nom)}">${c.items.map((i) => `<option value="${i.id}">${esc(i.nom)} (${esc(i.unite)})</option>`).join("")}</optgroup>`).join("");
+    app.innerHTML = entete + `
+      <div class="carte">
+        <div class="ligne espace no-print"><h2 style="margin:0">🧾 Devis estimatif</h2>
+          <div class="ligne"><button class="btn sec" id="vider">Vider</button><button class="btn" id="imp">🖨️ Imprimer</button></div></div>
+        <label class="petit muted" for="objet" style="display:block;margin-top:10px">Objet des travaux</label>
+        <input class="champ" id="objet" value="${esc(d.objet)}" placeholder="Ex. : rénovation salle de bain, extension 20 m²…">
+        <div class="table-wrap" style="margin-top:12px"><table>
+          <thead><tr><th>Désignation</th><th>Unité</th><th>Quantité</th><th>PU HT</th><th>Total HT</th><th class="no-print"></th></tr></thead>
+          <tbody id="lignes"></tbody></table></div>
+        <div class="ligne no-print" style="margin-top:12px">
+          <select class="champ" id="choix" style="flex:1;min-width:200px">${options}</select>
+          <button class="btn sec" id="ajout">+ Ajouter la ligne</button>
+        </div>
+        <div class="form" style="margin-top:14px">
+          <label>Aléas / imprévus (%)<input id="aleas" inputmode="decimal" value="${esc(d.aleas)}"></label>
+          <label>TVA<select id="tva">${PRIX.tva.map((t) => `<option value="${t.taux}" ${nombre(d.tva) === t.taux ? "selected" : ""}>${esc(t.label)}</option>`).join("")}</select></label>
+        </div>
+        <div class="resultat" id="totaux" aria-live="polite"></div>
+        <p class="muted petit" style="margin-top:10px">Estimation indicative, pas un devis engageant. Le taux de TVA réduit dépend de conditions (âge et usage du logement, nature des travaux, attestation du client) : vérifie-les avant de l'appliquer.</p>
+      </div>`;
+    const corps = document.getElementById("lignes");
+    function totaux() {
+      const ht = d.lignes.reduce((s, l) => { const it = itemPar(l.id); return s + (it ? nombre(l.q) * prixDe(it) : 0); }, 0);
+      const al = ht * nombre(d.aleas) / 100;
+      const base = ht + al, tva = base * nombre(d.tva) / 100;
+      document.getElementById("totaux").innerHTML = `Total travaux HT : <b>${euros(ht)}</b><br>
+        ${al ? `Aléas (${arrondi(nombre(d.aleas), 1)} %) : <b>${euros(al)}</b><br>Total HT avec aléas : <b>${euros(base)}</b><br>` : ""}
+        TVA ${arrondi(nombre(d.tva), 1)} % : <b>${euros(tva)}</b><br>
+        <span style="font-size:1.2rem">Total TTC : <b>${euros(base + tva)}</b></span>`;
+    }
+    function lignes() {
+      corps.innerHTML = d.lignes.map((l, k) => {
+        const it = itemPar(l.id); if (!it) return "";
+        return `<tr><td>${esc(it.nom)}</td><td>${esc(it.unite)}</td>
+          <td><input class="champ" style="width:84px;padding:6px 8px" inputmode="decimal" data-q="${k}" value="${esc(l.q)}" aria-label="Quantité"></td>
+          <td style="white-space:nowrap">${euros(prixDe(it))}</td>
+          <td style="white-space:nowrap" data-tot="${k}">${euros(nombre(l.q) * prixDe(it))}</td>
+          <td class="no-print"><button class="btn sec" style="padding:4px 9px" data-suppr="${k}" aria-label="Supprimer la ligne">✕</button></td></tr>`;
+      }).join("") || `<tr><td colspan="6" class="muted">Aucune ligne. Ajoute des ouvrages ci-dessous ou depuis la bibliothèque.</td></tr>`;
+      corps.querySelectorAll("[data-q]").forEach((inp) => {
+        inp.oninput = () => {
+          const k = +inp.dataset.q; d.lignes[k].q = inp.value.replace(",", "."); sauver();
+          const it = itemPar(d.lignes[k].id);
+          corps.querySelector(`[data-tot="${k}"]`).textContent = euros(nombre(d.lignes[k].q) * prixDe(it));
+          totaux();
+        };
+      });
+      corps.querySelectorAll("[data-suppr]").forEach((b) => { b.onclick = () => { d.lignes.splice(+b.dataset.suppr, 1); sauver(); lignes(); }; });
+      totaux();
+    }
+    document.getElementById("ajout").onclick = () => { const id = document.getElementById("choix").value; if (!d.lignes.some((l) => l.id === id)) d.lignes.push({ id, q: 1 }); sauver(); lignes(); };
+    document.getElementById("objet").oninput = (e) => { d.objet = e.target.value; sauver(); };
+    document.getElementById("aleas").oninput = (e) => { d.aleas = e.target.value.replace(",", "."); sauver(); totaux(); };
+    document.getElementById("tva").onchange = (e) => { d.tva = e.target.value; sauver(); totaux(); };
+    document.getElementById("imp").onclick = () => window.print();
+    document.getElementById("vider").onclick = () => { d.lignes = []; d.objet = ""; document.getElementById("objet").value = ""; sauver(); lignes(); toast("Devis vidé"); };
+    lignes();
+  }
+
+  function vueCalculPrix(entete) {
+    app.innerHTML = entete + `
+      <div class="grille large" style="align-items:start">
+        <div class="carte lecon">
+          <h2>Comment se construit un prix</h2>
+          <p><b>Déboursé sec (DS)</b> = main-d'œuvre + matériaux + matériel + sous-traitance, pour l'ouvrage.</p>
+          <p>On y ajoute les <b>frais de chantier</b> (installation, encadrement, grue, nettoyage…), puis un <b>coefficient</b> qui couvre les frais généraux de l'entreprise, les aléas et la marge.</p>
+          <p><b>Prix de vente HT</b> = (DS + frais de chantier) × coefficient. Le <b>prix unitaire</b> = prix de vente ÷ quantité.</p>
+          <div class="encadre terrain"><p style="margin:0">Le coefficient dépend de chaque entreprise (sa taille, ses frais, sa stratégie). Il se calcule à partir de ses comptes : demande-le au service études ou au comptable plutôt que de le deviner.</p></div>
+        </div>
+        <div class="carte">
+          <h2>🧮 Calculer un prix unitaire</h2>
+          <form class="form" id="f">
+            <label>Ouvrage<input name="nom" value="Mur en blocs 20 cm"></label>
+            <label>Quantité<input name="q" inputmode="decimal" value="50"></label>
+            <label>Unité<input name="u" value="m²"></label>
+            <label>Heures de main-d'œuvre<input name="h" inputmode="decimal" value="40"></label>
+            <label>Coût horaire chargé (€/h)<input name="th" inputmode="decimal" value="35"></label>
+            <label>Matériaux (€)<input name="mat" inputmode="decimal" value="1100"></label>
+            <label>Matériel (€)<input name="mtl" inputmode="decimal" value="150"></label>
+            <label>Sous-traitance (€)<input name="st" inputmode="decimal" value="0"></label>
+            <label>Frais de chantier (% du DS)<input name="fc" inputmode="decimal" value="8"></label>
+            <label>Coefficient (FG + aléas + marge)<input name="k" inputmode="decimal" value="1.25"></label>
+          </form>
+          <div class="resultat" id="res" aria-live="polite"></div>
+        </div>
+      </div>`;
+    const f = document.getElementById("f");
+    const maj = () => {
+      const v = (k) => nombre(f.elements[k].value);
+      const mo = v("h") * v("th");
+      const ds = mo + v("mat") + v("mtl") + v("st");
+      const fc = ds * v("fc") / 100;
+      const pv = (ds + fc) * v("k");
+      const q = v("q");
+      document.getElementById("res").innerHTML = `Main-d'œuvre : <b>${euros(mo)}</b><br>
+        Déboursé sec : <b>${euros(ds)}</b>${q ? ` (soit ${euros(ds / q)} / ${esc(f.elements.u.value)})` : ""}<br>
+        Frais de chantier : <b>${euros(fc)}</b><br>
+        Prix de vente HT : <b>${euros(pv)}</b><br>
+        ${q ? `<span style="font-size:1.2rem">Prix unitaire HT : <b>${euros(pv / q)} / ${esc(f.elements.u.value)}</b></span><br>` : ""}
+        <span class="muted petit">Marge brute avant frais généraux : ${euros(pv - ds - fc)} · Rendement : ${q && v("h") ? arrondi(q / v("h"), 2) + " " + esc(f.elements.u.value) + " par heure" : "—"}</span>`;
+    };
+    f.oninput = maj; f.onsubmit = (e) => e.preventDefault();
+    maj();
   }
 
   /* ---------- Glossaire ---------- */
