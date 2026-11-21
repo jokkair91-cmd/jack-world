@@ -7,6 +7,7 @@
 
   const app = document.getElementById("app");
   const METIERS = (window.METIERS || []).slice().sort((a, b) => a.marche - b.marche);
+  const SPECIALITES = window.SPECIALITES || [];
   const AUTOCAD = window.AUTOCAD || { id: "autocad", modules: [], commandes: [] };
   const OUTILS = window.OUTILS || { checklists: [], glossaire: [] };
   const SEUIL_MODULE = 80;   // % pour valider un module
@@ -36,7 +37,7 @@
   const COURS_DEVIS = window.COURS_DEVIS || { id: "devis", modules: [] };
   AUTOCAD.retour = "#/autocad";
   COURS_DEVIS.retour = "#/prix/cours";
-  function parcours(id) { return id === "autocad" ? AUTOCAD : id === "devis" ? COURS_DEVIS : METIERS.find((m) => m.id === id); }
+  function parcours(id) { return id === "autocad" ? AUTOCAD : id === "devis" ? COURS_DEVIS : METIERS.find((m) => m.id === id) || SPECIALITES.find((m) => m.id === id); }
   const accueilDe = (p) => p.retour || `#/metier/${p.id}`;
   function scoreModule(pid, mid) { return etat.quiz[pid + "/" + mid]; }
   function avancement(p) {
@@ -90,13 +91,16 @@
         if (h[2] === "attestation") return vueAttestation(p);
         return p.id === "autocad" ? vueAutocad("cours") : p.id === "devis" ? vuePrix("cours") : vueMetier(p);
       }
-      if (h[0] === "autocad") return vueAutocad(h[1] || "cours");
+      if (h[0] === "autocad") return vueAutocad(h[1] || "demarrer");
       if (h[0] === "outils") {
         if (h[1] === "calc") return vueCalcul(h[2]);
         if (h[1] === "liste") return vueListe(h[2]);
         return vueOutils();
       }
       if (h[0] === "glossaire") return vueGlossaire();
+      if (h[0] === "dangers") return X.vueDangers(h[1]);
+      if (h[0] === "equipe") return X.vueEquipe(h[1] || "moi");
+      if (h[0] === "lexique") return X.vueLexique();
       if (h[0] === "prix") return vuePrix(["cours", "bibliotheque", "devis", "calcul"].includes(h[1]) ? h[1] : "cours");
       vueIntrouvable();
     } finally {
@@ -134,10 +138,20 @@
       <h2>🪜 Les parcours métiers</h2>
       <p class="muted petit">Du haut (le plus de responsabilités) vers le bas (le point de départ). Tu peux commencer où tu veux.</p>
       <div class="echelle">${metiers}</div>
+      <h2 style="margin-top:26px">🏗️ Les spécialités</h2>
+      <div class="grille large">${SPECIALITES.map((p) => {
+        const a = avancement(p), ex = etat.examen[p.id];
+        return `<a class="carte tuile" href="#/metier/${p.id}"><span class="emoji">${p.emoji}</span><h3>${esc(p.nom)}</h3><p class="muted petit">${esc(p.resume)}</p>
+          <span class="barre"><i style="width:${a.pct}%"></i></span>
+          <span class="etat ${ex >= SEUIL_EXAMEN ? "ok" : ""}" style="display:inline-block;margin-top:8px">${ex >= SEUIL_EXAMEN ? "🎓 Attestation" : `${a.ok}/${a.total} modules`}</span></a>`;
+      }).join("")}</div>
       <h2 style="margin-top:26px">🧰 Et aussi</h2>
       <div class="grille">
-        <a class="carte tuile" href="#/autocad"><span class="emoji">📐</span><h3>AutoCAD</h3><p class="muted petit">${ac.ok}/${ac.total} cours validés · commandes, raccourcis, simulateur de dessin.</p></a>
-        <a class="carte tuile" href="#/prix"><span class="emoji">💶</span><h3>Prix et devis</h3><p class="muted petit">Apprendre à faire un devis, prix indicatifs des ouvrages, devis estimatif, calcul d'un prix de vente.</p></a>
+        <a class="carte tuile" href="#/dangers"><span class="emoji">🔎</span><h3>Chasse aux dangers</h3><p class="muted petit">Des scènes de chantier : clique sur tout ce qui est dangereux et apprends la règle.</p></a>
+        <a class="carte tuile" href="#/autocad"><span class="emoji">📐</span><h3>AutoCAD</h3><p class="muted petit">${ac.ok}/${ac.total} cours validés · prise en main guidée, commandes, simulateur de dessin.</p></a>
+        <a class="carte tuile" href="#/prix"><span class="emoji">💶</span><h3>Prix et devis</h3><p class="muted petit">Apprendre à faire un devis, prix indicatifs, devis pro en PDF à ton logo, calcul d'un prix de vente.</p></a>
+        <a class="carte tuile" href="#/lexique"><span class="emoji">🌍</span><h3>Le chantier en 6 langues</h3><p class="muted petit">Consignes de sécurité, outils, matériaux : anglais, espagnol, portugais, roumain, polonais, arabe.</p></a>
+        <a class="carte tuile" href="#/equipe"><span class="emoji">🤝</span><h3>Mode équipe</h3><p class="muted petit">Envoie ton bilan à ton chef ; le chef suit la progression de toute l'équipe.</p></a>
         <a class="carte tuile" href="#/outils"><span class="emoji">🧮</span><h3>Boîte à outils</h3><p class="muted petit">Calculs de béton, surfaces, pentes, escaliers, durées + check-lists imprimables.</p></a>
         <a class="carte tuile" href="#/glossaire"><span class="emoji">📖</span><h3>Glossaire BTP</h3><p class="muted petit">Le vocabulaire du chantier et des marchés, expliqué simplement.</p></a>
       </div>
@@ -176,9 +190,9 @@
     const a = avancement(p);
     app.innerHTML = `
       <a class="retour" href="#/">← Tous les parcours</a>
-      <section class="hero">
+      <section class="hero hero-metier">
         <span style="font-size:3.4rem" aria-hidden="true">${p.emoji}</span>
-        <div><span class="marche" style="font:800 .8rem 'Baloo 2';color:#1b1b1b;background:var(--jaune);border-radius:6px;padding:1px 7px">Marche ${p.marche}</span>
+        <div>${p.marche ? `<span class="marche" style="font:800 .8rem 'Baloo 2';color:#1b1b1b;background:var(--jaune);border-radius:6px;padding:1px 7px">Marche ${p.marche}</span>` : `<span class="marche" style="font:800 .8rem 'Baloo 2';color:#1b1b1b;background:var(--orange);border-radius:6px;padding:1px 7px">Spécialité</span>`}
           <h1>${esc(p.nom)}</h1>
           <p>${fmt(p.role)}</p>
           <div class="barre"><i style="width:${a.pct}%"></i></div>
@@ -200,6 +214,13 @@
     if (m.terrain) t.push("Sur le terrain. " + m.terrain);
     return t.join(" ");
   }
+  function illustrationsDe(p, m) {
+    const ILLUS = window.ILLUS || {};
+    const ids = [...(m.illustrations || []), ...((window.ILLUS_MODULES || {})[p.id + "/" + m.id] || [])];
+    return ids.filter((id) => ILLUS[id]).map((id) => `
+      <figure class="illus"><div class="illus-cadre">${ILLUS[id].svg}</div>
+        <figcaption><b>${esc(ILLUS[id].titre)}</b><br><span class="muted petit">${esc(ILLUS[id].legende)}</span></figcaption></figure>`).join("");
+  }
   function vueModule(p, m) {
     const i = p.modules.indexOf(m);
     const suivant = p.modules[i + 1];
@@ -214,6 +235,7 @@
         <div class="ligne espace"><h1 style="margin:0">${m.emoji || ""} ${esc(m.titre)}</h1>
           <button class="btn sec no-print" id="lire">🔊 David lit la leçon</button></div>
         <p class="muted">${esc(m.intro || "")}${m.duree ? ` · ⏱️ ${esc(m.duree)}` : ""}</p>
+        ${illustrationsDe(p, m)}
         ${sections}
         ${m.danger ? `<div class="encadre danger"><h3>⛔ Danger</h3><p>${fmt(m.danger)}</p></div>` : ""}
         ${m.retenir ? `<div class="encadre retenir" style="margin-top:14px"><h3>📌 À retenir</h3><ul>${m.retenir.map((x) => `<li>${fmt(x)}</li>`).join("")}</ul></div>` : ""}
@@ -368,7 +390,7 @@
 
   /* ---------- AutoCAD ---------- */
   function vueAutocad(onglet) {
-    const tabs = [["cours", "📚 Cours"], ["commandes", "⌨️ Commandes"], ["entrainement", "🎯 Raccourcis"], ["simulateur", "🖥️ Simulateur"]];
+    const tabs = [["demarrer", "🚀 Bien démarrer"], ["cours", "📚 Cours"], ["simulateur", "🖥️ Simulateur"], ["commandes", "⌨️ Commandes"], ["entrainement", "🎯 Raccourcis"]];
     const entete = `
       <section class="hero">
         <span style="font-size:3.2rem" aria-hidden="true">📐</span>
@@ -376,6 +398,26 @@
       </section>
       <nav class="onglets">${tabs.map(([id, t]) => `<a href="#/autocad/${id}" class="${onglet === id ? "actif" : ""}">${t}</a>`).join("")}</nav>`;
     if (onglet === "module") return; // géré par #/metier/autocad/module/...
+    if (onglet === "demarrer") {
+      const I = window.ILLUS || {};
+      const fig = (id) => I[id] ? `<figure class="illus"><div class="illus-cadre">${I[id].svg}</div><figcaption><b>${esc(I[id].titre)}</b><br><span class="muted petit">${esc(I[id].legende)}</span></figcaption></figure>` : "";
+      const etapes = [
+        ["1", "Regarde l'écran", "Ruban en haut, zone de dessin au milieu, <b>ligne de commande en bas</b>. Le secret d'AutoCAD : <b>lire ce que la ligne de commande te demande</b>, à chaque fois."],
+        ["2", "Une commande = un mot + Entrée", "Tu tapes <code>LIGNE</code> (ou juste <code>L</code>) puis <kbd>Entrée</kbd>. AutoCAD te pose une question : « Premier point ». Tu réponds, <kbd>Entrée</kbd>. Et ainsi de suite."],
+        ["3", "Donner un point", "Soit tu cliques dans le dessin, soit tu tapes des chiffres : <code>0,0</code> (depuis l'origine), <code>@500,0</code> (500 plus loin en X), <code>@600&lt;30</code> (600 de long à 30°)."],
+        ["4", "Finir ou annuler", "<kbd>Entrée</kbd> à vide pour finir une commande. <kbd>Échap</kbd> pour l'annuler. <code>U</code> pour défaire la dernière action. Pas de panique : tout se rattrape."],
+        ["5", "Entraîne-toi dans le simulateur", "Choisis une mission et clique sur <b>« ▶ Montre-moi »</b> : David la fait devant toi. Puis refais-la toi-même avec <b>« Guide-moi »</b>, étape par étape."]
+      ];
+      app.innerHTML = entete + `
+        <div class="grille large" style="align-items:start">
+          ${fig("autocad-ecran")}${fig("autocad-coord")}
+        </div>
+        <h2 style="margin-top:20px">🧭 AutoCAD en 5 étapes</h2>
+        <div class="pile">${etapes.map(([n, t, x]) => `<div class="carte module" style="grid-template-columns:46px 1fr"><span class="num">${n}</span><span><b>${t}</b><br><span class="petit">${x}</span></span></div>`).join("")}</div>
+        <div class="ligne" style="margin-top:16px"><a class="btn" href="#/autocad/simulateur">🖥️ Ouvrir le simulateur guidé</a><a class="btn sec" href="#/autocad/cours">📚 Voir les cours</a></div>
+        <div class="encadre terrain petit" style="margin-top:14px">💡 Les 6 raccourcis à connaître en premier : <kbd>L</kbd> ligne, <kbd>C</kbd> cercle, <kbd>REC</kbd> rectangle, <kbd>M</kbd> déplacer, <kbd>CO</kbd> copier, <kbd>O</kbd> décaler. Et <kbd>F8</kbd> pour dessiner bien droit (mode ORTHO).</div>`;
+      return;
+    }
     if (onglet === "commandes") {
       app.innerHTML = entete + `
         <div class="carte">
@@ -622,7 +664,7 @@
         ${blocExamen(COURS_DEVIS)}`;
       return;
     }
-    if (onglet === "devis") return vueDevis(entete);
+    if (onglet === "devis") return X.vueDevisPro(entete);
     if (onglet === "calcul") return vueCalculPrix(entete);
 
     app.innerHTML = entete + `
@@ -787,6 +829,12 @@
     remplir("");
     document.getElementById("cherche").oninput = (e) => remplir(e.target.value);
   }
+
+  /* ---------- Rubriques ajoutées (extras.js) ---------- */
+  const X = window.JackExtras({
+    app, etat, sauver, esc, fmt, toast, parler, silence, nombre, arrondi, euros,
+    METIERS, SPECIALITES, AUTOCAD, COURS_DEVIS, avancement, PRIX, itemPar, prixDe, prixEtat
+  });
 
   route();
 })();

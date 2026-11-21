@@ -187,6 +187,68 @@ kbd { color: var(--jaune); }
   opacity: 0; pointer-events: none; }
 .toast.vu { transform: translateX(-50%) translateY(0); opacity: 1; }
 
+/* ---------- Illustrations animées ---------- */
+.illus { margin: 14px 0; }
+.illus-cadre { border-radius: 14px; overflow: hidden; border: 1px solid var(--line); box-shadow: var(--ombre); background: #1e2731; }
+.illus-svg { display: block; width: 100%; height: auto; }
+.illus figcaption { margin-top: 8px; }
+
+/* ---------- Chasse aux dangers ---------- */
+.scene-wrap { border-radius: 14px; overflow: hidden; border: 2px solid var(--line); }
+.scene-wrap svg { display: block; width: 100%; height: auto; cursor: crosshair; touch-action: manipulation; }
+
+/* ---------- Simulateur : ruban, aide, guide ---------- */
+.ruban { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; background: var(--card2); border: 1px solid var(--line); border-radius: 12px; }
+.ruban button { display: grid; justify-items: center; gap: 2px; min-width: 64px; padding: 6px 8px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg2); cursor: pointer; font-size: 1.2rem; line-height: 1; }
+.ruban button span { font-size: .72rem; font-weight: 800; color: var(--muted); }
+.ruban button:hover { border-color: var(--jaune); }
+.ruban button:hover span { color: var(--jaune); }
+.aide-invite { background: #1d2f3d; border: 1px solid #2f5470; border-radius: 12px; padding: 10px 12px; font-size: .92rem; }
+.aide-invite b { color: #9fd3ff; }
+.guide { background: #3a3216; border: 2px solid var(--jaune); border-radius: 12px; padding: 10px 12px; }
+.guide code.gros { font-size: 1.15rem; color: var(--jaune); padding: 2px 8px; }
+
+/* ---------- Onglets en boutons (lexique) ---------- */
+.onglet-btn { padding: 8px 12px; border-radius: 10px; background: var(--card); border: 1px solid var(--line); color: var(--ink); font-weight: 700; cursor: pointer; }
+.onglet-btn.actif { background: var(--jaune); color: #1b1b1b; border-color: var(--jaune); }
+details.carte summary { cursor: pointer; list-style: none; }
+details.carte summary::-webkit-details-marker { display: none; }
+details.carte summary::before { content: "▸ "; color: var(--jaune); }
+details.carte[open] summary::before { content: "▾ "; }
+
+/* ---------- Mode équipe ---------- */
+.tableau-equipe td { text-align: center; }
+.tableau-equipe td:first-child { text-align: left; }
+.cell-ok { background: var(--vert-bg); }
+.cell-encours { background: #3a3216; }
+
+/* ---------- Devis professionnel (aperçu = document imprimé) ---------- */
+.doc-devis { background: #fff; color: #1b1b1b; border-radius: 8px; padding: 28px; font-size: .9rem; line-height: 1.45; max-width: 820px; margin: 0 auto; box-shadow: var(--ombre); }
+.doc-devis p { margin: 0 0 .5em; }
+.doc-entete { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; }
+.doc-logo { display: block; max-height: 70px; max-width: 220px; margin-bottom: 8px; }
+.doc-nom { font: 800 1.2rem "Baloo 2", sans-serif; }
+.doc-cli { text-align: right; min-width: 220px; }
+.doc-titre { font: 800 1.8rem "Baloo 2", sans-serif; letter-spacing: .08em; color: #c99600; }
+.doc-client { margin-top: 10px; padding: 10px 12px; border: 1px solid #ccc; border-radius: 8px; text-align: left; }
+.doc-table, .doc-totaux { width: 100%; border-collapse: collapse; margin-top: 10px; }
+.doc-table th { background: #1b1b1b; color: #ffc420; font-family: "Baloo 2", sans-serif; }
+.doc-table th, .doc-table td { border: 1px solid #ccc; padding: 6px 8px; color: #1b1b1b; }
+.doc-devis .num { text-align: right; white-space: nowrap; }
+.doc-totaux { width: auto; margin-left: auto; min-width: 300px; }
+.doc-totaux td { padding: 4px 8px; border-bottom: 1px solid #eee; color: #1b1b1b; }
+.doc-ttc td { font-weight: 900; font-size: 1.05rem; background: #fff4cc; }
+.doc-mentions { margin-top: 14px; font-size: .8rem; color: #333; }
+.doc-signature { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+.doc-signature > div { border: 1px solid #999; border-radius: 8px; padding: 10px; min-height: 110px; font-size: .8rem; }
+
+@media (max-width: 600px) {
+  .doc-devis { padding: 14px; }
+  .doc-cli { text-align: left; }
+  .doc-signature { grid-template-columns: 1fr; }
+  .ruban button { min-width: 54px; }
+}
+
 @media (max-width: 600px) {
   .topbar { padding: 6px 12px; }
   .nav-haut a { padding: 5px 8px; font-size: .88rem; }
@@ -205,4 +267,7 @@ kbd { color: var(--jaune); }
   .carte { box-shadow: none; border-color: #999; background: #fff; color: #000; }
   .checklist li { border-color: #ccc; }
   main { padding: 0; }
+  body.impression-devis main > *:not(#apercu) { display: none !important; }
+  .doc-devis { box-shadow: none; padding: 0; max-width: none; }
+  .illus-cadre { box-shadow: none; }
 }

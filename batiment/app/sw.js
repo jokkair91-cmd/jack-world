@@ -1,7 +1,7 @@
 // Jack Bâtiment : garde l'appli en mémoire pour qu'elle s'installe et s'ouvre aussi sans connexion.
 // Réseau d'abord : en ligne, on reçoit toujours la dernière version (pas d'« ancienne version » coincée) ;
 // hors ligne, on reprend la dernière copie gardée. Les fichiers d'autres sites (polices, radios) ne sont pas gardés.
-const CACHE = 'jackworld-batiment-app-2026-11-19';
+const CACHE = 'jackworld-batiment-app-2026-11-21';
 const DEPART = ['index.html', 'manifest.webmanifest', 'icon-192.png'];
 
 self.addEventListener('install', event => {
