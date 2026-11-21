@@ -405,6 +405,35 @@
       ${txt(390, 120, "Puits ou captage d'eau :", { s: 13 })}${txt(390, 138, "au moins 35 m de l'épandage", { s: 13, c: "#ffb3ad" })}`)
   };
 
+  /* ---------- Maçon : monter les angles, puis tirer au cordeau ---------- */
+  (function () {
+    const C = 12, bloc = (x, y, c) => `<rect x="${x}" y="${y}" width="48" height="22" rx="2" fill="${c || "#a7adb4"}" stroke="#6f757c" stroke-width="2"/>`;
+    let s = txt(20, 34, "Monter un mur : les angles d'abord", { s: 18, w: 800, c: "#ffc420" });
+    s += `<rect x="0" y="318" width="640" height="42" fill="url(#gBeton)"/>`;
+    // angles montés en « escalier » (harpage)
+    const angle = (x0, dir) => { let r = ""; for (let rang = 0; rang < 5; rang++) for (let k = 0; k < 4 - rang; k++) r += bloc(x0 + dir * (k * 50 + (rang % 2) * 25), 294 - rang * 24, "#c0c5cb"); return r; };
+    s += `<g opacity="0">${apparait(0.4, C)}${angle(40, 1)}</g><g opacity="0">${apparait(1.4, C)}${angle(552, -1)}</g>`;
+    s += `<g opacity="0">${apparait(1.4, C)}${txt(40, 120, "1. Les angles, d'aplomb et de niveau", { s: 13 })}</g>`;
+    s += `<g opacity="0">${apparait(3, C)}<line x1="40" y1="294" x2="600" y2="294" stroke="#ff7a1a" stroke-width="2"/>${txt(200, 150, "2. Cordeau tendu d'angle à angle", { s: 13, c: "#ffb37a" })}</g>`;
+    for (let k = 0; k < 3; k++) s += `<g opacity="0">${apparait(4.2 + k * 0.6, C)}${bloc(244 + k * 52, 294)}</g>`;
+    s += `<g opacity="0">${apparait(7.2, C)}${txt(200, 180, "3. On remplit le rang en suivant le cordeau", { s: 13 })}${txt(200, 198, "joints de 1 cm environ, joints croisés au rang suivant", { s: 12, w: 600, c: "#a9aeb5" })}</g>`;
+    I["mur-angles"] = { titre: "Le maçon monte les angles, puis tire au cordeau", legende: "On monte d'abord les deux angles en escalier, parfaitement d'aplomb et de niveau. Le cordeau tendu entre eux sert de guide pour remplir chaque rang.", svg: cadre(s) };
+  })();
+
+  /* ---------- Les couches d'un enduit ---------- */
+  I.enduit = {
+    titre: "Un enduit traditionnel en trois couches",
+    legende: "Le gobetis accroche, le corps d'enduit dresse et imperméabilise, la finition donne l'aspect. Chaque couche est un peu moins dosée en ciment que la précédente.",
+    svg: cadre(`
+      ${txt(20, 34, "Coupe d'un enduit de façade", { s: 18, w: 800, c: "#ffc420" })}
+      <rect x="60" y="60" width="160" height="280" fill="#a7adb4"/>${[0, 1, 2, 3, 4, 5].map((i) => `<line x1="60" y1="${100 + i * 44}" x2="220" y2="${100 + i * 44}" stroke="#6f757c" stroke-width="2"/>`).join("")}
+      ${txt(80, 360 - 8, "Mur (support)", { s: 12, c: "#1b1b1b" })}
+      <g opacity="0">${apparait(0.6, 9)}<path d="M220,60 ${Array.from({ length: 28 }, (_, i) => `L${226 + (i % 2) * 6},${60 + i * 10}`).join(" ")} L220,340 Z" fill="#8d939b"/>${txt(330, 110, "1. Gobetis : accroche (projeté)", { s: 13 })}${fleche(325, 106, 232, 120)}</g>
+      <g opacity="0">${apparait(2.4, 9)}<rect x="232" y="60" width="40" height="280" fill="#cfc6b4"/>${txt(330, 190, "2. Corps d'enduit : dresse, protège de l'eau", { s: 13 })}${fleche(325, 186, 262, 200)}</g>
+      <g opacity="0">${apparait(4.2, 9)}<rect x="272" y="60" width="12" height="280" fill="#efe3c8"/>${txt(330, 270, "3. Finition : grattée, talochée, lissée…", { s: 13 })}${fleche(325, 266, 284, 280)}</g>
+      <g opacity="0">${apparait(5.8, 9)}${txt(330, 320, "Ni au gel, ni en plein soleil, ni sous la pluie", { s: 13, c: "#ffb3ad" })}</g>`)
+  };
+
   window.ILLUS = I;
   window.ILLUS_PERSO = perso;
   // Illustrations ajoutées aux modules déjà existants

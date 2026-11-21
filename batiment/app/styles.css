@@ -208,6 +208,39 @@ kbd { color: var(--jaune); }
 .guide { background: #3a3216; border: 2px solid var(--jaune); border-radius: 12px; padding: 10px 12px; }
 .guide code.gros { font-size: 1.15rem; color: var(--jaune); padding: 2px 8px; }
 
+/* ---------- Jack CAD : interface façon AutoCAD ---------- */
+.acad { display: grid; gap: 0; border: 1px solid #0c0e11; border-radius: 12px; overflow: hidden; background: #2b3038; box-shadow: var(--ombre); }
+.acad-titre { background: #1a1d22; color: #c8ccd2; font-size: .85rem; padding: 6px 10px; display: flex; gap: 8px; align-items: center; }
+.acad-titre b { background: #c0392b; color: #fff; border-radius: 4px; padding: 0 6px; font-family: "Baloo 2"; }
+.acad-titre span { margin-left: auto; color: #7d838b; font-size: .78rem; }
+.acad-ruban { display: flex; flex-wrap: wrap; background: #353b44; border-bottom: 1px solid #1a1d22; }
+.acad-groupe { display: grid; grid-template-rows: 1fr auto; border-right: 1px solid #262a31; padding: 4px 4px 0; }
+.acad-btns { display: flex; flex-wrap: wrap; gap: 2px; align-items: flex-start; }
+.acad-btns button { display: grid; justify-items: center; gap: 1px; min-width: 54px; padding: 4px 4px; border: 1px solid transparent; border-radius: 6px; background: transparent; cursor: pointer; color: #e6e8eb; }
+.acad-btns button i { font-style: normal; font-size: 1.25rem; line-height: 1.1; color: #9fd3ff; }
+.acad-btns button span { font-size: .7rem; font-weight: 700; color: #c8ccd2; }
+.acad-btns button:hover { background: #454c57; border-color: #5a626e; }
+.acad-nom { text-align: center; font-size: .68rem; color: #8d939b; border-top: 1px solid #2c3137; padding: 2px 0; text-transform: uppercase; letter-spacing: .05em; }
+.acad-calques { align-items: center; padding: 8px 4px; }
+.acad-calques select { background: #1e2125; color: #f3f1ea; border: 1px solid #5a626e; border-radius: 6px; padding: 6px 8px; font-weight: 700; min-width: 130px; }
+.acad .guide { border-radius: 0; border-width: 0 0 2px; }
+.acad-zone { position: relative; }
+.acad-zone canvas { display: block; width: 100%; height: auto; cursor: none; touch-action: none; background: #212830; }
+.acad-dyn { position: absolute; pointer-events: none; background: rgba(30, 33, 37, .92); border: 1px solid #5a626e; border-radius: 4px; padding: 2px 6px; font: 12px ui-monospace, Consolas, monospace; color: #e6e8eb; white-space: nowrap; z-index: 2; }
+.acad-dyn span { color: #9fd3ff; margin-right: 6px; }
+.acad-dyn b { background: #4a5260; padding: 0 4px; border-radius: 2px; font-weight: 400; }
+.acad .aide-invite { border-radius: 0; border-width: 1px 0 0; }
+.acad .console { border-radius: 0; border-width: 1px 0 0; position: relative; }
+.acad-suggest { position: absolute; left: 8px; bottom: 44px; background: #1e2125; border: 1px solid #5a626e; border-radius: 6px; z-index: 3; min-width: 280px; box-shadow: 0 6px 18px rgba(0,0,0,.5); }
+.acad-suggest button { display: block; width: 100%; text-align: left; padding: 6px 10px; border: 0; background: transparent; cursor: pointer; color: #f3f1ea; font: 13px ui-monospace, Consolas, monospace; }
+.acad-suggest button:hover, .acad-suggest button:first-child { background: #2f5470; }
+.acad-suggest span { color: #a9aeb5; font-family: Nunito, sans-serif; }
+.acad-etat { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; background: #1a1d22; padding: 4px 8px; font: 12px ui-monospace, Consolas, monospace; color: #c8ccd2; }
+.acad-modes { display: flex; gap: 4px; flex-wrap: wrap; }
+.acad-modes button { border: 1px solid #3a4048; background: #262a31; color: #7d838b; border-radius: 4px; padding: 2px 8px; font: 700 11px ui-monospace, Consolas, monospace; cursor: pointer; }
+.acad-modes button.actif { color: #9fd3ff; background: #20384d; border-color: #2f6a99; }
+.acad-props { background: #262a31; padding: 6px 10px; font-size: .85rem; color: #e6e8eb; border-top: 1px solid #1a1d22; }
+
 /* ---------- Onglets en boutons (lexique) ---------- */
 .onglet-btn { padding: 8px 12px; border-radius: 10px; background: var(--card); border: 1px solid var(--line); color: var(--ink); font-weight: 700; cursor: pointer; }
 .onglet-btn.actif { background: var(--jaune); color: #1b1b1b; border-color: var(--jaune); }

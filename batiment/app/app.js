@@ -406,13 +406,16 @@
         ["2", "Une commande = un mot + Entrée", "Tu tapes <code>LIGNE</code> (ou juste <code>L</code>) puis <kbd>Entrée</kbd>. AutoCAD te pose une question : « Premier point ». Tu réponds, <kbd>Entrée</kbd>. Et ainsi de suite."],
         ["3", "Donner un point", "Soit tu cliques dans le dessin, soit tu tapes des chiffres : <code>0,0</code> (depuis l'origine), <code>@500,0</code> (500 plus loin en X), <code>@600&lt;30</code> (600 de long à 30°)."],
         ["4", "Finir ou annuler", "<kbd>Entrée</kbd> à vide pour finir une commande. <kbd>Échap</kbd> pour l'annuler. <code>U</code> pour défaire la dernière action. Pas de panique : tout se rattrape."],
-        ["5", "Entraîne-toi dans le simulateur", "Choisis une mission et clique sur <b>« ▶ Montre-moi »</b> : David la fait devant toi. Puis refais-la toi-même avec <b>« Guide-moi »</b>, étape par étape."]
+        ["5", "Les aides au dessin (barre d'état)", "<kbd>F8</kbd> <b>ORTHO</b> : traits parfaitement horizontaux ou verticaux. <kbd>F3</kbd> <b>ACCROBJ</b> : la souris s'accroche aux extrémités, milieux, centres, intersections (carré vert). <b>DYN</b> : longueur et angle affichés près du curseur. Astuce pro : avec ORTHO, oriente la souris et <b>tape juste la longueur</b> (ex. <code>300</code>)."],
+        ["6", "Modifier comme un pro", "<code>O</code> Décaler (doubler un mur), <code>M</code> Déplacer, <code>CO</code> Copier, <code>RO</code> Rotation, <code>MI</code> Miroir, <code>E</code> Effacer. Sélectionne en cliquant sur les objets, puis <kbd>Entrée</kbd>."],
+        ["7", "Calques, cotes et textes", "Range chaque chose sur son <b>calque</b> (MURS, COTES, TEXTES…) avec la liste du ruban. <code>DLI</code> pour coter, <code>TX</code> pour écrire."],
+        ["8", "Entraîne-toi dans le simulateur", "Choisis une mission et clique sur <b>« ▶ Montre-moi »</b> : David la fait devant toi. Puis refais-la toi-même avec <b>« Guide-moi »</b>, étape par étape."]
       ];
       app.innerHTML = entete + `
         <div class="grille large" style="align-items:start">
           ${fig("autocad-ecran")}${fig("autocad-coord")}
         </div>
-        <h2 style="margin-top:20px">🧭 AutoCAD en 5 étapes</h2>
+        <h2 style="margin-top:20px">🧭 AutoCAD en 8 étapes</h2>
         <div class="pile">${etapes.map(([n, t, x]) => `<div class="carte module" style="grid-template-columns:46px 1fr"><span class="num">${n}</span><span><b>${t}</b><br><span class="petit">${x}</span></span></div>`).join("")}</div>
         <div class="ligne" style="margin-top:16px"><a class="btn" href="#/autocad/simulateur">🖥️ Ouvrir le simulateur guidé</a><a class="btn sec" href="#/autocad/cours">📚 Voir les cours</a></div>
         <div class="encadre terrain petit" style="margin-top:14px">💡 Les 6 raccourcis à connaître en premier : <kbd>L</kbd> ligne, <kbd>C</kbd> cercle, <kbd>REC</kbd> rectangle, <kbd>M</kbd> déplacer, <kbd>CO</kbd> copier, <kbd>O</kbd> décaler. Et <kbd>F8</kbd> pour dessiner bien droit (mode ORTHO).</div>`;
