@@ -1,4 +1,4 @@
-// Logo Jack Finance : J émeraude + F bleu, dans un double anneau d'or, avec un trait de lumière.
+// Logo Jack Finance : J et F dorés sur un disque vert foncé, double anneau d'or et trait de lumière (même logo que le site).
 // p = préfixe unique pour les identifiants SVG ; anime = version animée (présentation).
 function logoSvg(p = 'l', anime = false) {
   const J = 'M47 21 L67 11 L57 70 C53 89 41 97 25 97 C14 97 8 91 5 81 L22 73 C23 80 27 83 32 83 C38 83 42 78 43 70 Z';
@@ -11,10 +11,10 @@ function logoSvg(p = 'l', anime = false) {
       <stop offset="0" stop-color="#fff3cc"/><stop offset=".32" stop-color="#f0d38a"/><stop offset=".62" stop-color="#d2a956"/><stop offset="1" stop-color="#9c712c"/>
     </linearGradient>
     <linearGradient id="${p}-vert" x1="0" y1="0" x2=".4" y2="1">
-      <stop offset="0" stop-color="#6ff5bf"/><stop offset=".5" stop-color="#17c487"/><stop offset="1" stop-color="#077a54"/>
+      <stop offset="0" stop-color="#f6dfa0"/><stop offset=".5" stop-color="#ddb56a"/><stop offset="1" stop-color="#b48740"/>
     </linearGradient>
     <linearGradient id="${p}-bleu" x1="0" y1="0" x2=".5" y2="1">
-      <stop offset="0" stop-color="#7fb0ff"/><stop offset=".5" stop-color="#2f6bff"/><stop offset="1" stop-color="#1636b0"/>
+      <stop offset="0" stop-color="#eccb84"/><stop offset=".5" stop-color="#c99a4f"/><stop offset="1" stop-color="#8f6426"/>
     </linearGradient>
     <linearGradient id="${p}-anneau" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#f7e4ad"/><stop offset=".35" stop-color="#b98a3e"/><stop offset=".6" stop-color="#f3d996"/><stop offset="1" stop-color="#94692a"/>
@@ -25,6 +25,7 @@ function logoSvg(p = 'l', anime = false) {
       ${anime ? `<animateTransform attributeName="gradientTransform" type="translate" values="-1 0; 1 0; 1 0" keyTimes="0; .45; 1" dur="4.5s" begin="1.6s" repeatCount="indefinite"/>` : ''}
     </linearGradient>
   </defs>
+  <circle cx="100" cy="100" r="99" fill="#06281f"/>
   <circle class="logo-anneau" cx="100" cy="100" r="94" fill="none" stroke="url(#${p}-anneau)" stroke-width="2.4" pathLength="1"/>
   <circle class="logo-anneau logo-anneau-2" cx="100" cy="100" r="86.5" fill="none" stroke="url(#${p}-anneau)" stroke-width=".8" opacity=".55" pathLength="1"/>
   <path class="logo-losange" d="M100 1.5 L104 6 L100 10.5 L96 6 Z" fill="url(#${p}-or1)"/>

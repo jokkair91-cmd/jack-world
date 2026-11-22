@@ -1,0 +1,273 @@
+/* ---------- Téléchargement du cerveau de Jack ---------- */
+.setup {
+  max-width: 760px; margin: 0 auto 10px; padding: 14px 16px;
+  background: #181d23ee; border: 1px solid #1d5a44; border-radius: 16px;
+  backdrop-filter: blur(12px); font-size: 14px;
+}
+.setup p { margin: 0 0 8px; }
+.setup p:last-child { margin: 0; }
+.bar { height: 8px; border-radius: 99px; background: #0b0e12; overflow: hidden; margin: 4px 0 8px; }
+.bar i { display: block; height: 100%; width: 0; background: var(--green); transition: width .3s; }
+.primaryBtn {
+  background: var(--green); color: var(--green-ink); border: 0; border-radius: 12px;
+  padding: 9px 16px; font-weight: 600;
+}
+.badge {
+  font-size: 12px; color: var(--green); border: 1px solid #1d5a44; background: #12261fd9;
+  border-radius: 999px; padding: 3px 10px;
+}
+
+:root {
+  color-scheme: dark;
+  --bg: #111418;
+  --surface: #181d23;
+  --raised: #1f262e;
+  --line: #2c343d;
+  --text: #e8edf2;
+  --muted: #8a97a5;
+  --green: #19c98a;
+  --green-ink: #06231a;
+  --blue: #2e8cf0;
+  --code: #0a0c0f;
+  --danger: #ff7b72;
+  --mono: 'Cascadia Code', Consolas, 'Courier New', monospace;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.65 'Segoe UI', system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: #6cb6ff; }
+:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Paysage en fond, avec un voile pour garder le texte lisible ---------- */
+.landscape {
+  position: fixed; inset: 0; z-index: -1;
+  background: var(--bg) center / cover no-repeat;
+  opacity: 0; transition: opacity .8s ease;
+}
+.landscape.ready { opacity: 1; }
+.landscape:after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, #0b0e12b3 0%, #0b0e1299 40%, #0b0e12cc 100%);
+}
+body { background: var(--bg); }
+.top {
+  background: #11141899;
+  backdrop-filter: blur(12px);
+  border-bottom-color: #ffffff14 !important;
+}
+.composer {
+  background: #181d23e6 !important;
+  backdrop-filter: blur(12px);
+}
+.msg.user { background: #1f262ee6 !important; }
+.msg.jack .body, .welcome h1, .status, .hint { text-shadow: 0 1px 3px #000c; }
+.suggestions button, .chip, .sources a { background: #181d23cc !important; backdrop-filter: blur(6px); }
+.chip[aria-pressed="true"] { background: #12261fd9 !important; }
+
+/* ---------- Logo de Jack ---------- */
+.bot {
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  width: 30px; height: 21px; flex: none;
+  border: 2.5px solid var(--green); border-radius: 8px;
+}
+.bot:before {
+  content: ""; position: absolute; width: 2px; height: 5px;
+  bottom: 100%; left: calc(50% - 1px); background: var(--green);
+}
+.bot i { width: 4px; height: 7px; border-radius: 4px; background: var(--blue); animation: blink 5s infinite; }
+.bot.big { width: 64px; height: 44px; gap: 9px; border-width: 4px; border-radius: 16px; margin-bottom: 18px; }
+.bot.big:before { width: 4px; height: 10px; left: calc(50% - 2px); }
+.bot.big i { width: 8px; height: 15px; border-radius: 6px; }
+@keyframes blink { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(.15); } }
+body.thinking .top .bot i { animation: think .9s ease-in-out infinite alternate; }
+body.speaking .top .bot i { animation: talk .22s ease-in-out infinite alternate; }
+@keyframes think { from { opacity: .35; } to { opacity: 1; } }
+@keyframes talk { from { transform: scaleY(.4); } to { transform: scaleY(1.1); } }
+
+/* ---------- Barre du haut ---------- */
+.top {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: .05em; }
+.topActions { margin-left: auto; display: flex; gap: 4px; }
+.icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; padding: 0;
+  background: none; border: 0; border-radius: 10px; color: var(--muted);
+}
+.icon:hover { background: var(--raised); color: var(--text); }
+
+/* ---------- Conversation ---------- */
+main { flex: 1; overflow-y: auto; padding: 0 16px; }
+.messages, .welcome { max-width: 760px; margin: 0 auto; }
+.messages { padding: 24px 0 12px; }
+.welcome {
+  min-height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 40px 0;
+}
+.welcome h1 { font-size: 28px; font-weight: 500; margin: 0 0 24px; }
+body.hasChat .welcome { display: none; }
+.suggestions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.suggestions button {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+  padding: 8px 16px; color: var(--text); font-size: 14px;
+}
+.suggestions button:hover { border-color: var(--green); }
+
+.msg { margin: 0 0 22px; }
+.msg.user {
+  margin-left: auto; width: fit-content; max-width: 80%;
+  background: var(--raised); border-radius: 18px; padding: 10px 16px;
+  white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.msg.jack { overflow-wrap: anywhere; }
+.msg.jack > .body > :first-child { margin-top: 0; }
+.msg.jack p { margin: 0 0 12px; }
+.msg.jack h1, .msg.jack h2, .msg.jack h3 { font-size: 18px; font-weight: 600; margin: 20px 0 8px; }
+.msg.jack ul, .msg.jack ol { margin: 0 0 12px; padding-left: 24px; }
+.msg.jack li { margin: 3px 0; }
+.msg.jack blockquote { margin: 0 0 12px; padding-left: 14px; border-left: 3px solid var(--line); color: var(--muted); }
+.msg.jack hr { border: 0; border-top: 1px solid var(--line); margin: 18px 0; }
+.msg.jack code { font-family: var(--mono); font-size: 14px; background: var(--raised); padding: 1px 6px; border-radius: 6px; }
+.msg.jack table { border-collapse: collapse; margin: 0 0 12px; font-size: 14px; display: block; overflow-x: auto; }
+.msg.jack th, .msg.jack td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; }
+.msg.jack th { background: var(--surface); }
+
+.codeBlock { margin: 0 0 14px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--code); }
+.codeHead {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 6px 4px 14px; background: var(--surface);
+  font-size: 12px; color: var(--muted);
+}
+.codeHead button {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: none; border: 0; border-radius: 8px; padding: 5px 9px;
+  color: var(--muted); font-size: 12px;
+}
+.codeHead button:hover { background: var(--raised); color: var(--text); }
+.codeHead svg { width: 15px; height: 15px; }
+.codeBlock pre { margin: 0; padding: 14px; overflow-x: auto; }
+.msg.jack .codeBlock pre code { font-variant-ligatures: none; border-radius: 0; background: none; padding: 0; font-size: 13.5px; line-height: 1.6; color: #d8e1ea; white-space: pre; }
+
+.sources { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 10px; }
+.sources a {
+  font-size: 12px; text-decoration: none; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px;
+}
+.sources a:hover { color: var(--text); border-color: var(--green); }
+.actions { display: flex; gap: 2px; opacity: .75; }
+.actions button {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: none; border: 0; border-radius: 8px; padding: 5px 8px;
+  color: var(--muted); font-size: 13px;
+}
+.actions button:hover { background: var(--raised); color: var(--text); }
+.actions svg { width: 16px; height: 16px; }
+.msg.jack:hover .actions { opacity: 1; }
+.typing { display: inline-flex; gap: 5px; padding: 8px 0; }
+.typing i { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: think .7s ease-in-out infinite alternate; }
+.typing i:nth-child(2) { animation-delay: .2s; }
+.typing i:nth-child(3) { animation-delay: .4s; }
+.status { font-size: 13px; color: var(--muted); margin: 0 0 6px; }
+.error {
+  margin: 0 0 22px; padding: 12px 14px; border-radius: 12px;
+  border: 1px solid #6b2f2b; background: #2a1715; color: var(--danger); font-size: 14px;
+}
+.error button { margin-left: 10px; background: none; border: 1px solid #6b2f2b; color: var(--text); border-radius: 8px; padding: 3px 10px; }
+
+/* ---------- Zone d'écriture ---------- */
+.composerWrap { padding: 8px 16px 10px; }
+.composer {
+  max-width: 760px; margin: 0 auto;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 22px;
+  padding: 10px 10px 8px 16px;
+}
+.composer:focus-within { border-color: #3d4a57; }
+#prompt {
+  width: 100%; resize: none; border: 0; outline: 0; background: none;
+  max-height: 220px; min-height: 28px; padding: 4px 0; line-height: 1.5;
+}
+#prompt::placeholder { color: var(--muted); }
+.composerBar { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+.spacer { flex: 1; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: none; border: 1px solid var(--line); border-radius: 999px;
+  padding: 4px 11px; font-size: 13px; color: var(--muted);
+}
+.chip svg { width: 16px; height: 16px; }
+.chip[aria-pressed="true"] { color: var(--green); border-color: #1d5a44; background: #12261f; }
+.send {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border: 0; border-radius: 12px;
+  background: var(--green); color: var(--green-ink);
+}
+.send svg { stroke-width: 2.4; }
+.send .square { display: none; fill: currentColor; }
+body.thinking .send .arrow { display: none; }
+body.thinking .send .square { display: block; }
+body.local #webToggle { display: none; }
+[hidden] { display: none !important; }
+#talk.listening { color: var(--danger); background: var(--raised); }
+.hint { max-width: 760px; margin: 6px auto 0; text-align: center; font-size: 12px; color: var(--muted); }
+
+/* ---------- Fenêtres ---------- */
+dialog {
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--line); border-radius: 16px; padding: 18px;
+}
+dialog::backdrop { background: #0008; }
+.modal { width: min(440px, calc(100vw - 32px)); }
+.linkish { background: none; border: 0; padding: 0; color: var(--green); text-decoration: underline; font-size: inherit; }
+#keyHint { margin-top: 20px; }
+.drawer {
+  margin: 0; inset: 0 auto 0 0; height: 100%; max-height: 100%;
+  width: min(320px, 86vw); border-radius: 0 16px 16px 0; border-left: 0;
+}
+.dialogHead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.dialogHead h2 { font-size: 17px; font-weight: 600; margin: 0; }
+.field { display: grid; gap: 6px; font-size: 14px; color: var(--muted); margin: 14px 0 0; }
+.field input, .field select {
+  background: var(--bg); border: 1px solid var(--line); border-radius: 10px;
+  padding: 9px 11px; color: var(--text);
+}
+.check { display: flex; align-items: center; gap: 8px; margin-top: 16px; font-size: 14px; }
+.row { display: flex; gap: 8px; margin-top: 10px; }
+.row button, .historyItem button {
+  background: var(--raised); border: 1px solid var(--line); border-radius: 10px; padding: 7px 14px;
+}
+.row .primary { background: var(--green); border-color: var(--green); color: var(--green-ink); font-weight: 600; }
+.small { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+.historyList { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
+.drawer { overflow-x: hidden; }
+.historyItem { display: flex; align-items: center; gap: 4px; }
+.historyItem .open {
+  flex: 1; min-width: 0; text-align: left; background: none; border: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 9px 10px; border-radius: 10px;
+}
+.historyItem .open:hover, .historyItem.current .open { background: var(--raised); }
+.historyItem .del { background: none; border: 0; color: var(--muted); padding: 6px 9px; }
+.historyItem .del:hover { color: var(--danger); }
+.empty { color: var(--muted); font-size: 14px; }
+
+@media (max-width: 600px) {
+  .welcome h1 { font-size: 23px; }
+  .msg.user { max-width: 90%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *:before { animation: none !important; }
+}

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111418">
+<meta name="description" content="AI JACK : ton IA gratuite, sans compte, qui marche sans Internet. Discuter, coder, écrire, directement dans ton navigateur.">
+<title>AI JACK · l'IA gratuite de Jack World</title>
+<link rel="icon" href="app/jack-ia.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+:root{--bg:#111418;--card:#181d23;--line:#2c343d;--ink:#e8edf2;--muted:#8a97a5;--green:#19c98a;--blue:#2e8cf0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.65 'Segoe UI',system-ui,sans-serif;min-height:100vh}
+.hero{position:relative;min-height:78vh;display:flex;align-items:center;background:linear-gradient(180deg,#0b0e12aa,#0b0e12ee 85%,var(--bg)),url("app/immersion.jpg") center/cover no-repeat}
+.wrap{max-width:980px;margin:0 auto;padding:0 24px;width:100%}
+.bot{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:9px;width:64px;height:44px;border:4px solid var(--green);border-radius:16px;margin-bottom:22px}
+.bot:before{content:"";position:absolute;width:4px;height:10px;bottom:100%;left:calc(50% - 2px);background:var(--green)}
+.bot i{width:8px;height:15px;border-radius:6px;background:var(--blue)}
+.eyebrow{font-size:12px;letter-spacing:.2em;color:var(--green);font-weight:700;margin-bottom:10px}
+h1{font-size:clamp(40px,7vw,72px);line-height:1.05;letter-spacing:-.04em;font-weight:800}
+.lead{color:#c9d3dc;max-width:560px;font-size:18px;margin:18px 0 28px}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:#06231a;text-decoration:none;font-weight:700;padding:13px 22px;border-radius:12px}
+.btn:hover{filter:brightness(1.1)}
+.btn:focus-visible,a:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:40px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+.card h2{font-size:17px;margin-bottom:6px}
+.card p{color:var(--muted);font-size:15px}
+.steps{padding:0 0 48px}
+.steps h2{font-size:22px;margin-bottom:12px}
+.steps ol{padding-left:22px;color:#c9d3dc}
+.steps li{margin:6px 0}
+.note{color:var(--muted);font-size:14px;margin-top:14px}
+footer{border-top:1px solid var(--line);padding:22px 0;color:var(--muted);font-size:13px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.hero{min-height:70vh}}
+</style>
+<script data-jack-world-nav src="../jack-world-nav.js" defer></script>
+</head>
+<body>
+<section class="hero">
+  <div class="wrap">
+    <span class="bot" aria-hidden="true"><i></i><i></i></span>
+    <p class="eyebrow">JACK WORLD · AI JACK</p>
+    <h1>Ton IA à toi.<br>Gratuite. Sans Internet.</h1>
+    <p class="lead">Discute, écris, corrige tes textes et fais-toi aider pour coder. Le cerveau de Jack tourne directement dans ton navigateur : rien à installer, pas de compte, pas d'abonnement.</p>
+    <a class="btn" href="app/index.html">Ouvrir AI JACK <span aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+<main class="wrap">
+  <section class="grid" aria-label="Ce que fait AI JACK">
+    <article class="card"><h2>Gratuit pour de vrai</h2><p>Pas de clé, pas de compte, pas de limite par jour. Jack tourne sur ton propre ordinateur.</p></article>
+    <article class="card"><h2>Marche sans Internet</h2><p>Le cerveau se télécharge une seule fois. Ensuite, tu peux discuter même hors connexion.</p></article>
+    <article class="card"><h2>Tes discussions restent chez toi</h2><p>Rien ne part sur Internet : tes messages restent dans ton navigateur.</p></article>
+  </section>
+
+  <section class="steps">
+    <h2>Pour commencer</h2>
+    <ol>
+      <li>Ouvre AI JACK dans <strong>Edge</strong> ou <strong>Chrome</strong> à jour, sur ordinateur.</li>
+      <li>Clique sur « Télécharger le cerveau de Jack » (environ 1 Go, une seule fois).</li>
+      <li>Écris ton message. C'est tout.</li>
+    </ol>
+    <p class="note">AI JACK est moins intelligent que les grandes IA en ligne : c'est le prix du gratuit et du hors connexion. Il peut se tromper, vérifie ce qui est important. Dans les réglages, « Léger » va plus vite et « Malin » réfléchit mieux.</p>
+  </section>
+</main>
+
+<footer><div class="wrap">AI JACK · Jack World · 2026 · Moteur d'IA libre WebLLM</div></footer>
+</body>
+</html>

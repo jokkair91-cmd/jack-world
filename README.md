@@ -1,6 +1,6 @@
 # Jack World
 
-J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance, Jack Bours, Jack Bâtiment et NEW DUC réunis sur un seul site.
+J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance, Jack Bours, Jack Bâtiment, AI JACK et NEW DUC réunis sur un seul site.
 
 | Dossier | Appli | Version source |
 |---|---|---|
@@ -20,6 +20,8 @@ J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance, Jack Bo
 | `bours/app/` | Jack Bours (l'appli) | copie de `Bureau/Jack Bours` du 19 nov. 2026, avec l'espace Jack World (`app.html` devenu `index.html`, sans serveur.ps1 ; lien « page de présentation » vers `../index.html`), + icônes et bouton « Changer de site ». Outil d'apprentissage, argent fictif, pas un conseil en investissement |
 | `batiment/index.html` | Site vitrine Jack Bâtiment | créé le 19 nov. 2026 (thème chantier de l'appli, David le castor) |
 | `batiment/app/` | Jack Bâtiment (l'appli) | copie de `Bureau/Jack Batiment` du 19 nov. 2026 à 3 h 41, avec Prix et devis (sans serveur.ps1 ni l'image jack-jungle inutilisée), + icônes et bouton « Changer de site ». Formation d'auto-apprentissage, ne remplace pas les formations obligatoires |
+| `ia/index.html` | Site vitrine AI JACK | créé le 22 nov. 2026 (logo robot vert et bleu, paysage de nuit) |
+| `ia/app/` | AI JACK (l'appli) | créé le 22 nov. 2026 à partir de `Bureau/AI-JACK-Claude` (même look), mais l'IA tourne dans le navigateur avec WebLLM 0.2.89 (WebGPU, chargé depuis cdn.jsdelivr.net) : gratuit, sans clé, sans serveur. Le « cerveau » (modèle de 0,5 à 3 Go selon Léger / Rapide / Malin) se télécharge une fois dans le navigateur puis marche hors ligne. Il faut Edge ou Chrome à jour sur ordinateur. Le `sw.js` garde aussi le moteur WebLLM pour le hors ligne |
 | `newduc/` | Site NEW DUC | V6 (`NEW DUC - travail/NEWDUKE-V6`) |
 
 ## Ajouts propres à la version en ligne (19 nov. 2026)
