@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="jack22-build" content="JACK22-STUDIO-9.0"><!-- Jack World : évite d'afficher l'ancien habillage pendant que la page se charge (la page reste cachée sur fond sombre jusqu'à la fin de la lecture). Sans JavaScript, rien ne change. -->
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="jack22-build" content="JACK22-STUDIO-9.1"><!-- Jack World : évite d'afficher l'ancien habillage pendant que la page se charge (la page reste cachée sur fond sombre jusqu'à la fin de la lecture). Sans JavaScript, rien ne change. -->
 <style id="jw-anti-flash">html{background:#0f1012}html.jw-chargement body,html.jw-chargement body #storeWarn{visibility:hidden!important}html.jw-chargement::after{content:"";position:fixed;inset:0;z-index:2147483647;background:#0f1012}</style>
 <script>/* Jack World : beaucoup de modules du studio posent leurs boutons au premier tour d'une minuterie (setInterval).
    On note ces minuteries pendant le chargement et on les fait tourner une fois juste avant d'afficher la page :
@@ -3614,7 +3614,7 @@ for(const b of document.querySelectorAll('[data-sample-note]'))b.onclick=()=>sam
 $8('v8SavePreset').onclick=()=>{try{const c=audioClips.find(c=>c.voice?.slot===Number($('l3Slot').value));if(!c)return message('Sélectionne une voix enregistrée.');const next=copy(state8);next.presets.push({name:$8('v8PresetName').value.trim(),settings:window.Jack22Lot3.settings(c)});state8=parse(next);syncPresets();later();message('Preset voix enregistré dans le projet.');}catch(e){message(e.message);}};
 function syncPresets(){const box=$8('v8Presets');box.replaceChildren();for(const p of state8.presets){const b=document.createElement('button');b.textContent=p.name;b.onclick=()=>{const c=audioClips.find(c=>c.voice?.slot===Number($('l3Slot').value));if(!c)return message('Choisis une voix dans les effets.');if(persistBusy||window.Jack22Voice.state.active)return;const checked=D.validate(p.settings);if(checked.edit.start+checked.edit.end>=c.duration-.05)return message('Ce preset découperait toute la prise : choisis une prise plus longue ou un autre preset.');c.voice.processing=checked;audioKill(c);window.Jack22Lot3.sync();window.Jack22Lot3.schedule();later();};box.append(b);}}
 function sync(){$8('v8Swing').value=state8.swing;$8('v8SwingValue').textContent=state8.swing+' %';$8('v8AutoOn').checked=state8.automation.on;$8('v8Curve').value=state8.automation.points.map(p=>p.bar+', '+p.level).join('\n');$8('v8LoopStatus').textContent=state8.loop.on?'Zone en boucle : mesures '+state8.loop.start+' à '+(state8.loop.end-1):'Boucle de zone arrêtée';syncSections();syncPresets();samplerOptions();syncHistory();}
-function diagnostics(){return {build:'JACK22-STUDIO-9.0',time:new Date().toISOString(),available:{microAPI:!!navigator.mediaDevices?.getUserMedia,audioWorklet:typeof AudioWorkletNode!=='undefined',offlineRenderer:typeof OfflineAudioContext!=='undefined',storage:typeof indexedDB!=='undefined'},state:{clips:audioClips.length,voices:audioClips.filter(c=>c.voice).length,sourceSeconds:audioClips.reduce((n,c)=>n+c.duration,0),prepared:window.l3Ready(),dirty:ProjectPersistence.isDirty()},validation:{realBrowserTests:false,meaning:'Capacités détectées et état courant, pas une certification de fonctionnement.'}};}
+function diagnostics(){return {build:'JACK22-STUDIO-9.1',time:new Date().toISOString(),available:{microAPI:!!navigator.mediaDevices?.getUserMedia,audioWorklet:typeof AudioWorkletNode!=='undefined',offlineRenderer:typeof OfflineAudioContext!=='undefined',storage:typeof indexedDB!=='undefined'},state:{clips:audioClips.length,voices:audioClips.filter(c=>c.voice).length,sourceSeconds:audioClips.reduce((n,c)=>n+c.duration,0),prepared:window.l3Ready(),dirty:ProjectPersistence.isDirty()},validation:{realBrowserTests:false,meaning:'Capacités détectées et état courant, pas une certification de fonctionnement.'}};}
 function download(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),30000);}
 $8('v8Check').onclick=()=>{$8('v8Diag').textContent=JSON.stringify(diagnostics(),null,2);};
 $8('v8DownloadDiag').onclick=()=>download(new Blob([JSON.stringify(diagnostics(),null,2)],{type:'application/json'}),'JACK22-diagnostic.json');
@@ -12388,7 +12388,14 @@ html.j8ShellOn #j8Shell{display:grid}
   const SOUND_COL = { lead: '#9b5de5', bass: '#e5484d', pad: '#34d399', pluck: '#f5a524', sub808: '#ff6b6b', guitar: '#f97316' };
   const soundColor = k => SOUND_COL[k] || '#8fd6a0';
   const pitchColor = m => 'hsl(' + Math.round(((m % 12) * 30 + 10) % 360) + ',85%,58%)';
-  const api = { version: '9.0-espaces', register, go: origGo, knob, el, toast, clamp, trackColor, canvasFit, remember, position, soundColor, pitchColor, SOUND_COL, get current() { return current; }, spaces };
+  // Clavier multicolore comme en 7.9 : chaque nouvelle note allume sa touche d'une couleur vive tirée au hasard (≥ 60° de la
+  // couleur précédente de cette touche, et différente de la dernière tirée). Entrée : Map hauteur → jeton de la note (début…).
+  const keyLights = () => { const cur = new Map(), lastH = new Map(); let prevH = -999; const hd = (a, b) => Math.min(Math.abs(a - b), 360 - Math.abs(a - b));
+    return on => { const out = new Map(); for (const [m, tok] of on) { const c = cur.get(m); if (c && c.tok === tok) { out.set(m, c.col); continue; }
+        const l = lastH.get(m), lit = [...cur.entries()].filter(([k]) => k !== m && on.has(k)).map(([, c]) => c.h); let hh = 0, t = 0; do { hh = Math.floor(Math.random() * 360); t++; } while (t < 80 && ((l != null && hd(hh, l) < 60) || hd(hh, prevH) < 40 || lit.some(x => hd(hh, x) < 45)));
+        lastH.set(m, hh); prevH = hh; const col = 'hsl(' + hh + ',90%,60%)'; cur.set(m, { tok, col, h: hh }); out.set(m, col); }
+      for (const m of [...cur.keys()]) if (!out.has(m)) cur.delete(m); return out; }; };
+  const api = { version: '9.1-espaces', register, go: origGo, knob, el, toast, clamp, trackColor, canvasFit, remember, position, soundColor, pitchColor, keyLights, SOUND_COL, get current() { return current; }, spaces };
   window.J8S = api; JACK22.modules.register('n08-espaces-base', 'ui', '8.8', api);
   // les espaces s'inscrivent pendant le chargement ; la coquille s'ouvre une fois la page prête
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(start, 80)); else setTimeout(start, 80);
@@ -12745,7 +12752,8 @@ html.j8ShellOn #j8Shell{display:grid}
   const inScale = m => !st.scale || SCALES[st.scale.t].includes(((m - st.scale.root) % 12 + 12) % 12);
   function geo(h) { return { gridTop: 20, gridH: h - st.velH - 26, velTop: h - st.velH }; }
   function rr(g, x, y, w, h, r) { g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, r); else g.rect(x, y, w, h); }
-  function sounding(p) { const on = new Map(); if (!p || state === 'stopped') return on; const s = S.position() % p.steps; for (const n of p.notes) if (s >= n.start && s < n.start + n.dur) on.set(pitch(n), colOf(n)); return on; }
+  const lights = S.keyLights();
+  function sounding(p) { const on = new Map(); if (!p || state === 'stopped') return on; const s = S.position() % p.steps; for (const n of p.notes) if (s >= n.start && s < n.start + n.dur) on.set(pitch(n), 'n' + n.start + ':' + Math.floor(S.position() / p.steps)); return on; }
   const laneVal = n => st.lane === 'vel' ? (n.velocity ?? 100) / 127 : st.lane === 'glide' ? (n.glide || 0) : ((n.off || 0) + 0.5);
   function draw(cv) {
     const { g, w, h } = S.canvasFit(cv), p = pat(), G = geo(h); g.fillStyle = '#0b0b0e'; g.fillRect(0, 0, w, h);
@@ -12767,7 +12775,7 @@ html.j8ShellOn #j8Shell{display:grid}
       if (ww > 26 && hh >= 11) { g.fillStyle = '#0b0b0bd9'; g.font = '600 ' + Math.min(10, hh - 3) + 'px Consolas'; g.fillText(NAMES[n.idx] + n.octave, x + (n.glide > 0 ? 12 : 5), y + hh - 3); } }
     g.restore();
     // clavier vertical vert pâle, toutes les notes nommées ; touche qui joue = couleur de la note
-    const lit = sounding(p); if (st.keyDown) lit.set(st.keyDown.m, st.keyDown.c);
+    const on0 = sounding(p); if (st.keyDown) on0.set(st.keyDown.m, st.keyDown.t); const lit = lights(on0);
     g.fillStyle = '#15181b'; g.fillRect(0, G.gridTop, st.keyW, G.gridH);
     for (const pass of [0, 1]) for (let m = maxM; m >= minM; m--) { const blk = [1, 3, 6, 8, 10].includes(m % 12); if ((pass === 1) !== blk) continue; const y = G.gridTop + (maxM - m) * st.rh - st.scrollY; if (y < G.gridTop - st.rh || y > G.gridTop + G.gridH) continue;
       const kw = blk ? st.keyW - 22 : st.keyW - 1, on = lit.get(m);
@@ -12809,7 +12817,7 @@ html.j8ShellOn #j8Shell{display:grid}
     cv.addEventListener('contextmenu', e => { e.preventDefault(); const p = pat(); if (!p) return; const a = at(cv, e), n = noteAt(p, a); if (n) commit(pp => { pp.notes.splice(pp.notes.indexOf(n), 1); if (st.sel === n) st.sel = null; }); });
     cv.addEventListener('pointerdown', e => {
       if (e.button !== 0) return; const p = pat(); if (!p) return; const a = at(cv, e);
-      if (a.inKeys && !a.inVel) { const preset = (sndSel() && sndSel().value) || 'lead'; st.keyDown = { m: a.m, c: S.pitchColor(a.m) }; hear(a.m, preset); setTimeout(() => { st.keyDown = null; }, 350); return; }
+      if (a.inKeys && !a.inVel) { const preset = (sndSel() && sndSel().value) || 'lead'; st.keyDown = { m: a.m, t: 'h' + performance.now() }; hear(a.m, preset); setTimeout(() => { st.keyDown = null; }, 350); return; }
       if (a.inVel) { const n = p.notes.reduce((best, nn) => { const d = Math.abs(nn.start + (st.lane === 'off' ? 0 : (nn.off || 0)) - a.step); return d < 0.8 && (!best || d < best.d) ? { n: nn, d } : best; }, null); if (n) { st.drag = { kind: 'lane', n: n.n }; st.sel = n.n; S.remember(); } }
       else { const n = noteAt(p, a); if (n) { const edge = (n.start + n.dur - a.step) * st.cw < 7; st.sel = n; st.drag = { kind: edge ? 'len' : 'move', n, s0: n.start, m0: pitch(n), a0: a }; S.remember(); fill(); }
         else { const start = Math.floor(a.step / st.snap) * st.snap; if (start < 0 || start + st.len > p.steps || a.m < 24 || a.m > 95) return; const preset = (sndSel() && sndSel().value) || 'lead'; commit(pp => { const nn = { start, dur: st.len, preset, octave: Math.floor(a.m / 12) - 1, idx: a.m % 12, velocity: st.vel }; pp.notes.push(nn); st.sel = nn; }); hear(a.m, preset); } }
@@ -12933,9 +12941,10 @@ html.j8ShellOn #j8Shell{display:grid}
     g.strokeStyle = '#ff4b55'; g.lineWidth = 2.5; g.beginPath(); for (let x = 0; x <= w; x += 2) { const y = h - 6 - Math.pow(x / w, c) * (h - 12); x ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke(); g.lineWidth = 1;
     g.fillStyle = '#9a6a70'; g.font = '10px Consolas'; g.fillText('force de frappe →', w - 110, h - 8); g.save(); g.translate(12, h - 10); g.rotate(-Math.PI / 2); g.fillText('volume →', 0, 0); g.restore();
   }
-  function soundingKeys() { const on = new Map(); if (state === 'stopped') return on; const pos = S.position(); song.tracks.forEach((t, ti) => { if (!ti) return; const p = activePat(ti); if (!p || !p.notes) return; const s = pos % p.steps; for (const n of p.notes) if (s >= n.start && s < n.start + n.dur) on.set((n.octave + 1) * 12 + n.idx, S.soundColor(n.preset)); }); return on; }
+  const lights = S.keyLights();
+  function soundingKeys() { const on = new Map(); if (state === 'stopped') return on; const pos = S.position(); song.tracks.forEach((t, ti) => { if (!ti) return; const p = activePat(ti); if (!p || !p.notes) return; const s = pos % p.steps; for (const n of p.notes) if (s >= n.start && s < n.start + n.dur) on.set((n.octave + 1) * 12 + n.idx, ti + ':' + n.start + ':' + Math.floor(pos / p.steps)); }); return on; }
   function kbDraw(cv) {
-    const { g, w, h } = S.canvasFit(cv), oct0 = st.oct0, nW = 7 * 4 + 1, ww = w / nW, WH = [0, 2, 4, 5, 7, 9, 11], lit = soundingKeys(); if (st.down) lit.set(st.down.m, st.down.c);
+    const { g, w, h } = S.canvasFit(cv), oct0 = st.oct0, nW = 7 * 4 + 1, ww = w / nW, WH = [0, 2, 4, 5, 7, 9, 11], on0 = soundingKeys(); if (st.down) on0.set(st.down.m, st.down.t); const lit = lights(on0);
     g.fillStyle = '#0c0e0d'; g.fillRect(0, 0, w, h); st.kb = { ww, oct0, h, nW };
     for (let i = 0; i < nW; i++) { const m = (oct0 + 1 + Math.floor(i / 7)) * 12 + WH[i % 7], on = lit.get(m), x = i * ww + 1;
       if (on) { g.fillStyle = on; g.shadowColor = on; g.shadowBlur = 14; } else { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#d6e6c6'); gr.addColorStop(.7, '#bed5aa'); gr.addColorStop(1, '#a9c493'); g.fillStyle = gr; }
@@ -12946,7 +12955,7 @@ html.j8ShellOn #j8Shell{display:grid}
       g.fillRect(x, 2, ww * .6, (h - 4) * .6); g.shadowBlur = 0; }
   }
   function kbNote(x, y) { const { ww, oct0, h, nW } = st.kb, i = Math.min(nW - 1, Math.floor(x / ww)), WH = [0, 2, 4, 5, 7, 9, 11]; if (y < 2 + (h - 4) * .6) { const r = x / ww - i; if (r > .7 && ![2, 6].includes(i % 7) && i < nW - 1) return (oct0 + 1 + Math.floor(i / 7)) * 12 + WH[i % 7] + 1; if (r < .3 && i > 0 && ![2, 6].includes((i - 1) % 7)) return (oct0 + 1 + Math.floor((i - 1) / 7)) * 12 + WH[(i - 1) % 7] + 1; } return (oct0 + 1 + Math.floor(i / 7)) * 12 + WH[i % 7]; }
-  function play(m) { st.down = { m, c: S.pitchColor(m) }; try { rollPreview({ start: 0, dur: 4, preset: st.k, octave: Math.floor(m / 12) - 1, idx: m % 12, velocity: 100 }); } catch (x) {} }
+  function play(m) { st.down = { m, t: 'h' + performance.now() }; try { rollPreview({ start: 0, dur: 4, preset: st.k, octave: Math.floor(m / 12) - 1, idx: m % 12, velocity: 100 }); } catch (x) {} }
   function build(root) {
     const head = el('div', { className: 'e-sy-head' });
     head.innerHTML = '<span class="lg">JX<span>·22</span></span><button type="button" class="e-sy-tab" data-v="osc"><i></i>SON</button><button type="button" class="e-sy-tab" data-v="bank"><i></i>PRESETS</button><div class="e-sy-lcd"><button type="button" data-a="prev" title="Son précédent">‹</button><select data-k="snd" aria-label="Son"></select><button type="button" data-a="next" title="Son suivant">›</button></div><button type="button" class="e-btn" data-a="play">▶ Écouter</button><button type="button" class="e-btn" data-a="reset">Son d\'origine</button><span style="margin-left:auto"></span><span class="vol"></span>';
@@ -13006,30 +13015,94 @@ html.j8ShellOn #j8Shell{display:grid}
 <!-- ===== bloc n13-espace-mixage.html ===== -->
 <style id="j8n13Mixage">
 /* JACK22 9.0 — 06 CONSOLE (maquettes 4 et 9) et 07 ÉGALISEUR */
-.e-space[data-space=mixage]{grid-template-rows:206px minmax(0,1fr);gap:8px;padding:8px}
-.e-cs-top .e-body{display:grid;grid-template-columns:170px minmax(0,1fr) 400px;grid-template-rows:minmax(0,1fr);gap:10px;padding:8px 10px;overflow:hidden}
-.e-cs-top canvas{min-height:0}
+/* 9.1 — CONSOLE refaite d'après les maquettes 4 (SYNTHESIS) et 9 (console à tranches colorées), en noir et rouge JACK22 */
+.e-space[data-space=mixage]{grid-template-columns:minmax(0,1fr) 220px;grid-template-rows:244px minmax(0,1fr);gap:8px;padding:8px}
 .e-eq-side{grid-column:2}.e-eq-big{grid-column:1;grid-row:1}.e-eq-bands{grid-column:1;grid-row:2}
-.e-cs-top .who{display:flex;flex-direction:column;gap:6px;justify-content:center}.e-cs-top .who b{font:800 16px "Segoe UI"}.e-cs-top .who i{display:block;height:5px;border-radius:3px;background:var(--c)}
-.e-cs-top canvas{width:100%;height:100%;background:#08080b;border:1px solid var(--e-line);border-radius:6px;cursor:crosshair}
-.e-cs-top .cp{border-left:1px solid var(--e-line);padding-left:12px;display:flex;flex-direction:column;gap:6px;overflow:hidden}.e-cs-top .cp .k{display:flex;gap:10px;flex-wrap:wrap}
-.e-cs-top h4 button[aria-pressed=true]{background:#2a0f14!important;border-color:var(--e-red)!important;color:#fff}
-.e-cs-strips{display:flex;gap:6px;padding:8px;overflow-x:auto;overflow-y:hidden;background:var(--e-panel);border:1px solid var(--e-line);border-radius:9px}
-.e-cs-s{flex:1 0 108px;max-width:150px;display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 6px;background:linear-gradient(#1a1a20,#111115);border:1px solid var(--e-line);border-top:4px solid var(--c);border-radius:8px;min-height:0}
-.e-cs-s.sel{box-shadow:0 0 0 2px var(--e-red) inset}
-.e-cs-s .th{width:100%;height:30px;flex:none;background:#08080b;border-radius:4px;cursor:pointer}
-.e-cs-s .ins{width:100%;display:flex;flex-direction:column;gap:2px}.e-cs-s .ins button{width:100%;text-align:left;background:#0b0b0e;border:1px solid #2a2a33;border-radius:3px;padding:2px 6px;font:600 10.5px "Segoe UI";color:#cfd3d8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
-.e-cs-s .ins button.off{color:#666;text-decoration:line-through}.e-cs-s .ins button.add{color:#555;text-align:center}.e-cs-s .ins select{width:100%;background:#0b0b0e;color:#fff;border:1px solid var(--e-red);font-size:10.5px}
-.e-cs-s .kn{display:flex;gap:2px;justify-content:center;flex-wrap:wrap}
-.e-cs-s .bt{display:flex;gap:4px}.e-cs-s .bt button{border:1px solid #33333d;background:linear-gradient(#26262d,#141418);border-radius:4px;padding:1px 9px;cursor:pointer;font:700 11px "Segoe UI"}
-.e-cs-s .bt button[aria-pressed=true].so{background:#2f7fd0;color:#fff}.e-cs-s .bt button[aria-pressed=true].mu{background:#e3a13d;color:#000}
-.e-cs-s .fd{flex:1;display:flex;gap:8px;min-height:60px;width:100%;justify-content:center}
+.e-cs-top{grid-column:1/3}
+.e-cs-top>h4{padding:0 6px 0 0!important;background:linear-gradient(#1d1d23,#111115)!important;letter-spacing:0!important}
+.e-cs-tabs{display:flex;flex:1;align-items:stretch;height:34px;min-width:0}
+.e-cs-tabs .tb{flex:1;display:flex;align-items:center;justify-content:center;gap:9px;padding:0 10px!important;border:0!important;border-right:1px solid var(--e-line)!important;border-radius:0!important;background:none!important;font:700 11.5px "Segoe UI"!important;letter-spacing:.14em;text-transform:uppercase;color:var(--e-soft)!important;cursor:pointer}
+.e-cs-tabs .tb:hover{color:#fff!important}
+.e-cs-tabs .tb[aria-pressed=true]{background:linear-gradient(#e3313d,#9e1d27)!important;color:#fff!important}
+.e-cs-tabs .pw{width:21px;height:21px;flex:none;border-radius:50%;display:grid;place-items:center;border:1px solid #45454f;background:#0b0b0e;color:#6a6a74;font-size:11px;line-height:1}
+.e-cs-tabs .pw.on{color:#5dff9a;border-color:#3fbf6a;box-shadow:0 0 9px #3fbf6a99}
+.e-cs-tabs .tb[aria-pressed=true] .pw{border-color:#fff8}
+.e-cs-tabs .sw{flex:none;width:44px;display:grid;place-items:center;color:var(--e-dim);font-size:16px;border-right:1px solid var(--e-line)}
+.e-cs-top .e-body{display:grid;grid-template-columns:200px 118px minmax(0,1fr) 62px 330px;grid-template-rows:minmax(0,1fr) 30px;gap:0 10px;padding:9px 10px;overflow:hidden}
+.e-cs-who{grid-column:1;grid-row:1/3;display:flex;flex-direction:column;gap:5px;border-right:1px solid var(--e-line);padding-right:10px;min-height:0;overflow:hidden}
+.e-cs-who .nr{display:flex;align-items:center;gap:8px}.e-cs-who .nr .ic{width:34px;height:34px;color:var(--c);flex:none}.e-cs-who .nr .ic svg{width:34px;height:34px}
+.e-cs-who .nr b{font:800 16px "Segoe UI";flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.e-cs-who .nr button{border:1px solid var(--e-line2);background:var(--e-raised);border-radius:5px;color:var(--e-ink);cursor:pointer;padding:2px 7px}
+.e-cs-who .bar{height:4px;border-radius:2px;background:var(--c);flex:none}
+.e-cs-who .rw{display:flex;gap:8px;align-items:flex-start}
+.e-cs-who .lb{font:700 9.5px Consolas;letter-spacing:.2em;color:var(--e-soft)}
+.e-cs-who .asg{display:flex;gap:4px;flex-wrap:wrap}.e-cs-who .asg button{min-width:36px;height:22px;border:1px solid var(--e-line2);background:linear-gradient(#26262d,#141418);border-radius:5px;color:var(--e-soft);font:700 10.5px "Segoe UI";cursor:pointer;padding:0 6px}
+.e-cs-who .asg button[aria-pressed=true]{background:linear-gradient(#ffcf6b,#d9922a);color:#111;border-color:#ffd88a}
+.e-cs-bk{grid-column:2;grid-row:1/3;display:grid;grid-template-columns:1fr 1fr;align-content:center;justify-items:center;gap:8px 4px;min-height:0}
+.e-cs-top canvas.eqc{grid-column:3;grid-row:1;display:block;width:100%;height:100%;min-height:0;background:#08080b;border:1px solid var(--e-line);border-radius:6px 6px 0 0;cursor:crosshair}
+.e-cs-bands{grid-column:3;grid-row:2;display:flex;border:1px solid var(--e-line);border-top:0;border-radius:0 0 6px 6px;overflow:hidden}
+.e-cs-bands button{flex:1;border:0;border-right:1px solid var(--e-line);background:linear-gradient(#1c1c22,#121216);color:var(--e-soft);font:700 11px "Segoe UI";cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;overflow:hidden;padding:0 4px}
+.e-cs-bands button:last-child{border-right:0}.e-cs-bands button i{width:9px;height:9px;border-radius:50%;background:var(--c);box-shadow:0 0 6px var(--c)}
+.e-cs-bands button.on{background:linear-gradient(#e3313d,#9e1d27);color:#fff}
+.e-cs-vw{grid-column:4;grid-row:1/3;display:flex;flex-direction:column;gap:5px}
+.e-cs-vw button{border:1px solid var(--e-line2);background:linear-gradient(#1c1c22,#121216);border-radius:5px;color:var(--e-soft);font:700 10px "Segoe UI";padding:6px 0;cursor:pointer}
+.e-cs-vw button[aria-pressed=true]{color:#fff;border-color:var(--e-red);background:#2a0f14}
+.e-cs-vw .gr{flex:1;min-height:30px;width:14px;align-self:center;background:#050507;border:1px solid var(--e-line);border-radius:3px;position:relative;overflow:hidden}.e-cs-vw .gr i{position:absolute;left:0;right:0;top:0;background:var(--e-amber)}
+.e-cs-cp{grid-column:5;grid-row:1/3;border-left:1px solid var(--e-line);padding-left:12px;display:flex;flex-direction:column;gap:6px;min-height:0;overflow:hidden}
+.e-cs-cp .hd{display:flex;align-items:center;gap:8px}.e-cs-cp .hd b{font:800 16px "Segoe UI";flex:1}
+.e-cs-cp .hd .e-btn{padding:3px 9px;font-size:11px}
+.e-cs-cp .bd{display:flex;flex-direction:column;gap:6px;flex:1;min-height:0}
+.e-cs-cp .k{display:flex;justify-content:space-around;align-items:flex-start;flex:none;padding:4px 0;background:#0b0b0f;border:1px solid var(--e-line);border-radius:6px}
+.e-cs-cp canvas.mc{display:block;flex:1 1 0;width:100%;min-height:0;background:#08080b;border:1px solid var(--e-line);border-radius:6px}
+.e-cs-cp p{margin:0;color:var(--e-soft);font-size:11px}
+.e-cs-strips{grid-column:1;display:flex;gap:4px;padding:6px;overflow-x:auto;overflow-y:hidden;background:#09090c;border:1px solid var(--e-line);border-radius:9px;min-height:0}
+.e-cs-s{flex:1 1 0;min-width:112px;display:flex;flex-direction:column;align-items:stretch;gap:4px;padding:5px;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 34%,#121216) 0,color-mix(in srgb,var(--c) 14%,#0e0e12) 46%,#0c0c10 100%);border:1px solid color-mix(in srgb,var(--c) 45%,#26262f);border-radius:7px;min-height:0;position:relative;cursor:default}
+.e-cs-s.sel{outline:2px solid var(--e-red2);outline-offset:-1px;box-shadow:0 0 18px #e3313d55}
+.e-cs-s .hd{display:flex;justify-content:space-between;align-items:center;font:700 10px Consolas;color:#ffffffb0;flex:none}
+.e-cs-s canvas{display:block;width:100%;flex:none;background:#060608;border:1px solid #000;border-radius:3px;cursor:pointer}
+.e-cs-s canvas.th{height:36px}.e-cs-s canvas.cm{height:24px}
+.e-cs-s .ins{display:flex;flex-direction:column;gap:2px;flex:none}
+html body #j8Shell .e-cs-s button{min-height:0!important;line-height:1.1!important;box-sizing:border-box!important;font-size:10.5px!important}
+html body #j8Shell .e-cs-who button,html body #j8Shell .e-cs-bands button,html body #j8Shell .e-cs-vw button,html body #j8Shell .e-cs-mixb,html body #j8Shell .e-cs-scn button{min-height:0!important}
+html body #j8Shell .e-cs-who .asg button{height:22px!important;padding:0 6px!important}html body #j8Shell .e-cs-who .nr button{padding:3px 8px!important}
+html body #j8Shell .e-cs-cp .hd .e-btn{min-height:0!important}
+html body #j8Shell .e-cs-s .ins button{height:18px!important;max-height:18px!important;padding:0 6px!important;white-space:nowrap!important}
+html body #j8Shell .e-cs-s .bt button{height:22px!important;max-height:22px!important;padding:0!important}
+.e-cs-s .ins button,.e-cs-s .ins .sl{height:18px;flex:none;width:100%;text-align:left;background:#08080bd9;border:1px solid #00000099;border-radius:3px;padding:0 6px;font:600 10.5px "Segoe UI";color:#dfe2e6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.e-cs-s .ins .sl{border:1px dashed #ffffff1c;background:transparent;cursor:default}
+.e-cs-s .ins button.off{color:#777;text-decoration:line-through}.e-cs-s .ins button.add{color:#9a9aa6;text-align:center}.e-cs-s .ins select{width:100%;height:18px;background:#0b0b0e;color:#fff;border:1px solid var(--e-red);font-size:10.5px}
+.e-cs-s .snd{display:flex;justify-content:space-around;flex:none;min-height:0}
+.e-cs-s .bt{display:flex;flex-direction:column;gap:3px;flex:none}
+.e-cs-s .bt button{height:22px!important;padding:0!important;border:1px solid #000a;background:linear-gradient(#2e2e36,#18181d);border-radius:4px;font:700 11px "Segoe UI";color:#e6e6ea;cursor:pointer}
+.e-cs-s .bt button[aria-pressed=true].so{background:linear-gradient(#ffd45e,#e0a41f);color:#111}.e-cs-s .bt button[aria-pressed=true].mu{background:linear-gradient(#ff5a63,#b8202b);color:#fff}
+#j8Shell .e-cs-s input.pn{-webkit-appearance:none;appearance:none;width:100%;height:14px;background:transparent;margin:0;flex:none;cursor:ew-resize}
+#j8Shell .e-cs-s input.pn::-webkit-slider-runnable-track{height:6px;background:linear-gradient(90deg,#050507 49%,#ffffff40 49% 51%,#050507 51%);border:1px solid #000;border-radius:3px}
+#j8Shell .e-cs-s input.pn::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:14px;margin-top:-5px;border-radius:2px;background:var(--c);border:1px solid #000}
+.e-cs-s .fd{flex:1;display:flex;gap:3px;min-height:40px;justify-content:center;position:relative}
+.e-cs-s .sc{position:relative;width:22px;flex:none;font:600 8.5px Consolas;color:#ffffff8c}
+.e-cs-s .sc span{position:absolute;right:0;transform:translateY(50%);padding-right:5px;line-height:1}.e-cs-s .sc span::after{content:"";position:absolute;right:0;top:50%;width:3px;height:1px;background:#ffffff60}
 .e-cs-s .fd input{height:100%;width:32px}
-.e-cs-s .mt{width:9px;height:100%;background:#050507;border-radius:3px;position:relative;overflow:hidden}.e-cs-s .mt i{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(0deg,#3fbf6a 0 62%,#e2b83c 62% 84%,#e3313d 84%)}
-.e-cs-s .db{font:600 11px Consolas;color:var(--e-ink)}
-.e-cs-s .nm{width:100%;text-align:center;padding:4px 2px;border-radius:4px;font:800 11px "Segoe UI";color:#0b0b0e;background:var(--c);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:none}
-.e-cs-s.master{flex:0 0 150px;max-width:none;background:linear-gradient(#2a0f14,#111115);border-color:var(--e-red)}
-.e-cs-s.bus{--c:#6b7280}
+.e-cs-s .mt{width:10px;height:100%;background:#050507;border:1px solid #000;border-radius:2px;position:relative;overflow:hidden}.e-cs-s .mt i{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(0deg,#3fbf6a 0 62%,#e2b83c 62% 84%,#e3313d 84%)}
+.e-cs-s .db{text-align:center;font:600 10.5px Consolas;color:var(--e-ink);flex:none}
+.e-cs-s .ic{height:30px;display:flex;justify-content:center;color:#f2f2f5;flex:none;opacity:.9}.e-cs-s .ic svg{width:30px;height:30px}
+.e-cs-s .nm{text-align:center;padding:3px 2px;border-radius:3px;font:800 11px "Segoe UI";color:#0b0b0e;background:var(--c);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:none}
+.e-cs-s.master{flex:0 0 136px;background:linear-gradient(#3a1016,#121216 45%,#0c0c10);border-color:var(--e-red)}
+.e-cs-s.bus{--c:#7c8496}
+#j8Shell .e-cs-s.send input.e-fd::-webkit-slider-thumb{background:linear-gradient(#ffe3ad,#d9922a 45%,#111 45%,#111 55%,#a8701d 55%,#6e4810)}
+.e-cs-s.send .db{color:var(--e-amber)}
+.e-cs-side{grid-column:2;display:flex;flex-direction:column;gap:8px;min-height:0}
+.e-cs-side .e-pane{flex:none}.e-cs-side .e-pane.mx{flex:1}
+.e-cs-side .e-body{padding:8px;display:flex;flex-direction:column;gap:4px;overflow:auto;min-height:0}
+.e-cs-mixb{display:flex;align-items:center;gap:7px;width:100%;text-align:left;border:1px solid var(--e-line2);background:linear-gradient(#222229,#141418);border-radius:5px;padding:6px 8px;color:var(--e-ink);font:700 11px "Segoe UI";cursor:pointer;flex:none}
+.e-cs-mixb:hover{border-color:var(--e-red)}.e-cs-mixb[aria-pressed=true]{background:linear-gradient(#e3313d,#9e1d27);border-color:#ff5a63;color:#fff}
+.e-cs-mixb .lv{margin-left:auto;width:36px;height:6px;flex:none;background:#050507;border-radius:3px;overflow:hidden}.e-cs-mixb .lv i{display:block;height:100%;background:var(--e-green)}
+.e-cs-mixb .mu{flex:none;font:700 9px Consolas;padding:1px 4px;border-radius:3px;background:#b8202b;color:#fff}
+.e-cs-side .hint{color:var(--e-dim);font-size:10.5px;margin:2px 0 0}
+.e-cs-scn{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.e-cs-scn button{height:32px;border:1px solid var(--e-line2);background:linear-gradient(#222229,#141418);border-radius:5px;color:var(--e-dim);font:800 14px Consolas;cursor:pointer}
+.e-cs-scn button.has{color:#fff;border-color:var(--e-amber)}.e-cs-scn button.cur{box-shadow:0 0 0 2px var(--e-red2) inset}
+.e-cs-side .row2{display:flex;gap:4px}.e-cs-side .row2 .e-btn{flex:1;font-size:11px;padding:5px 4px}
+@media (max-height:820px){.e-space[data-space=mixage]{grid-template-rows:212px minmax(0,1fr)}.e-cs-s canvas.cm,.e-cs-s .ic{display:none}.e-cs-s canvas.th{height:28px}}
 /* ÉGALISEUR */
 .e-space[data-space=egaliseur]{grid-template-columns:minmax(0,1fr) 360px;grid-template-rows:minmax(0,1fr) 196px;gap:8px;padding:8px}
 .e-eq-big canvas{display:block;width:100%;height:100%;cursor:crosshair}
@@ -13038,7 +13111,9 @@ html.j8ShellOn #j8Shell{display:grid}
 .e-eq-band{flex:1;border:1px solid var(--e-line);border-top:3px solid var(--c);border-radius:8px;padding:8px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer}
 .e-eq-band.sel{background:#16161c;box-shadow:0 0 0 1px var(--c) inset}.e-eq-band b{font:700 12px "Segoe UI"}.e-eq-band .k{display:flex;gap:10px}
 .e-eq-side{grid-row:1/3;display:flex;flex-direction:column;gap:8px;min-height:0}.e-eq-side .e-pane{flex:1}
-.e-eq-side .e-body{padding:10px;display:flex;flex-direction:column;gap:10px}.e-eq-side canvas{width:100%;height:170px;background:#08080b;border:1px solid var(--e-line);border-radius:6px}
+.e-eq-side .e-body{padding:10px;display:flex;flex-direction:column;gap:10px;overflow:hidden;min-height:0;flex:1}.e-eq-side canvas{display:block;width:100%;flex:1 1 0;min-height:60px;background:#08080b;border:1px solid var(--e-line);border-radius:6px}
+.e-eq-comp .top{display:flex;gap:10px;align-items:center}.e-eq-comp .top .e-btn{flex:none}.e-eq-comp .grw{flex:1;display:flex;flex-direction:column;gap:3px;font:700 9.5px Consolas;letter-spacing:.15em;color:var(--e-soft)}
+.e-eq-comp .k5{display:flex;justify-content:space-between;padding:6px 4px;background:#0b0b0f;border:1px solid var(--e-line);border-radius:6px;flex:none}
 .e-eq-side .k{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;justify-items:center}
 .e-eq-gr{height:14px;background:#050507;border-radius:3px;position:relative;overflow:hidden}.e-eq-gr i{position:absolute;right:0;top:0;bottom:0;background:#ffb347}
 </style>
@@ -13065,28 +13140,32 @@ html.j8ShellOn #j8Shell{display:grid}
     vca.gain.value = 0; input.connect(vca); input.connect(rect); rect.connect(lp); lp.connect(map); map.connect(vca.gain);
     return [input, vca];
   };
-  const st = { key: 'melody', drag: null, tab: 'eq', band: 2 };
+  const st = { key: 'melody', drag: null, tab: 'eq', band: 2, rta: true, sendBus: null, store: false, scene: '' };
   const DEF = () => ({ level: 100, pan: 0, low: 0, send: 0, duck: 0, mute: false, solo: false, comp: false, points: [] });
   const PEQ = () => Object.fromEntries(Object.entries(R.definitions.peq.params).map(([k, v]) => [k, v[0]]));
   const cap = () => VoiceStore.capture();
-  function apply(mut) { if (state !== 'stopped') { S.toast('Arrête la lecture pour régler la console (comme à l\'origine).'); return false; } const v = cap(); mut(v); try { R.validate(v.rack100); } catch (e) { S.toast(e.message); return false; } S.remember(); VoiceStore.setText(v); S.remember(); return true; }
+  function apply(mut) { if (state !== 'stopped') { S.toast('Arrête la lecture pour régler la console (comme à l\'origine).'); return false; } const v = cap(); try { mut(v); R.validate(v.rack100); } catch (e) { S.toast(e.message); return false; } S.remember(); VoiceStore.setText(v); S.remember(); return true; }
+  // mémoires de mix A–D (nouveau, 9.1) : volumes, panoramiques, Solo/Mute, départs et bus ; enregistrées dans le projet
+  const clone = o => JSON.parse(JSON.stringify(o));
+  const scenes = JACK22.project.store('console', () => ({ scenes: {} }), v => { const o = { scenes: {} }; const s = v && v.scenes; if (s && typeof s === 'object') for (const k of ['A', 'B', 'C', 'D']) { const x = s[k]; if (x && typeof x === 'object' && x.mix && typeof x.mix === 'object' && !Array.isArray(x.mix) && x.sends && typeof x.sends === 'object' && Array.isArray(x.buses) && JSON.stringify(x).length < 60000) o.scenes[k] = clone(x); } return o; });
   const ICON = { drums: '🥁', bass: '🔊', melody: '🎹', voices: '🎤', imports: '♫' };
   function channels() { return [...song.tracks.map((t, i) => ({ key: t.key, name: t.label, color: S.trackColor(t.key, i) })), { key: 'voices', name: 'Voix', color: '#e89fa9' }, { key: 'imports', name: 'Audio', color: '#9fb4e8' }]; }
   const chain = (v, key) => (v.rack100.chains[key] = v.rack100.chains[key] || []);
   const fxOf = (v, key, type) => (v.rack100.chains[key] || []).find(e => e.type === type);
   const newId = t => t + Date.now().toString(36) + Math.floor(Math.random() * 1e3).toString(36);
-  const setFx = (type, mut) => apply(x => { const ch = chain(x, st.key); let e = ch.find(y => y.type === type); if (!e) { if (ch.length >= 8) throw Error('Rack plein (8 effets).'); e = R.effect(type, newId(type)); type === 'peq' || type === 'gate' ? ch.unshift(e) : ch.push(e); } mut(e); });
+  const setFx = (type, mut) => apply(x => { const ch = chain(x, st.key); let e = ch.find(y => y.type === type); if (!e) { if (ch.length >= 8) throw Error('Rack plein (8 effets).'); e = R.effect(type, newId(type)); type === 'peq' || type === 'gate' || type === 'gain' ? ch.unshift(e) : ch.push(e); } mut(e); });
   // ---------- égaliseur (dessin partagé : petit dans la Console, grand dans l'Égaliseur) ----------
   const BANDS = [['lowF', 'lowG', null, 'Grave', '#22b8cf'], ['f1', 'g1', 'q1', 'Bas-médium', '#34d399'], ['f2', 'g2', 'q2', 'Médium', '#f5a524'], ['f3', 'g3', 'q3', 'Présence', '#9b5de5'], ['highF', 'highG', null, 'Aigu', '#f78fb3']];
   const fx = (f, w) => Math.log(f / 20) / Math.log(1000) * w, xf = (x, w) => 20 * Math.pow(1000, S.clamp(x / w, 0, 1));
   const gy = (gd, h) => h / 2 - gd / 18 * (h / 2 - 14), yg = (y, h) => S.clamp((h / 2 - y) / (h / 2 - 14) * 18, -18, 18);
   const an = {};
   function params() { return st.preview || ((fxOf(cap(), st.key, 'peq') || {}).params) || PEQ(); }
-  function eqDraw(cv, big) {
+  function eqDraw(cv, big, rta = true) {
     const { g, w, h } = S.canvasFit(cv), p = params(), on = !!fxOf(cap(), st.key, 'peq'); g.fillStyle = '#07070a'; g.fillRect(0, 0, w, h);
+    if (!big) { g.fillStyle = '#5c5c68'; g.font = '9px Consolas'; for (const d of [12, 6, 0, -6, -12]) g.fillText((d > 0 ? '+' : '') + d + ' dB', w - 34, gy(d, h) - 3); }
     g.font = (big ? 11 : 9) + 'px Consolas'; for (const f of [30, 50, 100, 200, 500, 1000, 2000, 5000, 10000]) { const x = fx(f, w); g.strokeStyle = '#1d1d25'; g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke(); g.fillStyle = '#5c5c68'; g.fillText(f >= 1000 ? f / 1000 + 'k' : f, x + 3, h - 4); }
     for (const d of [-12, -6, 0, 6, 12]) { const y = gy(d, h); g.strokeStyle = d ? '#1d1d25' : '#33333d'; g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); if (big) { g.fillStyle = '#5c5c68'; g.fillText((d > 0 ? '+' : '') + d + ' dB', 6, y - 3); } }
-    try { const n = engine && engine.productionNodes && engine.productionNodes.get(st.key); if (n) { if (!an.a || an.node !== n) { an.a = audio.createAnalyser(); an.a.fftSize = 2048; n.duck.connect(an.a); an.node = n; an.spec = new Float32Array(an.a.frequencyBinCount); } an.a.getFloatFrequencyData(an.spec); g.fillStyle = '#e3313d2a'; g.beginPath(); g.moveTo(0, h); for (let i = 1; i < an.spec.length; i += 2) { const f = i * audio.sampleRate / 2048; if (f < 20) continue; g.lineTo(fx(f, w), h - S.clamp((an.spec[i] + 100) / 80, 0, 1) * h); } g.lineTo(w, h); g.fill(); } } catch (e) {}
+    if (rta) try { const n = engine && engine.productionNodes && engine.productionNodes.get(st.key); if (n) { if (!an.a || an.node !== n) { an.a = audio.createAnalyser(); an.a.fftSize = 2048; n.duck.connect(an.a); an.node = n; an.spec = new Float32Array(an.a.frequencyBinCount); } an.a.getFloatFrequencyData(an.spec); g.fillStyle = '#e3313d2a'; g.beginPath(); g.moveTo(0, h); for (let i = 1; i < an.spec.length; i += 2) { const f = i * audio.sampleRate / 2048; if (f < 20) continue; g.lineTo(fx(f, w), h - S.clamp((an.spec[i] + 100) / 80, 0, 1) * h); } g.lineTo(w, h); g.fill(); } } catch (e) {}
     if (window.JACK22_MIXER8) { const fr = []; for (let i = 0; i < 200; i++) fr.push(20 * Math.pow(1000, i / 199));
       if (big) BANDS.forEach(([F, G, Q, , c], i) => { const one = { ...PEQ(), [F]: p[F], [G]: p[G], ...(Q ? { [Q]: p[Q] } : {}) }; const r = JACK22_MIXER8.peqResponse(one, fr); g.fillStyle = c + '22'; g.beginPath(); g.moveTo(0, gy(0, h)); r.forEach((d, k) => g.lineTo(fx(fr[k], w), gy(d, h))); g.lineTo(w, gy(0, h)); g.fill(); });
       const r = JACK22_MIXER8.peqResponse(p, fr); g.strokeStyle = on || st.preview ? '#ffb347' : '#6a5a40'; g.lineWidth = big ? 3 : 2; g.beginPath(); r.forEach((d, k) => { const x = fx(fr[k], w), y = gy(d, h); k ? g.lineTo(x, y) : g.moveTo(x, y); }); g.stroke(); g.lineWidth = 1; }
@@ -13114,52 +13193,121 @@ html.j8ShellOn #j8Shell{display:grid}
     return [P('threshold', 'Seuil', v => v + ' dB'), P('range', 'Fermeture', v => '−' + v + ' dB'), P('release', 'Relâche', v => v + ' ms')];
   }
   const fxBtn = type => { const e = fxOf(cap(), st.key, type), b = el('button', { type: 'button', className: 'e-btn' + (e && e.on ? ' red' : ''), textContent: e ? (e.on ? '⏻ Actif' : '⏻ Éteint') : '＋ Ajouter' }); b.onclick = () => (e ? setFx(type, x => { x.on = !x.on; }) : setFx(type, () => {})) && renderAll(); return b; };
-  // ---------- tranches ----------
-  function thumb(cv, v, key) { requestAnimationFrame(() => { const { g, w, h } = S.canvasFit(cv); g.fillStyle = '#08080b'; g.fillRect(0, 0, w, h); const e = fxOf(v, key, 'peq'); g.strokeStyle = e && e.on ? '#ffb347' : '#33333d'; g.lineWidth = 1.5; g.beginPath(); if (!e || !window.JACK22_MIXER8) { g.moveTo(0, h / 2); g.lineTo(w, h / 2); } else { const fr = []; for (let i = 0; i < 40; i++) fr.push(20 * Math.pow(1000, i / 39)); JACK22_MIXER8.peqResponse(e.params, fr).forEach((d, i) => { const x = i / 39 * w, y = h / 2 - d / 18 * (h / 2 - 2); i ? g.lineTo(x, y) : g.moveTo(x, y); }); } g.stroke(); }); }
+  // ---------- tranches (9.1 : maquettes 4 et 9 — tranche teintée de sa couleur, mini-égaliseur, mini-compresseur, inserts, départs,
+  //            Solo / Mute, panoramique, fader gradué en dB, vumètre, icône, nom) ----------
+  const ICONS = {
+    drums: '<ellipse cx="16" cy="12" rx="11" ry="4"/><path d="M5 12v9c0 2.2 4.9 4 11 4s11-1.8 11-4v-9"/><path d="M8 3l6 8M24 3l-6 8"/>',
+    bass: '<path d="M21 5l6 6-2 1-6 6"/><path d="M19 13l-7 7a4.5 4.5 0 1 1-4-4l7-7"/><circle cx="9.5" cy="22.5" r="1.4"/><path d="M23 3l1.5 1.5M26 6l1.5 1.5"/>',
+    keys: '<rect x="3" y="8" width="26" height="16" rx="2"/><path d="M9.5 24V16M16 24V16M22.5 24V16"/><rect x="7.6" y="8" width="3.6" height="8" fill="currentColor"/><rect x="14.2" y="8" width="3.6" height="8" fill="currentColor"/><rect x="20.8" y="8" width="3.6" height="8" fill="currentColor"/>',
+    mic: '<rect x="12" y="3" width="8" height="15" rx="4"/><path d="M8 14a8 8 0 0 0 16 0M16 22v6M11 28h10"/>',
+    wave: '<path d="M2 16h3l2-6 3 12 3-17 3 21 3-14 3 8 2-4h6"/>',
+    synth: '<path d="M3 16c3-9 5-9 8 0s5 9 8 0 5-9 8 0"/><path d="M3 26h26" opacity=".5"/>',
+    bus: '<path d="M4 10h16l-4-4M28 22H12l4 4"/>',
+    master: '<path d="M8 4v24M16 4v24M24 4v24"/><rect x="5" y="17" width="6" height="4" fill="currentColor"/><rect x="13" y="8" width="6" height="4" fill="currentColor"/><rect x="21" y="13" width="6" height="4" fill="currentColor"/>'
+  };
+  const iconOf = k => k === 'drums' ? 'drums' : k === 'bass' ? 'bass' : k === 'melody' ? 'keys' : k === 'voices' ? 'mic' : k === 'imports' || /^aud_/.test(k) ? 'wave' : /^bus:/.test(k) ? 'bus' : k === 'master' ? 'master' : 'synth';
+  const icon = (k, cls = 'ic') => { const s = el('span', { className: cls }); s.innerHTML = '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + ICONS[iconOf(k)] + '</svg>'; return s; };
+  const dbOf = lv => lv <= 0 ? '−∞' : ((v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1))(20 * Math.log10(lv / 100)));
+  function scale(max, send) { const sc = el('div', { className: 'sc' }), marks = send ? [[100, '100'], [75, '75'], [50, '50'], [25, '25'], [0, '0']] : [[150, '+3'], [100, '0'], [50, '−6'], [25, '−12'], [0, '−∞']];
+    for (const [v, t] of marks) { const s = el('span', { textContent: t }); s.style.bottom = 'calc(20px + (100% - 40px) * ' + (v / max) + ')'; sc.append(s); } return sc; }
+  function thumb(cv, v, key) { requestAnimationFrame(() => { const { g, w, h } = S.canvasFit(cv); g.fillStyle = '#060608'; g.fillRect(0, 0, w, h); g.strokeStyle = '#ffffff10'; for (let i = 1; i < 4; i++) { g.beginPath(); g.moveTo(i * w / 4, 0); g.lineTo(i * w / 4, h); g.stroke(); } const e = fxOf(v, key, 'peq'); g.strokeStyle = e && e.on ? '#5fd3ff' : '#3a3a46'; g.lineWidth = 1.6; g.beginPath(); if (!e || !window.JACK22_MIXER8) { g.moveTo(0, h / 2); g.lineTo(w, h / 2); } else { const fr = []; for (let i = 0; i < 40; i++) fr.push(20 * Math.pow(1000, i / 39)); JACK22_MIXER8.peqResponse(e.params, fr).forEach((d, i) => { const x = i / 39 * w, y = h / 2 - d / 18 * (h / 2 - 3); i ? g.lineTo(x, y) : g.moveTo(x, y); }); } g.stroke(); if (e && e.on) { g.fillStyle = '#5fd3ff22'; g.lineTo(w, h); g.lineTo(0, h); g.fill(); } }); }
+  function compThumb(cv, v, key) { requestAnimationFrame(() => { const { g, w, h } = S.canvasFit(cv); g.fillStyle = '#060608'; g.fillRect(0, 0, w, h); const c = fxOf(v, key, 'comp'), gt = fxOf(v, key, 'gate'), mc = ((v.production97.mix || {})[key] || {}).comp;
+      if (!c && !mc && !gt) { g.fillStyle = '#ffffff30'; g.font = '9px Consolas'; g.fillText('dynamique : —', 5, h / 2 + 3); return; }
+      const p = c ? c.params : { threshold: -18, ratio: 3 }, on = (c && c.on) || mc; g.fillStyle = on ? '#ffb347' : '#555'; const n = 12; for (let i = 0; i < n; i++) { const inDb = -60 + i * 5, out = inDb <= p.threshold ? inDb : p.threshold + (inDb - p.threshold) / p.ratio, red = Math.max(0, inDb - out); const bh = Math.max(2, (1 - red / 30) * (h - 6)); g.globalAlpha = .35 + .65 * (i / n); g.fillRect(4 + i * (w - 8) / n, h - 3 - bh, (w - 8) / n - 2, bh); } g.globalAlpha = 1;
+      g.fillStyle = '#ffffffb0'; g.font = 'bold 8.5px Consolas'; g.fillText((c ? 'COMP ' + p.ratio + ':1' : mc ? 'COMP' : '') + (gt && gt.on ? ' · PORTE' : ''), 4, 9); }); }
+  function setMix(key, patch) { return apply(x => { x.production97.mix[key] = { ...(x.production97.mix[key] || DEF()), ...patch }; }); }
+  function setSend(key, busId, level) { return apply(x => { const arr = (x.rack100.sends[key] = x.rack100.sends[key] || []); const e = arr.find(y => y.bus === busId); if (e) e.level = level; else arr.push({ bus: busId, level }); }); }
+  const sendOf = (v, key, busId) => ((v.rack100.sends[key] || []).find(x => x.bus === busId) || {}).level || 0;
   function strips(box) {
     const v = cap(), mix = v.production97.mix || {}, buses = v.rack100.buses; box.replaceChildren();
-    for (const c of channels()) {
-      const m = mix[c.key] || DEF(), s = el('div', { className: 'e-cs-s' + (st.key === c.key ? ' sel' : ''), dataset: { key: c.key } }); s.style.setProperty('--c', c.color);
-      s.onclick = e => { if (e.target.closest('button,input,select,.e-k')) return; st.key = c.key; renderAll(); };
+    if (st.sendBus && !buses.some(b => b.id === st.sendBus)) st.sendBus = null;
+    const sb = st.sendBus && buses.find(b => b.id === st.sendBus);
+    channels().forEach((c, idx) => {
+      const m = mix[c.key] || DEF(), s = el('div', { className: 'e-cs-s' + (st.key === c.key ? ' sel' : '') + (sb ? ' send' : ''), dataset: { key: c.key } }); s.style.setProperty('--c', c.color);
+      s.onclick = e => { if (e.target.closest('button,input,select,.e-k,canvas')) return; st.key = c.key; renderAll(); };
       const th = el('canvas', { className: 'th', title: 'Égaliseur de ' + c.name + ' (clic : le régler en haut)' }); th.onclick = () => { st.key = c.key; st.tab = 'eq'; renderAll(); };
+      const cm = el('canvas', { className: 'cm', title: 'Compresseur / porte de ' + c.name + ' (clic : les régler en haut)' }); cm.onclick = () => { st.key = c.key; st.tab = fxOf(v, c.key, 'gate') && !fxOf(v, c.key, 'comp') ? 'gate' : 'comp'; renderAll(); };
       const ins = el('div', { className: 'ins' }), ch = v.rack100.chains[c.key] || [];
-      for (const e of ch.slice(0, 4)) { const b = el('button', { type: 'button', className: e.on ? '' : 'off', textContent: (R.definitions[e.type] || { name: e.type }).name, title: 'Clic : allumer/éteindre · clic droit : retirer' }); b.onclick = () => apply(x => { const y = chain(x, c.key).find(z => z.id === e.id); if (y) y.on = !y.on; }) && renderAll(); b.oncontextmenu = ev => { ev.preventDefault(); apply(x => { const a = chain(x, c.key); a.splice(a.findIndex(z => z.id === e.id), 1); }) && renderAll(); }; ins.append(b); }
-      if (ch.length > 4) ins.append(el('button', { type: 'button', textContent: '+ ' + (ch.length - 4) + ' autres', onclick: () => { st.key = c.key; S.go('egaliseur'); } }));
+      for (const e of ch.slice(0, 3)) { const b = el('button', { type: 'button', className: e.on ? '' : 'off', textContent: (R.definitions[e.type] || { name: e.type }).name, title: 'Clic : allumer/éteindre · clic droit : retirer' }); b.onclick = () => apply(x => { const y = chain(x, c.key).find(z => z.id === e.id); if (y) y.on = !y.on; }) && renderAll(); b.oncontextmenu = ev => { ev.preventDefault(); apply(x => { const a = chain(x, c.key); a.splice(a.findIndex(z => z.id === e.id), 1); }) && renderAll(); }; ins.append(b); }
+      if (ch.length > 3) ins.append(el('button', { type: 'button', textContent: '+ ' + (ch.length - 3) + ' autres…', onclick: () => { st.key = c.key; S.go('egaliseur'); } }));
       if (ch.length < 8) { const add = el('button', { type: 'button', className: 'add', textContent: '＋ effet' }); add.onclick = () => { const sel = el('select'); sel.append(el('option', { value: '', textContent: 'Ajouter…' }), ...Object.entries(R.definitions).map(([k, d]) => el('option', { value: k, textContent: d.name }))); sel.onchange = () => { if (sel.value) apply(x => { chain(x, c.key).push(R.effect(sel.value, newId(sel.value))); }) && renderAll(); else renderAll(); }; add.replaceWith(sel); sel.focus(); }; ins.append(add); }
-      const solo = el('button', { type: 'button', className: 'so', textContent: 'S', title: 'Solo' }); solo.setAttribute('aria-pressed', String(!!m.solo)); solo.onclick = () => apply(x => { x.production97.mix[c.key] = { ...(x.production97.mix[c.key] || DEF()), solo: !m.solo }; }) && renderAll();
-      const mute = el('button', { type: 'button', className: 'mu', textContent: 'M', title: 'Mute' }); mute.setAttribute('aria-pressed', String(!!m.mute)); mute.onclick = () => apply(x => { x.production97.mix[c.key] = { ...(x.production97.mix[c.key] || DEF()), mute: !m.mute }; }) && renderAll();
-      const kn = el('div', { className: 'kn' });
-      for (const b of buses.slice(0, 2)) { const cur = ((v.rack100.sends[c.key] || []).find(x => x.bus === b.id) || {}).level || 0; kn.append(S.knob({ label: b.name.slice(0, 5), min: 0, max: 100, step: 1, value: cur, def: 0, size: 30, color: c.color, onCommit: val => apply(x => { const arr = (x.rack100.sends[c.key] = x.rack100.sends[c.key] || []); const e = arr.find(y => y.bus === b.id); if (e) e.level = val; else arr.push({ bus: b.id, level: val }); }) })); }
-      kn.append(S.knob({ label: 'Pan', min: -1, max: 1, step: .05, value: m.pan, def: 0, size: 30, fmt: x => x === 0 ? 'C' : (x < 0 ? 'G' : 'D') + Math.round(Math.abs(x) * 100), onCommit: val => apply(x => { x.production97.mix[c.key] = { ...(x.production97.mix[c.key] || DEF()), pan: val }; }) }));
-      const fader = el('input', { type: 'range', className: 'e-fd', min: 0, max: 150, value: m.level, title: 'Volume ' + c.name }); fader.setAttribute('aria-label', 'Volume ' + c.name); fader.onchange = () => apply(x => { x.production97.mix[c.key] = { ...(x.production97.mix[c.key] || DEF()), level: Number(fader.value) }; }) || (fader.value = m.level);
-      const nm = el('div', { className: 'nm', textContent: (ICON[c.key] || '♪') + ' ' + c.name.toLowerCase() });
-      s.append(th, ins, kn, el('div', { className: 'bt' }, solo, mute), el('div', { className: 'fd' }, fader, el('div', { className: 'mt' }, el('i'))), el('div', { className: 'db', textContent: m.level + ' %' }), nm);
-      box.append(s); thumb(th, v, c.key);
-    }
-    for (const b of buses) { const s = el('div', { className: 'e-cs-s bus', dataset: { key: 'bus:' + b.id } }); const f = el('input', { type: 'range', className: 'e-fd', min: 0, max: 150, value: b.level }); f.setAttribute('aria-label', 'Volume ' + b.name); f.onchange = () => apply(x => { const y = x.rack100.buses.find(z => z.id === b.id); if (y) y.level = Number(f.value); }) || (f.value = b.level);
-      const mu = el('button', { type: 'button', className: 'mu', textContent: 'M' }); mu.setAttribute('aria-pressed', String(!!b.mute)); mu.onclick = () => apply(x => { const y = x.rack100.buses.find(z => z.id === b.id); if (y) y.mute = !y.mute; }) && renderAll();
-      s.append(el('div', { className: 'ins' }, ...((v.rack100.chains['bus:' + b.id] || []).map(e => el('button', { type: 'button', textContent: (R.definitions[e.type] || {}).name || e.type })))), el('div', { className: 'bt' }, mu), el('div', { className: 'fd' }, f), el('div', { className: 'db', textContent: b.level + ' %' }), el('div', { className: 'nm', textContent: '⇢ ' + b.name })); box.append(s); }
+      while (ins.children.length < 3) ins.append(el('div', { className: 'sl' }));
+      const snd = el('div', { className: 'snd' });
+      for (const b of buses.slice(0, 3)) snd.append(S.knob({ label: b.name.slice(0, 6), title: 'Départ vers ' + b.name, min: 0, max: 100, step: 1, value: sendOf(v, c.key, b.id), def: 0, size: 26, color: '#ffb347', fmt: x => x + '', onCommit: val => setSend(c.key, b.id, val) && renderAll() }));
+      if (!buses.length) snd.append(el('span', { style: 'font:600 9px Consolas;color:#ffffff55;padding:6px 0', textContent: 'pas de bus' }));
+      const solo = el('button', { type: 'button', className: 'so', textContent: 'Solo', title: 'Solo' }); solo.setAttribute('aria-pressed', String(!!m.solo)); solo.onclick = () => setMix(c.key, { solo: !m.solo }) && renderAll();
+      const mute = el('button', { type: 'button', className: 'mu', textContent: 'Mute', title: 'Mute' }); mute.setAttribute('aria-pressed', String(!!m.mute)); mute.onclick = () => setMix(c.key, { mute: !m.mute }) && renderAll();
+      const pan = el('input', { type: 'range', className: 'pn', min: -1, max: 1, step: .05, value: m.pan, title: 'Panoramique (double-clic : centre)' }); pan.setAttribute('aria-label', 'Panoramique ' + c.name);
+      pan.onchange = () => setMix(c.key, { pan: Number(pan.value) }) && renderAll(); pan.ondblclick = () => setMix(c.key, { pan: 0 }) && renderAll();
+      const panTxt = m.pan === 0 ? 'C' : (m.pan < 0 ? 'G' : 'D') + Math.round(Math.abs(m.pan) * 100);
+      let fader, read;
+      if (sb) { const cur = sendOf(v, c.key, sb.id); fader = el('input', { type: 'range', className: 'e-fd', min: 0, max: 100, value: cur, title: 'Départ de ' + c.name + ' vers ' + sb.name }); fader.setAttribute('aria-label', 'Départ ' + c.name + ' vers ' + sb.name); fader.onchange = () => (setSend(c.key, sb.id, Number(fader.value)) && renderAll()) || (fader.value = cur); read = 'départ ' + cur + ' %'; }
+      else { fader = el('input', { type: 'range', className: 'e-fd', min: 0, max: 150, value: m.level, title: 'Volume ' + c.name }); fader.setAttribute('aria-label', 'Volume ' + c.name); fader.onchange = () => setMix(c.key, { level: Number(fader.value) }) || (fader.value = m.level); read = dbOf(m.level) + ' dB · ' + m.level + ' %'; }
+      const nm = el('div', { className: 'nm', textContent: c.name.toLowerCase() });
+      s.append(el('div', { className: 'hd' }, el('span', { textContent: String(idx + 1).padStart(2, '0') }), el('span', { textContent: panTxt })), th, cm, ins, snd, el('div', { className: 'bt' }, solo, mute), pan,
+        el('div', { className: 'fd' }, scale(sb ? 100 : 150, !!sb), fader, el('div', { className: 'mt' }, el('i'))), el('div', { className: 'db', textContent: read }), icon(c.key), nm);
+      box.append(s); thumb(th, v, c.key); compThumb(cm, v, c.key);
+    });
+    buses.forEach((b, i) => { const s = el('div', { className: 'e-cs-s bus', dataset: { key: 'bus:' + b.id } }); const f = el('input', { type: 'range', className: 'e-fd', min: 0, max: 150, value: b.level }); f.setAttribute('aria-label', 'Volume ' + b.name); f.onchange = () => apply(x => { const y = x.rack100.buses.find(z => z.id === b.id); if (y) y.level = Number(f.value); }) || (f.value = b.level);
+      const mu = el('button', { type: 'button', className: 'mu', textContent: 'Mute' }); mu.setAttribute('aria-pressed', String(!!b.mute)); mu.onclick = () => apply(x => { const y = x.rack100.buses.find(z => z.id === b.id); if (y) y.mute = !y.mute; }) && renderAll();
+      const sel = el('button', { type: 'button', className: 'so', textContent: 'Départs', title: 'Les faders des pistes règlent les départs vers ce bus' }); sel.setAttribute('aria-pressed', String(st.sendBus === b.id)); sel.onclick = () => { st.sendBus = st.sendBus === b.id ? null : b.id; renderAll(); };
+      const ins = el('div', { className: 'ins' }, ...((v.rack100.chains['bus:' + b.id] || []).slice(0, 3).map(e => el('button', { type: 'button', className: e.on ? '' : 'off', textContent: (R.definitions[e.type] || {}).name || e.type, onclick: () => apply(x => { const y = chain(x, 'bus:' + b.id).find(z => z.id === e.id); if (y) y.on = !y.on; }) && renderAll() })))); while (ins.children.length < 4) ins.append(el('div', { className: 'sl' }));
+      s.append(el('div', { className: 'hd' }, el('span', { textContent: 'BUS ' + (i + 1) }), el('span', { textContent: '' })), ins, el('div', { className: 'bt' }, sel, mu), el('div', { className: 'fd' }, scale(150, false), f, el('div', { className: 'mt' }, el('i'))), el('div', { className: 'db', textContent: dbOf(b.level) + ' dB' }), icon('bus:x'), el('div', { className: 'nm', textContent: b.name })); box.append(s); });
     const mv = document.getElementById('master'), ms = el('div', { className: 'e-cs-s master', dataset: { key: 'master' } }); ms.style.setProperty('--c', '#e3313d');
     const mf = el('input', { type: 'range', className: 'e-fd red', min: mv ? mv.min : 0, max: mv ? mv.max : 100, value: mv ? mv.value : 70 }); mf.setAttribute('aria-label', 'Volume master'); mf.oninput = () => { mv.value = mf.value; mv.dispatchEvent(new Event('input', { bubbles: true })); mv.dispatchEvent(new Event('change', { bubbles: true })); ms.querySelector('.db').textContent = mf.value + ' %'; };
-    const lim = window.JACK22_PACKS ? JACK22_PACKS.limit : null, lb = el('button', { type: 'button', className: 'so', textContent: 'Limiteur' }); lb.setAttribute('aria-pressed', String(!!(lim && lim.on))); lb.onclick = () => { JACK22_PACKS.setLimit({ ...JACK22_PACKS.limit, on: !JACK22_PACKS.limit.on }); renderAll(); };
-    ms.append(el('b', { style: 'font:800 14px Segoe UI', textContent: 'MASTER' }), el('div', { className: 'ins' }, el('button', { type: 'button', textContent: 'EQ master (3 bandes)', onclick: () => S.go('classique') }), el('button', { type: 'button', textContent: 'Compresseur master', onclick: () => S.go('mastering') })), el('div', { className: 'bt' }, lb), el('div', { className: 'fd' }, mf, el('div', { className: 'mt' }, el('i')), el('div', { className: 'mt' }, el('i'))), el('div', { className: 'db', textContent: (mv ? mv.value : 70) + ' %' }), el('div', { className: 'nm', style: 'color:#fff', textContent: 'MASTER' }));
+    const lim = window.JACK22_PACKS ? JACK22_PACKS.limit : null, lb = el('button', { type: 'button', className: 'so', textContent: 'Limiteur' }); lb.setAttribute('aria-pressed', String(!!(lim && lim.on))); lb.onclick = () => { toggleLim(); renderAll(); };
+    const lb2 = el('button', { type: 'button', textContent: 'Réglages…', onclick: () => { st.tab = 'lim'; renderAll(); } });
+    ms.append(el('div', { className: 'hd' }, el('span', { textContent: 'MAIN' }), el('span', { textContent: 'L R' })), el('div', { className: 'ins' }, el('button', { type: 'button', textContent: 'EQ master (3 bandes)', onclick: () => S.go('classique') }), el('button', { type: 'button', textContent: 'Compresseur master', onclick: () => S.go('mastering') }), el('div', { className: 'sl' }), el('div', { className: 'sl' })), el('div', { className: 'bt' }, lb, lb2), el('div', { className: 'fd' }, scale(Number(mv ? mv.max : 100), true), mf, el('div', { className: 'mt' }, el('i')), el('div', { className: 'mt' }, el('i'))), el('div', { className: 'db', textContent: (mv ? mv.value : 70) + ' %' }), icon('master'), el('div', { className: 'nm', style: 'color:#fff', textContent: 'MASTER' }));
     box.append(ms);
   }
+  function toggleLim() { if (!window.JACK22_PACKS) return; S.remember(); JACK22_PACKS.setLimit({ ...JACK22_PACKS.limit, on: !JACK22_PACKS.limit.on }); S.remember(); }
+  function limKnobs(size) { const L = window.JACK22_PACKS ? JACK22_PACKS.limit : { ceiling: -1, drive: 0 }, set = patch => { S.remember(); JACK22_PACKS.setLimit({ ...JACK22_PACKS.limit, ...patch }); S.remember(); renderAll(); };
+    return [S.knob({ label: 'Plafond', min: -12, max: 0, step: .5, value: L.ceiling, def: -1, size, fmt: v => v + ' dB', onCommit: v => set({ ceiling: v }) }), S.knob({ label: 'Gain', min: 0, max: 12, step: .5, value: L.drive, def: 0, size, fmt: v => '+' + v + ' dB', onCommit: v => set({ drive: v }) })]; }
+  const powered = t => t === 'lim' ? !!(window.JACK22_PACKS && JACK22_PACKS.limit.on) : !!(fxOf(cap(), st.key, { gate: 'gate', eq: 'peq', comp: 'comp' }[t]) || {}).on;
+  function power(t) { if (t === 'lim') { toggleLim(); return renderAll(); } const type = { gate: 'gate', eq: 'peq', comp: 'comp' }[t], e = fxOf(cap(), st.key, type); (e ? setFx(type, x => { x.on = !x.on; }) : setFx(type, () => {})) && renderAll(); }
   function renderTop() {
-    const r = document.querySelector('[data-space=mixage]'); if (!r || !r.querySelector('.e-cs-top')) return; const top = r.querySelector('.e-cs-top'), c = channels().find(x => x.key === st.key) || channels()[0]; st.key = c.key;
-    top.querySelectorAll('h4 [data-tab]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tab === st.tab)));
-    top.querySelector('h4 .t').textContent = 'TRANCHE CHOISIE · ' + c.name.toUpperCase();
-    const who = top.querySelector('.who'); who.style.setProperty('--c', c.color); who.replaceChildren(el('b', { textContent: c.name }), el('i'), el('span', { style: 'color:var(--e-soft);font-size:11px', textContent: { eq: 'Égaliseur 5 bandes : tire les points de la courbe.', comp: 'Compresseur de la piste (rack).', gate: 'Porte de bruit : coupe le souffle entre les phrases.' }[st.tab] }), fxBtn({ eq: 'peq', comp: 'comp', gate: 'gate' }[st.tab]));
-    const cp = top.querySelector('.cp'), k = el('div', { className: 'k' });
-    if (st.tab === 'eq') { k.append(...bandKnobs(st.band, 40)); cp.replaceChildren(el('b', { textContent: 'Bande ' + (st.band + 1) + ' · ' + BANDS[st.band][3] }), k, el('div', { style: 'display:flex;gap:4px;flex-wrap:wrap' }, ...BANDS.map((b, i) => { const x = el('button', { type: 'button', className: 'e-btn' + (i === st.band ? ' red' : ''), textContent: b[3] }); x.onclick = () => { st.band = i; renderTop(); }; return x; }))); }
-    if (st.tab === 'comp') { k.append(...compKnobs(40)); cp.replaceChildren(el('b', { textContent: 'Compresseur' }), k); }
-    if (st.tab === 'gate') { k.append(...gateKnobs(40)); cp.replaceChildren(el('b', { textContent: 'Porte de bruit' }), k); }
+    const r = document.querySelector('[data-space=mixage]'); if (!r || !r.querySelector('.e-cs-top')) return; const top = r.querySelector('.e-cs-top'), L = channels(), c = L.find(x => x.key === st.key) || L[0]; st.key = c.key; const v = cap();
+    top.querySelectorAll('.e-cs-tabs [data-tab]').forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.tab === st.tab)); b.querySelector('.pw').classList.toggle('on', powered(b.dataset.tab)); });
+    // colonne de gauche : la piste choisie, son gain d'entrée, ses départs (assignation rapide aux bus)
+    const who = top.querySelector('.e-cs-who'); who.style.setProperty('--c', c.color);
+    const prev = el('button', { type: 'button', textContent: '◀', title: 'Piste précédente' }), next = el('button', { type: 'button', textContent: '▶', title: 'Piste suivante' }), i = L.indexOf(c);
+    prev.onclick = () => { st.key = L[(i + L.length - 1) % L.length].key; renderAll(); }; next.onclick = () => { st.key = L[(i + 1) % L.length].key; renderAll(); };
+    const gn = fxOf(v, st.key, 'gain'), gk = S.knob({ label: 'Gain', title: 'Gain d\'entrée (effet « Gain » placé en tête du rack)', min: -24, max: 12, step: .5, value: gn ? gn.params.db : 0, def: 0, size: 34, color: c.color, fmt: x => (x > 0 ? '+' : '') + x + ' dB', onCommit: x => setFx('gain', e => { e.params.db = x; }) && renderAll() });
+    const asg = el('div', { className: 'asg' }); for (const b of v.rack100.buses) { const lv = sendOf(v, st.key, b.id), x = el('button', { type: 'button', textContent: b.name.slice(0, 8), title: 'Départ de ' + c.name + ' vers ' + b.name + ' (clic : 0 ↔ 30 %)' }); x.setAttribute('aria-pressed', String(lv > 0)); x.onclick = () => setSend(st.key, b.id, lv > 0 ? 0 : 30) && renderAll(); asg.append(x); }
+    if (!v.rack100.buses.length) asg.append(el('span', { style: 'color:var(--e-dim);font-size:10.5px', textContent: 'Aucun bus : crée-en un à droite (Réverb, Delay).' }));
+    who.replaceChildren(el('div', { className: 'nr' }, icon(c.key), el('b', { textContent: c.name }), prev, next), el('div', { className: 'bar' }), el('div', { className: 'rw' }, gk, el('div', { style: 'display:flex;flex-direction:column;gap:4px;min-width:0;flex:1' }, el('span', { className: 'lb', textContent: 'DÉPARTS' }), asg)), el('span', { style: 'font-size:10.5px;color:var(--e-soft)', textContent: 'Volume ' + dbOf(((v.production97.mix || {})[st.key] || DEF()).level) + ' dB · rack ' + (v.rack100.chains[st.key] || []).length + '/8 effets' }));
+    // boutons rotatifs de la bande choisie, à gauche de la courbe (maquette 9)
+    top.querySelector('.e-cs-bk').replaceChildren(...bandKnobs(st.band, 38));
+    top.querySelector('.e-cs-bands').querySelectorAll('button').forEach((b, k) => b.classList.toggle('on', k === st.band));
+    top.querySelector('.e-cs-vw [data-v=rta]').setAttribute('aria-pressed', String(st.rta));
+    // panneau de droite : compresseur (par défaut), porte de bruit ou limiteur du master
+    const cp = top.querySelector('.e-cs-cp'), k = el('div', { className: 'k' }), t = st.tab === 'eq' ? 'comp' : st.tab;
+    const big = () => { const b = el('button', { type: 'button', className: 'e-btn', textContent: '⤢ En grand', title: 'Ouvrir en grand (page 07 Égaliseur)' }); b.onclick = () => S.go('egaliseur'); return b; };
+    if (t === 'comp') { k.append(...compKnobs(34)); cp.replaceChildren(el('div', { className: 'hd' }, el('b', { textContent: 'Compresseur' }), fxBtn('comp'), big()), el('div', { className: 'bd' }, k, el('canvas', { className: 'mc', 'aria-label': 'Courbe du compresseur' }))); }
+    if (t === 'gate') { k.append(...gateKnobs(38)); cp.replaceChildren(el('div', { className: 'hd' }, el('b', { textContent: 'Porte de bruit' }), fxBtn('gate'), big()), el('div', { className: 'bd' }, k), el('p', { textContent: 'En dessous du seuil, le son est baissé de la valeur « Fermeture » : souffle et bruit de pièce entre les phrases disparaissent.' })); }
+    if (t === 'lim') { k.append(...limKnobs(38)); const L2 = window.JACK22_PACKS ? JACK22_PACKS.limit : {}, b = el('button', { type: 'button', className: 'e-btn' + (L2.on ? ' red' : ''), textContent: L2.on ? '⏻ Actif' : '⏻ Éteint' }); b.onclick = () => { toggleLim(); renderAll(); }; cp.replaceChildren(el('div', { className: 'hd' }, el('b', { textContent: 'Limiteur (master)' }), b), el('div', { className: 'bd' }, k), el('p', { textContent: 'Sur toute la sortie : le son ne dépasse jamais le plafond. « Gain » pousse le niveau avant le limiteur.' })); }
   }
+  // ---------- panneau de droite : mix principal / mix des départs, bus, mémoires de mix ----------
+  function renderSide() {
+    const r = document.querySelector('[data-space=mixage]'), side = r && r.querySelector('.e-cs-side'); if (!side) return; const v = cap(), buses = v.rack100.buses;
+    const mx = side.querySelector('.mx .e-body'), main = el('button', { type: 'button', className: 'e-cs-mixb', textContent: '▦ Mix principal' }); main.setAttribute('aria-pressed', String(!st.sendBus)); main.onclick = () => { st.sendBus = null; renderAll(); };
+    mx.replaceChildren(main, ...buses.map(b => { const x = el('button', { type: 'button', className: 'e-cs-mixb', title: 'Les faders des pistes règlent les départs vers ' + b.name }, el('span', { textContent: '⇢ ' + b.name }), ...(b.mute ? [el('span', { className: 'mu', textContent: 'M' })] : []), el('span', { className: 'lv' }, el('i', { style: 'width:' + Math.min(100, b.level / 1.5) + '%' }))); x.setAttribute('aria-pressed', String(st.sendBus === b.id)); x.onclick = () => { st.sendBus = st.sendBus === b.id ? null : b.id; renderAll(); }; return x; }),
+      el('p', { className: 'hint', textContent: st.sendBus ? 'Mode départs : les faders (orange) règlent ce que chaque piste envoie vers ce bus.' : 'Choisis un bus : les faders des pistes règlent alors leurs départs vers lui.' }));
+    const nb = side.querySelector('.nb .e-body'), mk = (type, label) => el('button', { type: 'button', className: 'e-btn', textContent: '＋ ' + label, onclick: () => apply(x => { if (x.rack100.buses.length >= 8) throw Error('Huit bus maximum.'); const id = 'bus' + Date.now().toString(36); x.rack100.buses.push({ id, name: label + ' ' + (x.rack100.buses.filter(b => b.name.startsWith(label)).length + 1), level: 100, pan: 0, mute: false }); x.rack100.chains['bus:' + id] = [R.effect(type, newId(type))]; }) && renderAll() });
+    nb.replaceChildren(el('div', { className: 'row2' }, mk('reverb', 'Réverb'), mk('delay', 'Delay')), el('p', { className: 'hint', textContent: buses.length + ' / 8 bus · pour retirer un bus : Racks complets…' }));
+    const sc = side.querySelector('.sc .e-body'), grid = el('div', { className: 'e-cs-scn' });
+    for (const k of ['A', 'B', 'C', 'D']) { const has = !!scenes.data.scenes[k], b = el('button', { type: 'button', className: (has ? 'has' : '') + (st.scene === k ? ' cur' : ''), textContent: k, title: st.store ? 'Mémoriser le mix actuel en ' + k : has ? 'Rappeler la mémoire ' + k : 'Mémoire ' + k + ' vide' }); b.onclick = () => st.store ? saveScene(k) : recallScene(k); grid.append(b); }
+    const sv = el('button', { type: 'button', className: 'e-btn' + (st.store ? ' red' : ''), textContent: st.store ? 'Choisis A, B, C ou D…' : 'Mémoriser le mix' }); sv.onclick = () => { st.store = !st.store; renderSide(); };
+    sc.replaceChildren(grid, sv, el('p', { className: 'hint', textContent: 'Une mémoire garde volumes, panoramiques, Solo/Mute, départs et bus. Rappel annulable (Ctrl+Z).' }));
+  }
+  function saveScene(k) { const v = cap(); scenes.commit(d => { d.scenes[k] = { mix: clone(v.production97.mix || {}), sends: clone(v.rack100.sends || {}), buses: v.rack100.buses.map(b => ({ id: b.id, level: b.level, pan: b.pan, mute: !!b.mute })) }; }, 'mémoire de mix ' + k); st.store = false; st.scene = k; S.toast('Mix mémorisé en ' + k + '.'); renderAll(); }
+  function recallScene(k) { const s = scenes.data.scenes[k]; if (!s) { S.toast('Mémoire ' + k + ' vide : clique « Mémoriser le mix » puis ' + k + '.'); return; }
+    if (apply(x => { const ids = new Set(x.rack100.buses.map(b => b.id)); x.production97.mix = clone(s.mix); x.rack100.sends = Object.fromEntries(Object.entries(clone(s.sends)).map(([key, arr]) => [key, (arr || []).filter(e => ids.has(e.bus))])); for (const b of s.buses) { const y = x.rack100.buses.find(z => z.id === b.id); if (y) Object.assign(y, { level: b.level, pan: b.pan, mute: b.mute }); } })) { st.scene = k; S.toast('Mémoire ' + k + ' rappelée.'); renderAll(); } }
   // ---------- espace ÉGALISEUR ----------
   function renderEq() {
     const r = document.querySelector('[data-space=egaliseur]'); if (!r || !r.querySelector('[data-k=ch]')) return; const sel = r.querySelector('[data-k=ch]'); sel.replaceChildren(...channels().map(c => el('option', { value: c.key, textContent: c.name }))); sel.value = st.key;
     const bb = r.querySelector('.e-eq-bands .e-body'); bb.replaceChildren(...BANDS.map((b, i) => { const d = el('div', { className: 'e-eq-band' + (i === st.band ? ' sel' : '') }, el('b', { textContent: (i + 1) + ' · ' + b[3] }), el('div', { className: 'k' }, ...bandKnobs(i, 44))); d.style.setProperty('--c', b[4]); d.onclick = e => { if (e.target.closest('.e-k')) return; st.band = i; renderEq(); }; return d; }));
-    const cb = r.querySelector('.e-eq-comp .e-body'); cb.replaceChildren(el('canvas', { className: 'tc' }), fxBtn('comp'), el('div', { className: 'k' }, ...compKnobs(40)), el('div', { style: 'font:700 10px Consolas;letter-spacing:.2em;color:var(--e-soft)', textContent: 'RÉDUCTION DE GAIN (MASTER)' }), el('div', { className: 'e-eq-gr' }, el('i')));
+    const cb = r.querySelector('.e-eq-comp .e-body'); cb.replaceChildren(el('div', { className: 'top' }, fxBtn('comp'), el('div', { className: 'grw' }, el('span', { textContent: 'RÉDUCTION (MASTER)' }), el('div', { className: 'e-eq-gr' }, el('i')))), el('div', { className: 'k5' }, ...compKnobs(38)), el('canvas', { className: 'tc' }));
     const gb = r.querySelector('.e-eq-gate .e-body'); gb.replaceChildren(fxBtn('gate'), el('div', { className: 'k' }, ...gateKnobs(40)), el('p', { style: 'margin:0;color:var(--e-soft);font-size:11px', textContent: 'En dessous du seuil, le son est baissé de la valeur « Fermeture » (souffle, bruit de pièce entre les phrases).' }));
     r.querySelector('.e-eq-big h4 [data-a=onoff]').textContent = (fxOf(cap(), st.key, 'peq') || {}).on === false ? '⏻ Égaliseur éteint' : '⏻ Égaliseur';
   }
@@ -13167,20 +13315,26 @@ html.j8ShellOn #j8Shell{display:grid}
     const X = db => (db + 60) / 60 * w, Y = db => h - (db + 60) / 60 * h; g.strokeStyle = '#33333d'; g.beginPath(); g.moveTo(0, h); g.lineTo(w, 0); g.stroke();
     g.strokeStyle = c && c.on ? '#ff4b55' : '#6a3a40'; g.lineWidth = 3; g.beginPath(); for (let i = -60; i <= 0; i++) { const o = (i <= p.threshold ? i : p.threshold + (i - p.threshold) / p.ratio) + p.makeup; i === -60 ? g.moveTo(X(i), Y(o)) : g.lineTo(X(i), Y(Math.min(0, o))); } g.stroke(); g.lineWidth = 1;
     g.fillStyle = '#ffb347'; g.beginPath(); g.arc(X(p.threshold), Y(p.threshold + p.makeup), 6, 0, 7); g.fill(); g.fillStyle = '#9a9aa6'; g.font = '10px Consolas'; g.fillText('entrée →', w - 60, h - 6); g.fillText('seuil ' + p.threshold + ' dB · ' + p.ratio + ':1', 6, 14); }
-  function renderAll() { renderStrips(); renderTop(); renderEq(); st.sig = sig(); }
+  function renderAll() { renderStrips(); renderTop(); renderSide(); renderEq(); st.sig = sig(); }
   function renderStrips() { const r = document.querySelector('[data-space=mixage]'), b = r && r.querySelector('.e-cs-strips'); if (b) strips(b); }
-  const sig = () => JSON.stringify([channels().map(c => c.key + c.name + c.color), cap().production97.mix, cap().rack100, st.key, st.tab, st.band, window.JACK22_PACKS && JACK22_PACKS.limit, document.getElementById('master') && document.getElementById('master').value]);
+  const sig = () => JSON.stringify([channels().map(c => c.key + c.name + c.color), cap().production97.mix, cap().rack100, st.key, st.tab, st.band, st.sendBus, st.rta, st.store, st.scene, scenes.data, window.JACK22_PACKS && JACK22_PACKS.limit, document.getElementById('master') && document.getElementById('master').value]);
   function meters(root) {
     let rows = []; try { rows = window.JACK22_MIXER8 ? JACK22_MIXER8.readAll() : []; } catch (e) {} const pos = db => S.clamp((db + 60) / 63 * 100, 0, 100);
     for (const s of root.querySelectorAll('.e-cs-s')) { const k = s.dataset.key, bars = s.querySelectorAll('.mt i'), x = rows.find(y => y.key === k); bars.forEach(b => b.style.height = (x && Number.isFinite(x.crete_dB) ? pos(x.crete_dB) : 0) + '%'); }
   }
   S.register('mixage', { label: 'Console', order: 6,
-    build(root) { const top = el('div', { className: 'e-pane e-cs-top' }), sb = el('div', { className: 'e-cs-strips' });
-      top.innerHTML = '<h4><span class="t">TRANCHE CHOISIE</span><span class="r"><button type="button" data-tab="gate">⏻ Porte</button><button type="button" data-tab="eq">⏻ Égaliseur</button><button type="button" data-tab="comp">⏻ Compresseur</button><button type="button" data-a="big">Égaliseur en grand →</button><button type="button" data-a="racks">Racks complets…</button></span></h4><div class="e-body"><div class="who"></div><canvas aria-label="Égaliseur de la tranche"></canvas><div class="cp"></div></div>';
-      root.append(top, sb); st.cvTop = top.querySelector('canvas'); bindEq(st.cvTop);
-      top.querySelector('h4').onclick = e => { const t = e.target.dataset.tab, a = e.target.dataset.a; if (t) { st.tab = t; renderTop(); } if (a === 'big') S.go('egaliseur'); if (a === 'racks') { S.go('classique'); try { window.JACK22_RACKS.open(); } catch (x) {} } };
+    build(root) { const top = el('div', { className: 'e-pane e-cs-top' }), sb = el('div', { className: 'e-cs-strips' }), side = el('div', { className: 'e-cs-side' });
+      const tab = (t, l) => '<button type="button" class="tb" data-tab="' + t + '"><span class="pw" data-pw="' + t + '" title="Allumer / éteindre">⏻</span>' + l + '</button>';
+      top.innerHTML = '<h4><span class="e-cs-tabs">' + tab('gate', 'Porte') + tab('eq', 'Égaliseur') + '<span class="sw">⇄</span>' + tab('comp', 'Compresseur') + tab('lim', 'Limiteur') + '</span><span class="r"><button type="button" data-a="big">Égaliseur en grand →</button><button type="button" data-a="racks">Racks complets…</button></span></h4>'
+        + '<div class="e-body"><div class="e-cs-who"></div><div class="e-cs-bk"></div><canvas class="eqc" aria-label="Égaliseur de la tranche"></canvas><div class="e-cs-bands"></div><div class="e-cs-vw"><button type="button" data-v="rta" title="Spectre en direct sous la courbe">Spectre</button><button type="button" data-v="flat" title="Remettre l\'égaliseur à plat">À plat</button><button type="button" data-v="big" title="Égaliseur en grand">Grand</button><div class="gr" title="Réduction de gain du compresseur master"><i></i></div></div><div class="e-cs-cp"></div></div>';
+      const bands = top.querySelector('.e-cs-bands'); BANDS.forEach((b, i) => { const x = el('button', { type: 'button' }, el('i'), el('span', { textContent: b[3] })); x.style.setProperty('--c', b[4]); x.onclick = () => { st.band = i; renderTop(); }; bands.append(x); });
+      side.innerHTML = '<div class="e-pane mx"><h4>MIX</h4><div class="e-body"></div></div><div class="e-pane nb"><h4>NOUVEAU BUS</h4><div class="e-body"></div></div><div class="e-pane sc"><h4>MÉMOIRES DE MIX</h4><div class="e-body"></div></div>';
+      root.append(top, sb, side); st.cvTop = top.querySelector('canvas.eqc'); bindEq(st.cvTop);
+      top.querySelector('h4').onclick = e => { const pw = e.target.closest('[data-pw]'), tb = e.target.closest('[data-tab]'), a = e.target.dataset.a; if (pw) { st.tab = pw.dataset.pw; power(pw.dataset.pw); return; } if (tb) { st.tab = tb.dataset.tab; renderTop(); } if (a === 'big') S.go('egaliseur'); if (a === 'racks') { S.go('classique'); try { window.JACK22_RACKS.open(); } catch (x) {} } };
+      top.querySelector('.e-cs-vw').onclick = e => { const a = e.target.dataset.v; if (a === 'rta') { st.rta = !st.rta; renderTop(); } if (a === 'flat') setFx('peq', x => { x.params = PEQ(); }) && renderAll(); if (a === 'big') S.go('egaliseur'); };
       renderAll(); },
-    show() { renderAll(); }, tick() { const r = document.querySelector('[data-space=mixage]'); if (!r) return; if (st.cvTop) eqDraw(st.cvTop, false); if (sig() !== st.sig && !st.drag) renderAll(); meters(r); } });
+    show() { renderAll(); }, tick() { const r = document.querySelector('[data-space=mixage]'); if (!r) return; if (st.cvTop) eqDraw(st.cvTop, false, st.rta); const mc = r.querySelector('canvas.mc'); if (mc) tcDraw(mc); if (sig() !== st.sig && !st.drag) renderAll(); meters(r);
+      const gr = window.JACK22_MASTER_PRO ? JACK22_MASTER_PRO.gainReduction() : null, gi = r.querySelector('.e-cs-vw .gr i'); if (gi) gi.style.height = (gr && gr.compresseur_dB ? S.clamp(-gr.compresseur_dB / 20 * 100, 0, 100) : 0) + '%'; } });
   S.register('egaliseur', { label: 'Égaliseur', order: 7,
     build(root) { const big = el('div', { className: 'e-pane e-eq-big' }), bands = el('div', { className: 'e-pane e-eq-bands' }), side = el('div', { className: 'e-eq-side' });
       big.innerHTML = '<h4>ÉGALISEUR<span class="r"><button type="button" data-a="prev">◀</button><select data-k="ch" aria-label="Piste"></select><button type="button" data-a="next">▶</button><button type="button" data-a="onoff">⏻ Égaliseur</button><button type="button" data-a="flat">Remettre à plat</button></span></h4><div class="e-body" style="overflow:hidden"><canvas aria-label="Égaliseur en grand"></canvas></div>';
@@ -13195,7 +13349,7 @@ html.j8ShellOn #j8Shell{display:grid}
       renderAll(); },
     show() { renderAll(); }, tick() { const r = document.querySelector('[data-space=egaliseur]'); if (!r) return; if (st.cvBig) eqDraw(st.cvBig, true); const tc = r.querySelector('canvas.tc'); if (tc) tcDraw(tc); if (sig() !== st.sig && !st.drag) renderAll();
       const gr = window.JACK22_MASTER_PRO ? JACK22_MASTER_PRO.gainReduction() : null, i = r.querySelector('.e-eq-gr i'); if (i) i.style.width = (gr && gr.compresseur_dB ? S.clamp(-gr.compresseur_dB / 20 * 100, 0, 100) : 0) + '%'; } });
-  S.mixage = { st, render: renderAll, apply };
+  S.mixage = { st, render: renderAll, apply, scenes, saveScene, recallScene };
 })();
 </script>
 <!-- ===== bloc n14-espace-voix.html ===== -->
