@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="jack22-build" content="JACK22-STUDIO-9.1"><!-- Jack World : évite d'afficher l'ancien habillage pendant que la page se charge (la page reste cachée sur fond sombre jusqu'à la fin de la lecture). Sans JavaScript, rien ne change. -->
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="jack22-build" content="JACK22-STUDIO-9.2"><!-- Jack World : évite d'afficher l'ancien habillage pendant que la page se charge (la page reste cachée sur fond sombre jusqu'à la fin de la lecture). Sans JavaScript, rien ne change. -->
 <style id="jw-anti-flash">html{background:#0f1012}html.jw-chargement body,html.jw-chargement body #storeWarn{visibility:hidden!important}html.jw-chargement::after{content:"";position:fixed;inset:0;z-index:2147483647;background:#0f1012}</style>
 <script>/* Jack World : beaucoup de modules du studio posent leurs boutons au premier tour d'une minuterie (setInterval).
    On note ces minuteries pendant le chargement et on les fait tourner une fois juste avant d'afficher la page :
@@ -3614,7 +3614,7 @@ for(const b of document.querySelectorAll('[data-sample-note]'))b.onclick=()=>sam
 $8('v8SavePreset').onclick=()=>{try{const c=audioClips.find(c=>c.voice?.slot===Number($('l3Slot').value));if(!c)return message('Sélectionne une voix enregistrée.');const next=copy(state8);next.presets.push({name:$8('v8PresetName').value.trim(),settings:window.Jack22Lot3.settings(c)});state8=parse(next);syncPresets();later();message('Preset voix enregistré dans le projet.');}catch(e){message(e.message);}};
 function syncPresets(){const box=$8('v8Presets');box.replaceChildren();for(const p of state8.presets){const b=document.createElement('button');b.textContent=p.name;b.onclick=()=>{const c=audioClips.find(c=>c.voice?.slot===Number($('l3Slot').value));if(!c)return message('Choisis une voix dans les effets.');if(persistBusy||window.Jack22Voice.state.active)return;const checked=D.validate(p.settings);if(checked.edit.start+checked.edit.end>=c.duration-.05)return message('Ce preset découperait toute la prise : choisis une prise plus longue ou un autre preset.');c.voice.processing=checked;audioKill(c);window.Jack22Lot3.sync();window.Jack22Lot3.schedule();later();};box.append(b);}}
 function sync(){$8('v8Swing').value=state8.swing;$8('v8SwingValue').textContent=state8.swing+' %';$8('v8AutoOn').checked=state8.automation.on;$8('v8Curve').value=state8.automation.points.map(p=>p.bar+', '+p.level).join('\n');$8('v8LoopStatus').textContent=state8.loop.on?'Zone en boucle : mesures '+state8.loop.start+' à '+(state8.loop.end-1):'Boucle de zone arrêtée';syncSections();syncPresets();samplerOptions();syncHistory();}
-function diagnostics(){return {build:'JACK22-STUDIO-9.1',time:new Date().toISOString(),available:{microAPI:!!navigator.mediaDevices?.getUserMedia,audioWorklet:typeof AudioWorkletNode!=='undefined',offlineRenderer:typeof OfflineAudioContext!=='undefined',storage:typeof indexedDB!=='undefined'},state:{clips:audioClips.length,voices:audioClips.filter(c=>c.voice).length,sourceSeconds:audioClips.reduce((n,c)=>n+c.duration,0),prepared:window.l3Ready(),dirty:ProjectPersistence.isDirty()},validation:{realBrowserTests:false,meaning:'Capacités détectées et état courant, pas une certification de fonctionnement.'}};}
+function diagnostics(){return {build:'JACK22-STUDIO-9.2',time:new Date().toISOString(),available:{microAPI:!!navigator.mediaDevices?.getUserMedia,audioWorklet:typeof AudioWorkletNode!=='undefined',offlineRenderer:typeof OfflineAudioContext!=='undefined',storage:typeof indexedDB!=='undefined'},state:{clips:audioClips.length,voices:audioClips.filter(c=>c.voice).length,sourceSeconds:audioClips.reduce((n,c)=>n+c.duration,0),prepared:window.l3Ready(),dirty:ProjectPersistence.isDirty()},validation:{realBrowserTests:false,meaning:'Capacités détectées et état courant, pas une certification de fonctionnement.'}};}
 function download(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),30000);}
 $8('v8Check').onclick=()=>{$8('v8Diag').textContent=JSON.stringify(diagnostics(),null,2);};
 $8('v8DownloadDiag').onclick=()=>download(new Blob([JSON.stringify(diagnostics(),null,2)],{type:'application/json'}),'JACK22-diagnostic.json');
@@ -12395,7 +12395,33 @@ html.j8ShellOn #j8Shell{display:grid}
         const l = lastH.get(m), lit = [...cur.entries()].filter(([k]) => k !== m && on.has(k)).map(([, c]) => c.h); let hh = 0, t = 0; do { hh = Math.floor(Math.random() * 360); t++; } while (t < 80 && ((l != null && hd(hh, l) < 60) || hd(hh, prevH) < 40 || lit.some(x => hd(hh, x) < 45)));
         lastH.set(m, hh); prevH = hh; const col = 'hsl(' + hh + ',90%,60%)'; cur.set(m, { tok, col, h: hh }); out.set(m, col); }
       for (const m of [...cur.keys()]) if (!out.has(m)) cur.delete(m); return out; }; };
-  const api = { version: '9.1-espaces', register, go: origGo, knob, el, toast, clamp, trackColor, canvasFit, remember, position, soundColor, pitchColor, keyLights, SOUND_COL, get current() { return current; }, spaces };
+  // 9.2 — clavier de l'ordinateur branché sur le clavier d'un espace, comme en 7.9 : mêmes touches physiques (A W S E D F T G Y H U J K O L P ;
+  // en QWERTY = Q Z S E D F T G Y H U J K O L P M en AZERTY), ▲ ▼ = octave. La note tient tant que la touche est appuyée ; elle passe par
+  // noteOn/noteOff d'origine (même moteur, même enregistreur), avec le son et l'octave de l'espace.
+  const PCK = { KeyA: 0, KeyW: 1, KeyS: 2, KeyE: 3, KeyD: 4, KeyF: 5, KeyT: 6, KeyG: 7, KeyY: 8, KeyH: 9, KeyU: 10, KeyJ: 11, KeyK: 12, KeyO: 13, KeyL: 14, KeyP: 15, Semicolon: 16 };
+  const pcLetter = Object.fromEntries(Object.keys(PCK).map(c => [c, c === 'Semicolon' ? ';' : c.slice(3)]));
+  try { if (navigator.keyboard && navigator.keyboard.getLayoutMap) navigator.keyboard.getLayoutMap().then(lm => { for (const c in PCK) { const l = lm.get(c); if (l) pcLetter[c] = String(l).toUpperCase(); } }).catch(() => {}); } catch (e) {}
+  function pcKeys(id, o) {
+    const held = new Map(); let oct = o.octave0 ? o.octave0() : 4;
+    const typing = t => t && t.closest && t.closest('input,select,textarea,[contenteditable],[role=slider]');
+    const live = () => document.documentElement.classList.contains('j8ShellOn') && current === id && !document.querySelector('dialog[open]');
+    const play = (src, m) => { const p0 = presetKey, o0 = octave; try { presetKey = o.preset(); octave = Math.floor(m / 12) - 1; noteOn(src, m % 12); } catch (e) { console.error(e); } finally { presetKey = p0; octave = o0; } };
+    const stop = src => { try { noteOff(src); } catch (e) {} };
+    const setOct = v => { oct = clamp(v, 1, 6); if (o.onOctave) o.onOctave(oct); };
+    addEventListener('keydown', e => {
+      if (!live() || e.ctrlKey || e.altKey || e.metaKey || typing(e.target)) return;
+      if (e.code === 'ArrowUp' || e.code === 'ArrowDown') { e.preventDefault(); e.stopImmediatePropagation(); setOct(oct + (e.code === 'ArrowUp' ? 1 : -1)); return; }
+      const i = PCK[e.code]; if (i === undefined) return; e.preventDefault(); e.stopImmediatePropagation(); if (e.repeat || held.has(e.code)) return;
+      const m = (oct + 1) * 12 + i; held.set(e.code, { m, t: 'k' + performance.now() }); play('j8k:' + e.code, m);
+    }, true);
+    addEventListener('keyup', e => { const h = held.get(e.code); if (!h) return; held.delete(e.code); e.stopImmediatePropagation(); stop('j8k:' + e.code); }, true);
+    const all = () => { for (const c of held.keys()) stop('j8k:' + c); held.clear(); };
+    addEventListener('blur', all); document.addEventListener('visibilitychange', () => { if (document.hidden) all(); });
+    return { get octave() { return oct; }, setOctave: setOct, release: all,
+      held: () => new Map([...held.values()].map(h => [h.m, h.t])),
+      letters: () => { const r = new Map(); for (const c in PCK) r.set((oct + 1) * 12 + PCK[c], pcLetter[c]); return r; } };
+  }
+  const api = { version: '9.2-espaces', register, go: origGo, knob, el, toast, clamp, trackColor, canvasFit, remember, position, soundColor, pitchColor, keyLights, pcKeys, SOUND_COL, get current() { return current; }, spaces };
   window.J8S = api; JACK22.modules.register('n08-espaces-base', 'ui', '8.8', api);
   // les espaces s'inscrivent pendant le chargement ; la coquille s'ouvre une fois la page prête
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(start, 80)); else setTimeout(start, 80);
@@ -12775,14 +12801,15 @@ html.j8ShellOn #j8Shell{display:grid}
       if (ww > 26 && hh >= 11) { g.fillStyle = '#0b0b0bd9'; g.font = '600 ' + Math.min(10, hh - 3) + 'px Consolas'; g.fillText(NAMES[n.idx] + n.octave, x + (n.glide > 0 ? 12 : 5), y + hh - 3); } }
     g.restore();
     // clavier vertical vert pâle, toutes les notes nommées ; touche qui joue = couleur de la note
-    const on0 = sounding(p); if (st.keyDown) on0.set(st.keyDown.m, st.keyDown.t); const lit = lights(on0);
+    const on0 = sounding(p); if (st.keyDown) on0.set(st.keyDown.m, st.keyDown.t); for (const [m, t] of pc.held()) on0.set(m, t); const lit = lights(on0), let0 = pc.letters();
     g.fillStyle = '#15181b'; g.fillRect(0, G.gridTop, st.keyW, G.gridH);
     for (const pass of [0, 1]) for (let m = maxM; m >= minM; m--) { const blk = [1, 3, 6, 8, 10].includes(m % 12); if ((pass === 1) !== blk) continue; const y = G.gridTop + (maxM - m) * st.rh - st.scrollY; if (y < G.gridTop - st.rh || y > G.gridTop + G.gridH) continue;
       const kw = blk ? st.keyW - 22 : st.keyW - 1, on = lit.get(m);
       if (on) { g.fillStyle = on; g.shadowColor = on; g.shadowBlur = 10; } else { const gr = g.createLinearGradient(0, 0, kw, 0); if (blk) { gr.addColorStop(0, '#0c0d0e'); gr.addColorStop(1, '#2a2e32'); } else { gr.addColorStop(0, m % 12 ? '#b9d1a4' : '#c4dcb0'); gr.addColorStop(1, m % 12 ? '#d6e6c6' : '#e6f2da'); } g.fillStyle = gr; }
       g.fillRect(0, blk ? y + 2 : y, kw, blk ? st.rh - 4 : st.rh - 1); g.shadowBlur = 0; if (!blk) { g.fillStyle = '#5f7a54'; g.fillRect(0, y + st.rh - 1, kw, 1); } }
     if (st.rh >= 10) for (let m = maxM; m >= minM; m--) { const y = G.gridTop + (maxM - m) * st.rh - st.scrollY; if (y < G.gridTop - st.rh || y > G.gridTop + G.gridH) continue; const blk = [1, 3, 6, 8, 10].includes(m % 12), on = lit.get(m);
-      g.fillStyle = on ? '#0b0b0b' : blk ? '#9aa1a8' : '#24301f'; g.font = (m % 12 ? '600 ' : '800 ') + Math.min(10, st.rh - 5) + 'px Consolas'; g.textAlign = 'right'; g.fillText(NAMES[m % 12] + (Math.floor(m / 12) - 1), blk ? st.keyW - 26 : st.keyW - 5, y + st.rh - 5); g.textAlign = 'left'; }
+      g.fillStyle = on ? '#0b0b0b' : blk ? '#9aa1a8' : '#24301f'; g.font = (m % 12 ? '600 ' : '800 ') + Math.min(10, st.rh - 5) + 'px Consolas'; g.textAlign = 'right'; g.fillText(NAMES[m % 12] + (Math.floor(m / 12) - 1), blk ? st.keyW - 26 : st.keyW - 5, y + st.rh - 5); g.textAlign = 'left';
+      const lt = let0.get(m); if (lt) { g.fillStyle = on ? '#0b0b0b' : blk ? '#b9d1a4' : '#3c5a32'; g.font = '800 ' + Math.min(10, st.rh - 5) + 'px Consolas'; g.fillText(lt, 4, y + st.rh - 5); } }
     g.fillStyle = '#000'; g.fillRect(st.keyW - 1, G.gridTop, 1, G.gridH);
     // couche du bas, fond vert (maquette 3) : barres à chapeau dans la couleur de la note (maquette 8)
     g.fillStyle = '#2b5a40'; g.fillRect(st.keyW, G.velTop, w - st.keyW, st.velH); g.fillStyle = '#16161c'; g.fillRect(0, G.velTop, st.keyW, st.velH);
@@ -12801,6 +12828,8 @@ html.j8ShellOn #j8Shell{display:grid}
   function commit(fn) { const p = pat(); if (!p) return; S.remember(); fn(p); sync(p); S.remember(); fill(); }
   const sndSel = () => document.querySelector('[data-space=pianoroll] [data-k=snd]');
   function hear(m, preset) { try { rollPreview({ start: 0, dur: st.len, preset, octave: Math.floor(m / 12) - 1, idx: m % 12, velocity: st.vel }); } catch (x) {} }
+  // clavier de l'ordinateur → clavier vertical (son « nouvelles notes », ▲ ▼ = octave ; la vue défile pour montrer les touches jouées)
+  const pc = S.pcKeys('pianoroll', { preset: () => (sndSel() && sndSel().value) || 'lead', octave0: () => 4, onOctave: o => { const top = (95 - ((o + 2) * 12 + 4)) * st.rh, bot = (95 - (o + 1) * 12 + 1) * st.rh, cv = st.cv, gh = cv ? geo(cv.getBoundingClientRect().height).gridH : 300; if (top < st.scrollY) st.scrollY = Math.max(0, top); else if (bot > st.scrollY + gh) st.scrollY = S.clamp(bot - gh, 0, 72 * st.rh); } });
   function build(root) {
     const info = el('div', { className: 'e-pane e-pr-info' }), pane = el('div', { className: 'e-pane e-pr' });
     info.innerHTML = '<h4>PATTERN</h4><div class="e-body"></div>';
@@ -12944,16 +12973,21 @@ html.j8ShellOn #j8Shell{display:grid}
   const lights = S.keyLights();
   function soundingKeys() { const on = new Map(); if (state === 'stopped') return on; const pos = S.position(); song.tracks.forEach((t, ti) => { if (!ti) return; const p = activePat(ti); if (!p || !p.notes) return; const s = pos % p.steps; for (const n of p.notes) if (s >= n.start && s < n.start + n.dur) on.set((n.octave + 1) * 12 + n.idx, ti + ':' + n.start + ':' + Math.floor(pos / p.steps)); }); return on; }
   function kbDraw(cv) {
-    const { g, w, h } = S.canvasFit(cv), oct0 = st.oct0, nW = 7 * 4 + 1, ww = w / nW, WH = [0, 2, 4, 5, 7, 9, 11], on0 = soundingKeys(); if (st.down) on0.set(st.down.m, st.down.t); const lit = lights(on0);
+    const { g, w, h } = S.canvasFit(cv), oct0 = st.oct0, nW = 7 * 4 + 1, ww = w / nW, WH = [0, 2, 4, 5, 7, 9, 11], on0 = soundingKeys(); if (st.down) on0.set(st.down.m, st.down.t); for (const [m, t] of pcKb.held()) on0.set(m, t); const lit = lights(on0), let0 = pcKb.letters();
     g.fillStyle = '#0c0e0d'; g.fillRect(0, 0, w, h); st.kb = { ww, oct0, h, nW };
     for (let i = 0; i < nW; i++) { const m = (oct0 + 1 + Math.floor(i / 7)) * 12 + WH[i % 7], on = lit.get(m), x = i * ww + 1;
       if (on) { g.fillStyle = on; g.shadowColor = on; g.shadowBlur = 14; } else { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#d6e6c6'); gr.addColorStop(.7, '#bed5aa'); gr.addColorStop(1, '#a9c493'); g.fillStyle = gr; }
       g.fillRect(x, 2, ww - 2, h - 4); g.shadowBlur = 0; g.strokeStyle = '#5f7a54'; g.strokeRect(x + .5, 2.5, ww - 3, h - 5);
-      if (i % 7 === 0) { g.fillStyle = on ? '#0b0b0b' : '#24301f'; g.font = '600 11px Segoe UI'; g.fillText('C' + (oct0 + i / 7), x + 5, h - 9); } }
+      if (i % 7 === 0) { g.fillStyle = on ? '#0b0b0b' : '#24301f'; g.font = '600 11px Segoe UI'; g.fillText('C' + (oct0 + i / 7), x + 5, h - 9); }
+      const lt = let0.get(m); if (lt) { g.fillStyle = on ? '#0b0b0b' : '#3c5a32'; g.font = '800 12px Consolas'; g.textAlign = 'center'; g.fillText(lt, x + ww / 2 - 1, h - 26); g.textAlign = 'left'; } }
     for (let i = 0; i < nW - 1; i++) { if ([2, 6].includes(i % 7)) continue; const m = (oct0 + 1 + Math.floor(i / 7)) * 12 + WH[i % 7] + 1, on = lit.get(m), x = (i + 1) * ww - ww * .3;
       if (on) { g.fillStyle = on; g.shadowColor = on; g.shadowBlur = 12; } else { const gr = g.createLinearGradient(0, 0, 0, h * .6); gr.addColorStop(0, '#34373a'); gr.addColorStop(.6, '#121314'); gr.addColorStop(1, '#050505'); g.fillStyle = gr; }
-      g.fillRect(x, 2, ww * .6, (h - 4) * .6); g.shadowBlur = 0; }
+      g.fillRect(x, 2, ww * .6, (h - 4) * .6); g.shadowBlur = 0;
+      const lt = let0.get(m); if (lt) { g.fillStyle = on ? '#0b0b0b' : '#b9d1a4'; g.font = '700 10px Consolas'; g.textAlign = 'center'; g.fillText(lt, x + ww * .3, (h - 4) * .6 - 6); g.textAlign = 'left'; } }
   }
+  // clavier de l'ordinateur → ce clavier (son choisi, octave ▲▼ ; le clavier affiché suit)
+  const showOct = () => { const r = document.querySelector('[data-space=synthe] .e-sy-kb .ov'); if (r) r.textContent = 'C' + st.oct0; };
+  const pcKb = S.pcKeys('synthe', { preset: () => st.k, octave0: () => 4, onOctave: o => { if (o < st.oct0) st.oct0 = o; if (o + 1 > st.oct0 + 3) st.oct0 = o - 2; st.oct0 = S.clamp(st.oct0, 1, 5); showOct(); } });
   function kbNote(x, y) { const { ww, oct0, h, nW } = st.kb, i = Math.min(nW - 1, Math.floor(x / ww)), WH = [0, 2, 4, 5, 7, 9, 11]; if (y < 2 + (h - 4) * .6) { const r = x / ww - i; if (r > .7 && ![2, 6].includes(i % 7) && i < nW - 1) return (oct0 + 1 + Math.floor(i / 7)) * 12 + WH[i % 7] + 1; if (r < .3 && i > 0 && ![2, 6].includes((i - 1) % 7)) return (oct0 + 1 + Math.floor((i - 1) / 7)) * 12 + WH[(i - 1) % 7] + 1; } return (oct0 + 1 + Math.floor(i / 7)) * 12 + WH[i % 7]; }
   function play(m) { st.down = { m, t: 'h' + performance.now() }; try { rollPreview({ start: 0, dur: 4, preset: st.k, octave: Math.floor(m / 12) - 1, idx: m % 12, velocity: 100 }); } catch (x) {} }
   function build(root) {
@@ -12961,7 +12995,7 @@ html.j8ShellOn #j8Shell{display:grid}
     head.innerHTML = '<span class="lg">JX<span>·22</span></span><button type="button" class="e-sy-tab" data-v="osc"><i></i>SON</button><button type="button" class="e-sy-tab" data-v="bank"><i></i>PRESETS</button><div class="e-sy-lcd"><button type="button" data-a="prev" title="Son précédent">‹</button><select data-k="snd" aria-label="Son"></select><button type="button" data-a="next" title="Son suivant">›</button></div><button type="button" class="e-btn" data-a="play">▶ Écouter</button><button type="button" class="e-btn" data-a="reset">Son d\'origine</button><span style="margin-left:auto"></span><span class="vol"></span>';
     const P = (title, id, cls) => { const p = el('div', { className: 'e-pane e-sy-p ' + (cls || ''), dataset: { p: id } }); p.innerHTML = '<h4><i class="led"></i>' + title + '<span class="r"></span></h4><div class="e-body"></div>'; return p; };
     const side = el('div', { className: 'e-sy-side' }, P('SOUS-OSC', 'sub'), P('BRUIT', 'noi'));
-    const kb = el('div', { className: 'e-sy-kb' }); kb.innerHTML = '<div class="oc"><button type="button" class="e-btn" data-o="+">Octave ▲</button><b style="text-align:center;font:700 13px Consolas;color:var(--e-red2)" class="ov"></b><button type="button" class="e-btn" data-o="-">Octave ▼</button></div><canvas aria-label="Clavier"></canvas>';
+    const kb = el('div', { className: 'e-sy-kb' }); kb.innerHTML = '<div class="oc"><button type="button" class="e-btn" data-o="+">Octave ▲</button><b style="text-align:center;font:700 13px Consolas;color:var(--e-red2)" class="ov"></b><button type="button" class="e-btn" data-o="-">Octave ▼</button></div><canvas aria-label="Clavier" title="Se joue aussi avec les touches de l\'ordinateur (lettres sur les touches) · ▲ ▼ = octave"></canvas>';
     const bank = el('div', { className: 'e-pane e-sy-bank', style: 'display:none' }); bank.innerHTML = '<h4>PRESETS PERSONNELS (CE NAVIGATEUR, TOUS LES PROJETS)<span class="r"><input data-k="pname" placeholder="Nom du preset" style="background:#0b0b0e;color:#fff;border:1px solid var(--e-line2);border-radius:5px;padding:2px 6px"><button type="button" data-a="save">Enregistrer le son actuel</button></span></h4><div class="e-body"></div>';
     root.append(head, side, P('OSC A', 'oa'), P('OSC B', 'ob'), P('FILTRE · PASSE-BAS', 'fl'), P('ENVELOPPE', 'en'), P('LFO', 'lfo'), P('VÉLOCITÉ · J-808', 'vel'), bank, kb);
     head.addEventListener('click', e => { const t = e.target.closest('[data-a],[data-v]'); if (!t) return; const a = t.dataset.a, v = t.dataset.v; try {
@@ -12983,6 +13017,7 @@ html.j8ShellOn #j8Shell{display:grid}
   }
   function rebuild() {
     const root = document.querySelector('[data-space=synthe]'); if (!root || !I()) return;
+    if (st.pcK !== st.k) { st.pcK = st.k; pcKb.setOctave((PRESETS[st.k] && PRESETS[st.k].octave) || 4); }   // chaque son démarre dans son octave naturelle (comme en 7.9)
     const head = root.querySelector('.e-sy-head'); head.querySelectorAll('[data-v]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === st.view)));
     head.querySelector('[data-k=snd]').replaceChildren(...I().EDITABLE.map(k => el('option', { value: k, textContent: N[k] || k }))); head.querySelector('[data-k=snd]').value = st.k;
     const bankPane = root.querySelector('.e-sy-bank'), main = [...root.querySelectorAll('.e-sy-p[data-p]:not([data-p=sub]):not([data-p=noi])'), root.querySelector('.e-sy-side')];
