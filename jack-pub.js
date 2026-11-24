@@ -26,7 +26,7 @@
     ['bours', 'JACK BOURS', 'Apprends la Bourse sans risquer un centime.', 'bours/index.html', 'bours/app/images/icone.svg'],
     ['batiment', 'JACK BÂTIMENT', 'Grimpe l\'échelle du chantier.', 'batiment/index.html', 'batiment/app/images/castor.svg'],
     ['ia', 'AI JACK', 'Une IA pour discuter, coder et écrire.', 'ia/index.html', 'ia/app/jack-ia.svg'],
-    ['jeu', 'JACK JEU', 'Retrouve la Cassette Perdue.', 'jeu/index.html', 'jeu/favicon.svg'],
+    ['jeu', 'JACK JEU', 'Une aventure en 3D à Vinylia.', 'jeu/index.html', 'jeu/favicon.svg'],
     ['sport', 'JACK SPORT', 'Ton coach sportif en 3D.', 'sport/index.html', 'sport/app/jack-sport.svg'],
   ].filter(([id]) => id !== actuel);
 

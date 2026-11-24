@@ -1,6 +1,6 @@
 # Jack World
 
-J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance, Jack Bours, Jack Bâtiment, AI JACK et NEW DUC réunis sur un seul site.
+J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance, Jack Bours, Jack Bâtiment, AI JACK, JACK JEU, JACK SPORT et NEW DUC réunis sur un seul site.
 
 | Dossier | Appli | Version source |
 |---|---|---|
@@ -22,10 +22,11 @@ J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance, Jack Bo
 | `batiment/app/` | Jack Bâtiment (l'appli) | copie de `Bureau/Jack Batiment` du 19 nov. 2026 à 3 h 41, avec Prix et devis (sans serveur.ps1 ni l'image jack-jungle inutilisée), + icônes et bouton « Changer de site ». Formation d'auto-apprentissage, ne remplace pas les formations obligatoires |
 | `ia/index.html` | Site vitrine AI JACK | créé le 22 nov. 2026 (logo robot vert et bleu, paysage de nuit) |
 | `ia/app/` | AI JACK (l'appli) | créé le 22 nov. 2026 à partir de `Bureau/AI-JACK-Claude` (même look), mais l'IA tourne dans le navigateur avec WebLLM 0.2.89 (WebGPU, chargé depuis cdn.jsdelivr.net) : gratuit, sans clé, sans serveur. Le « cerveau » (modèle de 0,5 à 3 Go selon Léger / Rapide / Malin) se télécharge une fois dans le navigateur puis marche hors ligne. Il faut Edge ou Chrome à jour sur ordinateur. Le `sw.js` garde aussi le moteur WebLLM pour le hors ligne |
-| `jeu/index.html` | Site vitrine JACK JEU | créé le 24 nov. 2026 (pixel et néon rouge du jeu) |
-| `jeu/app/` | JACK JEU · La Cassette Perdue (le jeu) | jeu en un seul fichier, ajouté le 23 nov. 2026, + icônes, hors connexion et « Changer de site » |
-| `sport/index.html` | Site vitrine JACK SPORT | créé le 23 nov. 2026, complété le 24 (capture, pub, police) |
-| `sport/app/` | JACK SPORT (l'appli) | coach en 3D (Three.js chargé depuis jsdelivr) : marche en ligne, pas en double-clic sur le fichier |
+| `jeu/index.html` | Site vitrine JACK JEU | créé le 24 nov. 2026, refait le même jour pour la version 3D (captures, galerie, commandes) |
+| `jeu/app/` | JACK JEU · La Cassette Perdue en 3D (le jeu) | créé le 24 nov. 2026 : un seul fichier, Three.js 0.160 chargé depuis jsdelivr (il faut internet la première fois, puis ça marche hors connexion ; marche aussi en double-clic). Île de Vinylia, Jack et sa Lame Néon, Mamie Bobine, Gloops, Grésils, Amplis, le Grand Larsen (boss en 3 phases), cinématiques, dialogues, sauvegarde à chaque fragment, record, clavier / souris / manette / tactile |
+| `jeu/retro/` | JACK JEU · version rétro 2D | le premier jeu en pixels (23 nov. 2026), gardé tel quel, avec son propre `sw.js` (cache `jackworld-jeuretro-`) |
+| `sport/index.html` | Site vitrine JACK SPORT | créé le 23 nov. 2026, complété le 24 (captures, pub, police, coach qui parle) |
+| `sport/app/` | JACK SPORT (l'appli) | coach en 3D (Three.js chargé depuis jsdelivr) : marche en ligne, pas en double-clic sur le fichier. Depuis le 24 nov. 2026, le coach parle pendant la séance (voix du navigateur + sous-titres) : explications pendant le repos, décompte 3-2-1, consignes, comptage des répétitions, fête de fin ; bouton « Le coach t'explique » dans chaque fiche |
 | `newduc/` | Site NEW DUC | V6 (`NEW DUC - travail/NEWDUKE-V6`) |
 
 ## Ajouts propres à la version en ligne (19 nov. 2026)

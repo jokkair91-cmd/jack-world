@@ -40,6 +40,7 @@ function setLook(look) {
   save();
   $$('[data-look]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.look === look)));
   [heroV, detailV, playerV].forEach(v => v && v.setLook(look));
+  pickVoice();
   thumbCache.clear();
   refreshThumbs();
   renderNutri();
@@ -141,12 +142,138 @@ $('#f-zones').addEventListener('click', e => { const b = e.target.closest('[data
 $('#f-q').addEventListener('input', e => { F.q = e.target.value; renderExercices(); });
 document.addEventListener('click', e => { const b = e.target.closest('[data-ex]'); if (b) openExercise(b.dataset.ex); });
 
+// ---------- LE COACH QUI PARLE : voix du navigateur + sous-titres à l'écran ----------
+// Les phrases passent les unes après les autres (pas de coupure), avec une limite de temps :
+// un chiffre du compte qui arrive trop tard est sauté, une explication trop longue n'est pas commencée.
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const minus = s => (s ? s[0].toLowerCase() + s.slice(1) : '');
+const est = t => 500 + String(t).length * 78; // durée parlée estimée (ms), un peu large pour ne jamais couper le décompte
+let voice = null;
+const VOIX_H = /henri|remy|rémy|paul|thomas|claude|jacques|daniel|antoine|mathieu|nicolas|guillaume|yves|jean|gérard|gerard|fabrice|alain|homme|male/i;
+const VOIX_F = /denise|vivienne|eloise|éloise|julie|hortense|amelie|amélie|aurelie|aurélie|marie|audrey|celine|céline|charlotte|brigitte|josephine|coralie|femme|female/i;
+function pickVoice() {
+  if (!window.speechSynthesis) return;
+  const want = S.look === 'fille' ? VOIX_F : VOIX_H;
+  const score = v => (/^fr[-_]fr/i.test(v.lang) ? 3 : 1) + (/natural|online|neural|premium|enhanced|amélioré/i.test(v.name) ? 4 : 0) + (/google/i.test(v.name) ? 2 : 0) + (want.test(v.name) ? 3 : 0);
+  voice = speechSynthesis.getVoices().filter(v => /^fr/i.test(v.lang)).sort((a, b) => score(b) - score(a))[0] || null;
+}
+if (window.speechSynthesis) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+
+const Coach = (() => {
+  let q = [], cur = null, timer = 0, fadeT = 0, gen = 0, lastCancel = 0;
+  let T = { box: null, viewer: null, onEmpty: null };
+  function show(it) {
+    const b = T.box;
+    if (!b) return;
+    clearTimeout(fadeT);
+    b.hidden = false;
+    b.querySelector('p').textContent = it.text;
+    b.dataset.kind = it.kind || '';
+    b.classList.remove('fade', 'pop');
+    void b.offsetWidth;
+    b.classList.add('pop', 'talk');
+  }
+  function quiet() {
+    if (T.viewer) T.viewer.talking = false;
+    const b = T.box;
+    if (!b) return;
+    b.classList.remove('talk');
+    clearTimeout(fadeT);
+    fadeT = setTimeout(() => b.classList.add('fade'), 4000);
+  }
+  function done(it, g) {
+    if (cur !== it || g !== gen) return;
+    clearTimeout(timer);
+    cur = null;
+    quiet();
+    next();
+    if (!cur && !q.length && T.onEmpty) T.onEmpty();
+  }
+  function next() {
+    if (cur) return;
+    const wait = lastCancel + 140 - Date.now(); // laisser la voix se taire avant de reparler
+    if (wait > 0) { clearTimeout(timer); timer = setTimeout(next, wait); return; }
+    let it;
+    while ((it = q.shift())) {
+      const now = Date.now();
+      if (it.ttl && now > it.ttl) continue;
+      if (it.by && now + est(it.say || it.text) > it.by) continue;
+      break;
+    }
+    if (!it) return;
+    cur = it;
+    const g = gen;
+    show(it);
+    if (it.onstart) it.onstart();
+    if (T.viewer) T.viewer.talking = true;
+    if (S.voix && window.speechSynthesis) {
+      try {
+        const u = new SpeechSynthesisUtterance(it.say || it.text);
+        u.lang = voice ? voice.lang : 'fr-FR';
+        if (voice) u.voice = voice;
+        u.rate = it.kind === 'count' ? 1.12 : 1.04;
+        u.onend = u.onerror = () => done(it, g);
+        it.u = u; // garder une référence, sinon Chrome peut perdre la fin de la phrase
+        speechSynthesis.speak(u);
+        timer = setTimeout(() => done(it, g), est(it.say || it.text) * 1.8 + 2500); // filet de sécurité
+        return;
+      } catch { /* pas de voix : les sous-titres suffisent */ }
+    }
+    timer = setTimeout(() => done(it, g), est(it.text));
+  }
+  return {
+    attach(box, viewer, onEmpty = null) {
+      if (T.box && T.box !== box) { this.stop(); T.box.hidden = true; }
+      T = { box, viewer, onEmpty };
+    },
+    get box() { return T.box; },
+    get busy() { return !!cur || q.length > 0; },
+    say(text, o = {}) {
+      if (!text) return;
+      if (o.urgent) this.stop();
+      const it = { text: String(text), say: o.say, kind: o.kind, onstart: o.onstart, ttl: o.ttl ? Date.now() + o.ttl : 0, by: o.by || 0 };
+      if (o.front) q.unshift(it); else q.push(it);
+      next();
+    },
+    stop() {
+      gen++;
+      q = [];
+      clearTimeout(timer);
+      const was = cur;
+      cur = null;
+      if (window.speechSynthesis && (speechSynthesis.speaking || speechSynthesis.pending)) {
+        try { speechSynthesis.cancel(); } catch { /* rien */ }
+        lastCancel = Date.now();
+      }
+      if (was) quiet();
+    },
+    hush() { this.stop(); if (T.box) T.box.hidden = true; },
+  };
+})();
+
+// bips du décompte
+let ac = null;
+function unlockAudio() { try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); ac.resume(); } catch { ac = null; } }
+function beep(f, d) {
+  if (!ac) return;
+  const o = ac.createOscillator(), g = ac.createGain();
+  o.frequency.value = f; o.type = 'sine';
+  g.gain.setValueAtTime(0.0001, ac.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.18, ac.currentTime + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + d);
+  o.connect(g).connect(ac.destination);
+  o.start(); o.stop(ac.currentTime + d + 0.02);
+}
+
 // ---------- FICHE EXERCICE ----------
 let detailV = null;
+let sheetEx = null;
 const dlg = $('#ex-dialog');
 function openExercise(id) {
   const e = EX[id];
   if (!e) return;
+  sheetEx = e;
+  sheetCoachStop();
   $('#ex-txt').innerHTML = `
     <p class="eyebrow">${e.lieu.map(l => LIEU[l]).join(' · ')} · ${esc(e.materiel)}</p>
     <h2 id="ex-title">${esc(e.nom)}</h2>
@@ -169,6 +296,39 @@ $('#ex-close').addEventListener('click', () => dlg.close());
 dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
 $('.views').addEventListener('click', e => { const b = e.target.closest('[data-view]'); if (b && detailV) detailV.setView(b.dataset.view); });
 $('#ex-speed').addEventListener('input', e => { if (detailV) detailV.speed = +e.target.value; });
+
+// « Le coach t'explique » : il montre le mouvement et lit chaque étape (l'étape lue s'allume)
+function sheetCoachReset() {
+  $$('#ex-txt li.now').forEach(l => l.classList.remove('now'));
+  setTimeout(() => { if (!(Coach.box === $('#ex-say') && Coach.busy)) $('#ex-say').hidden = true; }, 4500);
+  const b = $('#ex-coach');
+  b.textContent = '🔊 Le coach t\'explique';
+  b.setAttribute('aria-pressed', 'false');
+}
+function sheetCoachStop() {
+  if (Coach.box === $('#ex-say')) Coach.hush();
+  sheetCoachReset();
+}
+$('#ex-coach').addEventListener('click', () => {
+  const e = sheetEx;
+  if (!e || !detailV) return;
+  if (Coach.box === $('#ex-say') && Coach.busy) return sheetCoachStop();
+  Coach.attach($('#ex-say'), detailV, sheetCoachReset);
+  const b = $('#ex-coach');
+  b.textContent = '⏹ Arrêter';
+  b.setAttribute('aria-pressed', 'true');
+  const lis = $$('#ex-txt ol li');
+  const mark = i => () => {
+    lis.forEach((l, j) => l.classList.toggle('now', j === i));
+    if (lis[i]) lis[i].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  };
+  Coach.say(`${e.nom}. Regarde-moi bien, je te montre.`, { urgent: true });
+  e.etapes.forEach((t, i) => Coach.say(`${i + 1}. ${t}`, { say: t, onstart: mark(i) }));
+  Coach.say(`Les bons réflexes : ${e.conseils.join(' ')}`, { onstart: mark(-1) });
+  Coach.say(`À éviter : ${e.erreurs.map(minus).join(' Et ')}`);
+  Coach.say('À toi de jouer !');
+});
+dlg.addEventListener('close', sheetCoachStop);
 
 // ---------- PROGRAMMES ----------
 let pFiltre = 'tout';
@@ -241,13 +401,20 @@ $('#v-programme').addEventListener('click', e => {
   if (st) startSession(curProg, +st.dataset.start, S.semaine[curProg.id] || 1);
 });
 
-// ---------- LECTEUR DE SÉANCE ----------
+// ---------- LECTEUR DE SÉANCE : le coach fait chaque exercice avec toi et te guide à la voix ----------
 let playerV = null;
-const P = { steps: [], i: 0, left: 0, timer: 0, paused: false, start: 0, kcal: 0, stepStart: 0 };
-
+const P = { steps: [], i: 0, left: 0, timer: 0, paused: false, start: 0, kcal: 0, stepStart: 0, cues: {}, explained: new Set() };
+const BRAVO = ['Bien joué !', 'Super travail !', 'Excellent !', 'Bravo !', 'Très bien !', 'Parfait !'];
+const COURAGE = ['Continue comme ça !', 'Tu gères !', 'Lâche rien !', 'Garde le rythme !', 'Allez, allez !', 'Tu fais ça très bien !'];
+const PARTI = ["C'est parti !", 'Go !', 'Allez, on y va !'];
+// la fête de fin : bras en l'air et petits sauts de joie
+const FETE = { id: 'fete', nom: 'Bravo', zones: [], anim: { dur: 0.9, hold: 0.06, frames: [{ shA: 140, el: -28, hip: -16, knee: 28, head: -6 }, { shA: 166, el: -6, lift: 0.15, head: -12 }] } };
+const doseText = (w, ex) => (w.sec ? `${w.sec} secondes` : `${w.reps} répétitions${ex.reps2 ? ', en alternant les côtés' : ''}`);
+function cue(at, text, o = {}) { (P.cues[at] ||= []).push({ ...o, text }); }
+function countdown() { for (const n of [3, 2, 1]) cue(n, String(n), { urgent: true, kind: 'count' }); }
 function buildSteps(prog, sIdx, week) {
   const s = prog.seances[sIdx];
-  const steps = [];
+  const steps = [{ kind: 'rest', sec: 18, intro: true }]; // le coach se présente et explique le premier exercice
   ECHAUFFEMENT.forEach((b, i) => {
     steps.push({ kind: 'work', ...b, label: `Échauffement ${i + 1}/${ECHAUFFEMENT.length}` });
     steps.push({ kind: 'rest', sec: i === ECHAUFFEMENT.length - 1 ? 20 : 8 });
@@ -276,19 +443,23 @@ function buildSteps(prog, sIdx, week) {
 }
 
 function startSession(prog, sIdx, week) {
-  Object.assign(P, { prog, sIdx, week, steps: buildSteps(prog, sIdx, week), i: 0, paused: false, start: Date.now(), kcal: 0, active: 0 });
+  Object.assign(P, { prog, sIdx, week, steps: buildSteps(prog, sIdx, week), i: 0, paused: false, start: Date.now(), kcal: 0, active: 0, skipped: false, explained: new Set() });
   $('#player').hidden = false;
+  $('#player').classList.remove('done');
   $('#pl-end').hidden = true;
+  $('#pl-pause').textContent = '⏸ Pause';
   document.body.style.overflow = 'hidden';
   if (!playerV) {
     playerV = new Viewer($('#pl-canvas'), { look: S.look });
-    playerV.onCycle = n => updateCount(n);
+    playerV.onBeat = n => onBeat(n);
   }
   playerV.setLook(S.look);
+  playerV.setView('trois');
   playerV.resize();
-  $('#pl-voice').setAttribute('aria-pressed', String(S.voix));
+  setVoiceBtn();
+  pickVoice();
   unlockAudio();
-  say(`C'est parti pour ${prog.seances[sIdx].nom}. On commence par l'échauffement.`);
+  Coach.attach($('#pl-coach'), playerV);
   showStep();
 }
 
@@ -299,59 +470,154 @@ function showStep() {
   const st = P.steps[P.i];
   if (!st) return finish();
   P.stepStart = Date.now();
+  P.cues = {};
   $('#pl-bar').style.width = `${Math.round(P.i / P.steps.length * 100)}%`;
   const isRest = st.kind === 'rest';
   const ex = EX[isRest ? st.next.ex : st.ex];
+  const prev = P.steps[P.i - 1];
   playerV.setPaused(false);
-  playerV.speed = isRest ? 0.6 : 1;
+  playerV.speed = isRest ? 0.6 : 1; // pendant le repos, le coach montre le prochain exercice au ralenti
   playerV.setExercise(ex);
   playerV.start();
-  $('#pl-phase').textContent = isRest ? 'REPOS' : 'À TOI';
+  $('#pl-phase').textContent = st.intro ? 'PRÊT ?' : isRest ? 'REPOS' : 'À TOI';
   $('#pl-phase').classList.toggle('rest', isRest);
-  $('#pl-label').textContent = isRest ? 'Prochain exercice' : st.label;
+  $('#pl-label').textContent = st.intro ? 'Premier exercice' : isRest ? 'Prochain exercice' : st.label;
   $('#pl-name').textContent = ex.nom;
   $('#pl-tips').innerHTML = (isRest ? ex.etapes.slice(0, 2) : ex.conseils).map(t => `<li>${esc(t)}</li>`).join('');
-  $('#pl-count').textContent = '';
+  $('#pl-count').textContent = isRest ? 'Regarde le coach : il te montre le mouvement.' : '';
   const nextWork = P.steps.slice(P.i + 1).find(x => x.kind === 'work');
-  $('#pl-after').textContent = isRest ? '' : nextWork ? `Ensuite : ${EX[nextWork.ex].nom}` : 'Dernier effort !';
+  $('#pl-after').textContent = isRest ? `Au programme : ${doseText(st.next, ex)}` : nextWork ? `Ensuite : ${EX[nextWork.ex].nom}` : 'Dernier effort !';
+  $('#pl-next').classList.remove('pulse');
   const dz = $('#pl-dose');
   dz.classList.toggle('rest', isRest);
   if (isRest) {
     P.left = st.sec;
-    $('#pl-next').textContent = 'Passer le repos ⏭';
+    $('#pl-next').textContent = st.intro ? 'Je suis prêt ⏭' : 'Passer le repos ⏭';
     $('#pl-skip').hidden = true;
-    say(`Repos. Ensuite : ${ex.nom}.`);
-    tick();
+    scriptRest(st, ex, prev);
+    tick(true);
   } else if (st.sec) {
     P.left = st.sec;
     $('#pl-next').textContent = 'Fini ✓';
     $('#pl-skip').hidden = false;
-    say(`${ex.nom}, ${st.sec} secondes.`);
-    tick();
+    scriptTimed(st, ex);
+    tick(true);
   } else {
-    dz.innerHTML = `${st.reps}<small>répétitions</small>`;
+    P.left = 0;
+    dz.innerHTML = `0<small>/ ${st.reps} répétitions</small>`;
     $('#pl-next').textContent = 'Fait ✓';
     $('#pl-skip').hidden = false;
-    say(`${ex.nom}, ${st.reps} répétitions${ex.reps2 ? ', en alternant' : ''}.`);
-    P.left = 0;
+    $('#pl-count').textContent = 'Suis le rythme du coach : il compte avec toi.';
+    Coach.say(`${pick(['Go !', 'Allez !', "C'est parti !"])} ${st.reps} répétitions.`, { urgent: true });
   }
+  if (!isRest) bigCount('GO !');
   if (P.left) P.timer = setInterval(() => { if (!P.paused) { P.left--; tick(); } }, 1000);
 }
 
-function tick() {
-  const st = P.steps[P.i];
-  $('#pl-dose').innerHTML = `${P.left}<small>${st.kind === 'rest' ? 's de repos' : 'secondes'}</small>`;
-  if (P.left <= 3 && P.left > 0) beep(660, 0.09);
-  if (P.left <= 0) { beep(990, 0.25); nextStep(); }
+/** Repos : bravo, annonce du prochain exercice, puis explication du mouvement pendant que le coach le montre. */
+function scriptRest(st, ex, prev) {
+  const w = st.next;
+  const by = Date.now() + (st.sec - 3.6) * 1000; // tout doit être dit avant le décompte
+  const works = P.steps.filter(x => x.kind === 'work');
+  if (st.intro) {
+    Coach.say('Salut ! Je suis ton coach : je fais chaque exercice avec toi.', { urgent: true });
+    Coach.say(`On commence par l'échauffement : ${minus(ex.nom)}, ${doseText(w, ex)}.`, { by });
+  } else {
+    const tour = /Tour (\d+)\/(\d+) · exercice 1\//.exec(w.label || '');
+    const serie = /série (\d+)\/(\d+)/.exec(w.label || '');
+    let t = prev && prev.kind === 'work' ? (P.skipped ? 'OK, on passe.' : pick(BRAVO)) : '';
+    if (st.sec >= 15) t += ' Repos, respire.';
+    if (tour && +tour[1] > 1) t += ` Tour ${tour[1]} sur ${tour[2]}${tour[1] === tour[2] ? ', le dernier !' : '.'}`;
+    t += ` Ensuite : ${minus(ex.nom)}${serie && +serie[2] > 1 ? `, série ${serie[1]} sur ${serie[2]}` : ''}, ${doseText(w, ex)}.`;
+    Coach.say(t.trim(), { urgent: true });
+    if (w === works[works.length - 1]) Coach.say("C'est le dernier exercice, donne tout !", { by });
+  }
+  P.skipped = false;
+  if (P.explained.has(ex.id)) {
+    // déjà expliqué dans cette séance : juste un rappel
+    if (ex.conseils[0]) Coach.say(`Rappel : ${minus(ex.conseils[0])}`, { by });
+    if (ex.erreurs && ex.erreurs[0]) Coach.say(`Évite ça : ${minus(ex.erreurs[0])}`, { by });
+  } else {
+    ex.etapes.slice(0, 3).forEach((l, i) => Coach.say(l, { by, onstart: i ? null : () => P.explained.add(ex.id) }));
+    if (ex.conseils[0]) Coach.say(ex.conseils[0], { by });
+  }
+  if (st.sec >= 20) cue(10, 'Prépare-toi, on reprend dans 10 secondes.', { front: true, ttl: 2500 });
+  countdown();
 }
 
-function updateCount(n) {
+/** Effort chronométré : consignes de placement, mi-parcours, encouragements, 10 dernières secondes, 3-2-1. */
+function scriptTimed(st, ex) {
+  const n = st.sec;
+  Coach.say(`${pick(PARTI)} ${n} secondes.`, { urgent: true });
+  const plan = [
+    [n - 4, ex.conseils[0]],
+    n >= 20 && [10, 'Plus que 10 secondes, tiens bon !'],
+    n >= 24 && [Math.round(n / 2), `La moitié ! ${pick(COURAGE)}`],
+    n >= 40 && [Math.round(n * 0.75), ex.erreurs && ex.erreurs[0] && `Attention : ${minus(ex.erreurs[0])}`],
+    n >= 30 && [Math.round(n / 2) - 5, ex.conseils[1]],
+    n >= 50 && [Math.round(n / 4) + 7, pick(COURAGE)],
+  ].filter(x => x && x[1]).sort((a, b) => b[0] - a[0]);
+  let last = Infinity;
+  for (const [at, text] of plan) {
+    if (at <= 4 || at >= n || last - at < 5) continue;
+    cue(at, text);
+    last = at;
+  }
+  countdown();
+}
+
+/** Répétitions : le coach compte à voix haute à chaque mouvement qu'il termine. */
+function onBeat(n) {
   const st = P.steps[P.i];
-  if (!st || st.kind !== 'work' || !st.reps) return;
-  const ex = EX[st.ex];
-  const per = ex.reps2 ? 2 : 1;
-  const c = Math.min(st.reps, n * per);
-  $('#pl-count').textContent = c >= st.reps ? `Jack a fini ses ${st.reps} : à toi d'appuyer sur « Fait » quand tu as fini.` : `Rythme de Jack : ${c} / ${st.reps}`;
+  if (!st || st.kind !== 'work' || !st.reps || n > st.reps || !$('#pl-end').hidden) return;
+  $('#pl-dose').innerHTML = `${n}<small>/ ${st.reps} répétitions</small>`;
+  let t = String(n);
+  if (n === st.reps) t = `${n} ! Bravo !`;
+  else if (n === st.reps - 1) t = `${n}, dernière !`;
+  else if (n === st.reps - 2 && st.reps >= 6) t = `${n}, encore deux !`;
+  else if (n === Math.round(st.reps / 2) && st.reps >= 8) t = `${n}, la moitié !`;
+  Coach.say(t, { ttl: 2000, kind: 'count' });
+  if (n === st.reps) {
+    $('#pl-count').textContent = 'Le coach a fini. Termine tes répétitions, puis appuie sur « Fait ».';
+    $('#pl-next').classList.add('pulse');
+    Coach.say('Termine à ton rythme, puis appuie sur Fait.', { ttl: 4000 });
+  } else {
+    $('#pl-count').textContent = `Le coach compte avec toi : ${n} / ${st.reps}`;
+  }
+}
+
+function tick(first) {
+  const st = P.steps[P.i];
+  $('#pl-dose').innerHTML = `${P.left}<small>${st.kind === 'rest' ? 's de repos' : P.left > 1 ? 'secondes' : 'seconde'}</small>`;
+  if (first) return;
+  for (const c of P.cues[P.left] || []) Coach.say(c.text, { ...c, by: c.urgent ? 0 : Date.now() + (P.left - 3.5) * 1000 });
+  if (P.left <= 3 && P.left > 0) { beep(660, 0.08); bigCount(P.left); }
+  if (P.left <= 0) { beep(990, 0.22); nextStep(); }
+}
+
+let goT = 0;
+function bigCount(v) {
+  const g = $('#pl-go');
+  g.textContent = v;
+  g.classList.remove('show');
+  void g.offsetWidth;
+  g.classList.add('show');
+  clearTimeout(goT);
+  goT = setTimeout(() => g.classList.remove('show'), 950);
+}
+
+function confetti() {
+  const box = document.createElement('div');
+  box.className = 'confetti';
+  box.setAttribute('aria-hidden', 'true');
+  const C = ['#7cff00', '#00c8ff', '#fbbf24', '#f472b6', '#a78bfa', '#ffffff'];
+  for (let i = 0; i < 48; i++) {
+    const c = document.createElement('i');
+    c.style.cssText = `left:${Math.random() * 100}%;background:${C[i % C.length]};--dx:${Math.round((Math.random() - 0.5) * 180)}px;--r:${Math.round((Math.random() - 0.5) * 900)}deg;animation-duration:${(2.2 + Math.random() * 1.8).toFixed(2)}s;animation-delay:${(Math.random() * 0.7).toFixed(2)}s`;
+    box.appendChild(c);
+  }
+  $('.pl-3d').appendChild(box);
+  setTimeout(() => box.remove(), 5200);
 }
 
 function account() {
@@ -363,7 +629,7 @@ function account() {
   if (st.kind === 'work') P.active += sec;
 }
 
-function nextStep() { account(); clearInterval(P.timer); P.i++; P.paused = false; $('#pl-pause').textContent = '⏸ Pause'; showStep(); }
+function nextStep(skip) { account(); clearInterval(P.timer); P.skipped = !!skip; P.i++; P.paused = false; $('#pl-pause').textContent = '⏸ Pause'; showStep(); }
 
 function finish() {
   clearInterval(P.timer);
@@ -374,12 +640,22 @@ function finish() {
   S.historique.push({ date: new Date().toISOString(), prog: P.prog.id, nom: P.prog.nom, seance: s.nom, semaine: P.week, min, kcal });
   S.progres[P.prog.id] = { ...(S.progres[P.prog.id] || {}), [`${P.week}-${P.sIdx}`]: true };
   save();
-  say('Bravo ! Séance terminée.');
-  playerV.setPaused(true);
+  // le coach fait la fête avec toi
+  playerV.setPaused(false);
+  playerV.speed = 1;
+  playerV.setExercise(FETE);
+  playerV.setView('face');
+  $('#pl-phase').textContent = 'BRAVO !';
+  $('#pl-phase').classList.remove('rest');
+  $('#player').classList.add('done');
+  $('#pl-go').classList.remove('show');
+  confetti();
+  Coach.say(`Et voilà, séance terminée ! ${min} minute${min > 1 ? 's' : ''} d'effort${kcal >= 5 ? `, environ ${kcal} calories` : ''}.`, { urgent: true });
+  Coach.say(`${pick(['Je suis fier de toi.', 'Tu as tout donné, respect.', 'Quelle séance !'])} À la prochaine !`);
   $('#pl-end').innerHTML = `<div class="card">
     <p class="eyebrow">SÉANCE TERMINÉE</p><h2>Bravo, champion${S.look === 'fille' ? 'ne' : ''} !</h2>
     <p class="muted">${esc(s.nom)} · ${esc(P.prog.nom)} · semaine ${P.week}</p>
-    <div class="big-n"><div><b>${min}</b>minutes</div><div><b>${kcal}</b>kcal environ</div></div>
+    <div class="big-n"><div><b>${min}</b>minute${min > 1 ? 's' : ''}</div><div><b>${kcal}</b>kcal environ</div></div>
     <p><span class="letsgo">LET'S GO</span></p>
     <button class="btn big" id="pl-close">Terminer</button></div>`;
   $('#pl-end').hidden = false;
@@ -388,22 +664,32 @@ function finish() {
 
 function closePlayer() {
   clearInterval(P.timer);
-  if (window.speechSynthesis) speechSynthesis.cancel();
+  Coach.hush();
+  $('#pl-go').classList.remove('show');
   $('#player').hidden = true;
   document.body.style.overflow = '';
   if (curProg) renderProgram();
   renderHomeStats();
 }
 
-$('#pl-next').addEventListener('click', nextStep);
-$('#pl-skip').addEventListener('click', nextStep);
+$('#pl-next').addEventListener('click', () => nextStep());
+$('#pl-skip').addEventListener('click', () => nextStep(true));
 $('#pl-pause').addEventListener('click', () => {
+  if (!$('#pl-end').hidden) return;
   P.paused = !P.paused;
   playerV.setPaused(P.paused);
   $('#pl-pause').textContent = P.paused ? '▶ Reprendre' : '⏸ Pause';
+  Coach.say(P.paused ? 'Pause. Je t\'attends : reprends quand tu veux.' : "C'est reparti !", { urgent: true });
 });
 $('#pl-quit').addEventListener('click', () => { if (!$('#pl-end').hidden || confirm('Arrêter la séance ? Elle ne sera pas comptée.')) closePlayer(); });
-$('#pl-voice').addEventListener('click', () => { S.voix = !S.voix; save(); $('#pl-voice').setAttribute('aria-pressed', String(S.voix)); $('#pl-voice').textContent = S.voix ? '🔊 Voix' : '🔇 Voix'; if (!S.voix && window.speechSynthesis) speechSynthesis.cancel(); });
+function setVoiceBtn() { const b = $('#pl-voice'); b.setAttribute('aria-pressed', String(S.voix)); b.textContent = S.voix ? '🔊 Voix' : '🔇 Voix'; }
+$('#pl-voice').addEventListener('click', () => {
+  S.voix = !S.voix;
+  save();
+  setVoiceBtn();
+  if (!S.voix) { try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch { /* rien */ } }
+  else Coach.say('Voix activée.', { urgent: true });
+});
 $('#player').addEventListener('click', e => { if (e.target.id === 'pl-close') closePlayer(); });
 document.addEventListener('keydown', e => {
   if ($('#player').hidden || e.target.closest('input,select,textarea')) return;
@@ -411,27 +697,6 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && $('#pl-end').hidden && document.activeElement?.tagName !== 'BUTTON') { e.preventDefault(); nextStep(); }
   if (e.key === 'Escape') { e.preventDefault(); $('#pl-quit').click(); }
 });
-
-// voix et bips
-let voice = null;
-function pickVoice() { if (!window.speechSynthesis) return; voice = speechSynthesis.getVoices().find(v => /^fr/i.test(v.lang)) || null; }
-if (window.speechSynthesis) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
-function say(text) {
-  if (!S.voix || !window.speechSynthesis) return;
-  try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = 'fr-FR'; if (voice) u.voice = voice; u.rate = 1.05; speechSynthesis.speak(u); } catch { /* pas de voix */ }
-}
-let ac = null;
-function unlockAudio() { try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); ac.resume(); } catch { ac = null; } }
-function beep(f, d) {
-  if (!ac) return;
-  const o = ac.createOscillator(), g = ac.createGain();
-  o.frequency.value = f; o.type = 'sine';
-  g.gain.setValueAtTime(0.0001, ac.currentTime);
-  g.gain.exponentialRampToValueAtTime(0.25, ac.currentTime + 0.01);
-  g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + d);
-  o.connect(g).connect(ac.destination);
-  o.start(); o.stop(ac.currentTime + d + 0.02);
-}
 
 // ---------- ALIMENTATION ----------
 let nTab = null;

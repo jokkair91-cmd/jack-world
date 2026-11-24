@@ -167,6 +167,11 @@
         <button data-view="face">Face</button><button data-view="trois">3/4</button><button data-view="profil">Profil</button><button data-view="dos">Dos</button><button data-view="dessus">Dessus</button>
       </div>
       <label class="speed">Vitesse <input type="range" id="ex-speed" min="0.4" max="1.6" step="0.1" value="1"></label>
+      <button class="coach-btn" id="ex-coach" type="button" aria-pressed="false">🔊 Le coach t'explique</button>
+      <div class="pl-coach in-sheet" id="ex-say" hidden aria-live="polite">
+        <span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <div><b>TON COACH</b><p></p></div>
+      </div>
     </div>
     <div class="sheet-txt" id="ex-txt"></div>
     <button class="close" id="ex-close" aria-label="Fermer">✕</button>
@@ -182,8 +187,13 @@
   </div>
   <div class="pl-body">
     <div class="pl-3d">
-      <canvas id="pl-canvas" aria-label="Mannequin 3D de l'exercice en cours"></canvas>
+      <canvas id="pl-canvas" aria-label="Le coach en 3D fait l'exercice en cours"></canvas>
       <div class="pl-phase" id="pl-phase">C'est parti</div>
+      <div class="pl-go" id="pl-go" aria-hidden="true"></div>
+      <div class="pl-coach" id="pl-coach" hidden aria-live="polite">
+        <span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <div><b>TON COACH</b><p></p></div>
+      </div>
     </div>
     <div class="pl-side">
       <p class="pl-label" id="pl-label"></p>

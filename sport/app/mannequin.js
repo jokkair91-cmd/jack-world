@@ -38,6 +38,8 @@ function lerpPose(a, b, t) {
 /** Pose à l'instant « phase » (0 → 1) d'un cycle de l'exercice. */
 export function sample(anim, phase, frames) {
   const n = frames.length;
+  phase = ((phase % 1) + 1) % 1; // jamais négatif (sinon pose vide et le coach disparaît)
+  if (!Number.isFinite(phase)) phase = 0;
   if (n === 1) {
     const p = { ...frames[0] };
     p.spine += Math.sin(phase * Math.PI * 2) * 1.2; // respiration
@@ -190,6 +192,11 @@ function buildBody(lookName) {
   const teeth = ellipsoid(0.02, 0.006, 0.004, M.white, false);
   teeth.position.set(0, 0.073, 0.1);
   face.add(teeth);
+  // la bouche s'ouvre quand le coach parle
+  const mouth = ellipsoid(0.021, 0.012, 0.006, M.lip, false);
+  mouth.position.set(0, 0.068, 0.096);
+  mouth.visible = false;
+  face.add(mouth);
 
   // cheveux noirs
   const cap = piece(new THREE.SphereGeometry(0.108, 28, 14, 0, Math.PI * 2, 0, Math.PI * 0.5), M.hair);
@@ -327,7 +334,7 @@ function buildBody(lookName) {
     J[side + 'Hip'] = hp; J[side + 'Knee'] = kn; J[side + 'Ank'] = an;
   }
 
-  return { root, spine, head, J, meshes, zones, hands, chest, abdo, pelvis, pony, L };
+  return { root, spine, head, J, meshes, zones, hands, chest, abdo, pelvis, pony, mouth, L };
 }
 
 function applyPose(b, q) {
@@ -505,6 +512,12 @@ export class Viewer {
     this.cycles = 0;
     this.lastPhase = 0;
     this.onCycle = null;
+    this.onBeat = null; // à chaque répétition terminée (2 par cycle pour les exercices en alternance)
+    this.beats = 0;
+    this.talking = false; // le coach parle : bouche et tête bougent
+    this.talkAmt = 0;
+    this.blend = null;
+    this.lastQ = null;
     this.t0 = performance.now();
     this.paused = false;
     this.running = false;
@@ -558,14 +571,19 @@ export class Viewer {
   }
 
   setExercise(ex) {
+    const from = !this.opts.thumb && this.ex && this.lastQ && Object.values(this.lastQ).every(Number.isFinite) ? this.lastQ : null;
     this.ex = ex;
     this.frames = ex.anim.frames.map(expand);
     this.t0 = performance.now();
     this.cycles = 0;
+    this.beats = 0;
     this.lastPhase = 0;
-    this.smooth = false;
+    this.blend = null;
     this.buildProps();
     this.highlight(ex.zones || []);
+    // passage en douceur de l'ancienne position à la nouvelle (pas de saut d'un exercice à l'autre)
+    this.blend = from ? { from, t0: performance.now() } : null;
+    if (!from) this.smooth = false;
   }
 
   highlight(zs) {
@@ -627,7 +645,13 @@ export class Viewer {
   /** Place le corps à la phase donnée (0 → 1) et met à jour accessoires et cadrage. */
   pose(phase) {
     const b = this.body;
-    const q = sample(this.ex.anim, phase, this.frames);
+    let q = sample(this.ex.anim, phase, this.frames);
+    if (this.blend) {
+      const k = Math.min(1, (performance.now() - this.blend.t0) / 650);
+      if (k >= 1) this.blend = null;
+      else q = lerpPose(this.blend.from, q, k * k * (3 - 2 * k));
+    }
+    this.lastQ = q;
     applyPose(b, q);
     b.root.position.set(0, 1.3, 0);
     b.root.updateMatrixWorld(true);
@@ -659,11 +683,15 @@ export class Viewer {
   frame(now) {
     if (!this.ex) return;
     const dur = (this.ex.anim.dur || 2) / this.speed;
-    const t = this.paused ? this.pausedAt : (now - this.t0) / 1000;
+    // l'heure de l'image peut précéder de quelques ms le changement d'exercice : on ne descend jamais sous 0
+    const t = Math.max(0, (this.paused ? this.pausedAt : (now - this.t0) / 1000) || 0);
     const phase = (t / dur) % 1;
     if (!this.paused && phase < this.lastPhase) { this.cycles++; this.onCycle && this.onCycle(this.cycles); }
+    const beat = Math.floor((t / dur) * (this.ex.reps2 ? 2 : 1));
+    if (!this.paused && beat > this.beats) { this.beats = beat; this.onBeat && this.onBeat(beat); }
     this.lastPhase = phase;
     this.pose(phase);
+    this.alive(now);
     const pulse = 0.22 + 0.2 * Math.sin(now / 260);
     for (const m of this.hl) m.material.emissiveIntensity = pulse;
     this.place(this.smooth ? 0.06 : 1);
@@ -672,12 +700,29 @@ export class Viewer {
     this.renderer.render(this.scene, this.camera);
   }
 
+  /** Petits gestes de vie : il respire, et quand il parle sa bouche s'ouvre et sa tête accompagne la phrase. */
+  alive(now) {
+    const b = this.body;
+    const s = now / 1000;
+    this.talkAmt += ((this.talking ? 1 : 0) - this.talkAmt) * 0.18;
+    b.spine.rotation.x += Math.sin(s * 1.9) * 0.006;
+    if (b.mouth) {
+      const open = this.talkAmt * Math.abs(Math.sin(s * 15.5)) * (0.55 + 0.45 * Math.sin(s * 5.3));
+      b.mouth.visible = open > 0.06;
+      b.mouth.scale.y = 0.003 + 0.011 * open;
+    }
+    b.head.rotation.x += this.talkAmt * Math.sin(s * 4.6) * 0.045;
+    b.head.rotation.z = this.talkAmt * Math.sin(s * 2.7) * 0.05;
+  }
+
   place(k) {
     const c = new THREE.Vector3();
     bodyBox.getCenter(c);
     const size = new THREE.Vector3();
     bodyBox.getSize(size);
     const extent = Math.max(size.y, size.z * 0.9, size.x, 1.25);
+    if (!Number.isFinite(extent) || !Number.isFinite(c.x + c.y + c.z)) return; // image ratée : on garde le cadrage
+    if (!Number.isFinite(this.dist) || !Number.isFinite(this.target.x + this.target.y + this.target.z)) { this.dist = 4.2; this.target.copy(c); }
     this.target.lerp(c, k);
     this.dist += ((1.9 + extent * 1.95) * this.zoom - this.dist) * k;
     const y = this.yaw * D, p = this.pitch * D;

@@ -1,32 +1,17 @@
 {
-    "name":  "JACK JEU · La Cassette Perdue",
-    "short_name":  "JACK JEU",
-    "description":  "Un petit jeu d\u0027aventure de Jack World : explore Vinylia et retrouve les trois fragments de la Cassette Originelle.",
-    "lang":  "fr",
-    "start_url":  "index.html",
-    "scope":  "./",
-    "display":  "standalone",
-    "orientation":  "any",
-    "background_color":  "#07070b",
-    "theme_color":  "#07070b",
-    "icons":  [
-                  {
-                      "purpose":  "any",
-                      "type":  "image/png",
-                      "sizes":  "192x192",
-                      "src":  "icon-192.png"
-                  },
-                  {
-                      "purpose":  "any",
-                      "type":  "image/png",
-                      "sizes":  "512x512",
-                      "src":  "icon-512.png"
-                  },
-                  {
-                      "src":  "favicon.svg",
-                      "sizes":  "any",
-                      "type":  "image/svg+xml",
-                      "purpose":  "any"
-                  }
-              ]
+  "name": "JACK JEU · La Cassette Perdue",
+  "short_name": "JACK JEU",
+  "description": "Le jeu d'aventure en 3D de Jack World : explore l'île de Vinylia, affronte le Grand Larsen et rends la musique au royaume.",
+  "lang": "fr",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#07070b",
+  "theme_color": "#07070b",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
 }

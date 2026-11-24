@@ -1,0 +1,17 @@
+{
+  "name": "JACK JEU rétro · La Cassette Perdue (2D)",
+  "short_name": "JACK JEU 2D",
+  "description": "La version rétro en pixels de La Cassette Perdue, le jeu d'aventure de Jack World.",
+  "lang": "fr",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#07070b",
+  "theme_color": "#07070b",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

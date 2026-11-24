@@ -1,0 +1,1099 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07070b">
+<meta name="description" content="JACK JEU · La Cassette Perdue : un petit jeu d'aventure de Jack World. Explore Vinylia, affronte les monstres du Grand Larsen et retrouve les trois fragments de la Cassette Originelle.">
+<title>JACK JEU · La Cassette Perdue (version rétro)</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--noir:#07070b;--carte:#121219;--ligne:#2a2a36;--txt:#f4f4f6;--doux:#a9a9b8;--rouge:#ff2a3d;--jaune:#ffd166;--cyan:#2ee6d6;--violet:#9b5cff;--rose:#ff5fa2;--vert:#3ddc84;
+  --degrade:linear-gradient(90deg,#ffd166,#ff8a3d,#ff2a3d,#ff5fa2,#9b5cff,#2ee6d6);--s:2}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--noir);color:var(--txt);font:16px/1.5 "Chakra Petch",system-ui,sans-serif;overflow:hidden;overscroll-behavior:none}
+body{display:flex;flex-direction:column;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+button{font:inherit;color:inherit}
+header{display:flex;align-items:center;gap:8px;height:48px;padding:6px 12px;padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right));position:relative;flex:none}
+header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--degrade)}
+.logo{font:700 15px/1 "Silkscreen",monospace;letter-spacing:.05em;white-space:nowrap}
+.logo b{color:var(--rouge)}
+.logo span{font:600 13px "Chakra Petch",sans-serif;color:var(--doux);letter-spacing:0;margin-left:6px}
+header .vide{flex:1}
+.ico{min-width:42px;height:38px;border-radius:10px;border:1px solid var(--ligne);background:#15151d;font-size:17px;cursor:pointer}
+.ico:hover{background:#20202b}
+:focus-visible{outline:3px solid var(--jaune);outline-offset:2px}
+main{flex:1;display:flex;flex-direction:column;align-items:center;padding-top:8px;min-height:0}
+#scene{position:relative;width:calc(256px*var(--s));height:calc(192px*var(--s));flex:none;border-radius:4px;box-shadow:0 0 0 2px #ff2a3d66,0 0 46px #ff2a3d2a}
+#jeu{display:block;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges;touch-action:none;cursor:crosshair;border-radius:4px}
+.astuce{color:var(--doux);font-size:13px;margin-top:10px;text-align:center;padding:0 12px}
+.astuce kbd{font:700 11px "Silkscreen",monospace;background:#1b1b25;border:1px solid var(--ligne);border-radius:5px;padding:1px 5px;color:var(--txt)}
+/* Bulle de dialogue */
+#dialogue{position:absolute;left:3%;right:3%;bottom:3%;background:#07070bee;border:2px solid var(--rouge);border-radius:8px;padding:max(8px,calc(var(--s)*3px)) max(12px,calc(var(--s)*5px));font-size:max(14px,calc(var(--s)*5.4px));line-height:1.35;box-shadow:0 0 0 2px #000,0 6px 20px #000a;cursor:pointer;min-height:28%}
+#dialogue[hidden]{display:none}
+#dialogue b{display:block;font:700 max(11px,calc(var(--s)*3.6px)) "Silkscreen",monospace;color:var(--jaune);letter-spacing:.05em;margin-bottom:2px}
+#dialogue i{position:absolute;right:10px;bottom:6px;color:var(--rouge);font-style:normal;animation:clign 1s steps(2) infinite}
+@keyframes clign{50%{opacity:0}}
+#lieu{position:absolute;left:50%;top:calc(var(--s)*22px);transform:translateX(-50%);font:700 max(12px,calc(var(--s)*4.5px)) "Silkscreen",monospace;letter-spacing:.06em;background:#07070bcc;border:1px solid #ffffff22;padding:4px 12px;border-radius:6px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .4s}
+#lieu.vu{opacity:1}
+/* Écrans (menu, pause, fin) */
+.ecran{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;background:radial-gradient(circle at 50% 20%,#2a0a12cc,#07070bf2 70%);overflow:auto}
+.ecran[hidden]{display:none}
+.boite{width:min(520px,100%);background:#0d0d13f2;border:1px solid var(--ligne);border-radius:18px;padding:22px 22px 20px;text-align:center;box-shadow:0 10px 50px #000c;position:relative}
+.boite::before{content:"";position:absolute;left:18px;right:18px;top:0;height:3px;background:var(--degrade);border-radius:0 0 3px 3px}
+.surtitre{font:700 12px "Silkscreen",monospace;letter-spacing:.12em;background:var(--degrade);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:4px}
+h1,h2{font:700 clamp(28px,7vw,44px)/1.05 "Silkscreen",monospace;letter-spacing:.02em;margin:4px 0 10px}
+h1 em{font-style:normal;color:var(--rouge);text-shadow:0 0 18px #ff2a3d88}
+h2{font-size:clamp(24px,6vw,34px)}
+.boite p{color:#cfcfda;margin:8px 0}
+.record{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:14px 0 4px}
+.record span{background:#16161f;border:1px solid var(--ligne);border-radius:10px;padding:6px 12px;font-size:14px;color:var(--doux)}
+.record strong{color:var(--jaune);font-weight:700}
+.btns{display:grid;gap:10px;margin-top:16px}
+.btn{min-height:48px;border-radius:12px;border:1px solid var(--ligne);background:#191922;font-weight:700;font-size:17px;cursor:pointer;padding:8px 16px}
+.btn:hover{background:#23232e}
+.btn.principal{background:var(--rouge);border-color:var(--rouge);color:#fff;box-shadow:0 0 22px #ff2a3d66;font-family:"Silkscreen",monospace;letter-spacing:.05em}
+.btn.principal:hover{filter:brightness(1.1)}
+.petit{font-size:13px;color:var(--doux)!important}
+.commandes{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;text-align:left;margin:14px auto 4px;max-width:420px;font-size:15px}
+.commandes dt{font:700 12px "Silkscreen",monospace;color:var(--jaune);padding-top:3px;white-space:nowrap}
+.commandes dd{color:#d8d8e2}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0 6px}
+.stats div{background:#16161f;border:1px solid var(--ligne);border-radius:10px;padding:8px}
+.stats small{display:block;color:var(--doux);font-size:12px}
+.stats strong{font:700 18px "Silkscreen",monospace}
+.badge{display:inline-block;margin-top:6px;padding:4px 12px;border-radius:999px;background:var(--degrade);color:#07070b;font:700 13px "Silkscreen",monospace;animation:pulse 1s ease-in-out infinite alternate}
+.badge[hidden]{display:none}
+@keyframes pulse{to{transform:scale(1.07)}}
+/* Manette tactile */
+#manette{position:fixed;inset:auto 0 0 0;height:0;z-index:20}
+#manette[hidden]{display:none}
+#stick{position:fixed;left:max(18px,env(safe-area-inset-left));bottom:max(22px,env(safe-area-inset-bottom));width:132px;height:132px;border-radius:50%;background:radial-gradient(circle,#ffffff10,#ffffff06 60%,#ff2a3d22);border:2px solid #ff2a3d77;touch-action:none}
+#stick i{position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff6b7a,#ff2a3d 55%,#9a1022);box-shadow:0 0 18px #ff2a3d88;pointer-events:none}
+#btnA{position:fixed;right:max(22px,env(safe-area-inset-right));bottom:max(36px,env(safe-area-inset-bottom));width:88px;height:88px;border-radius:50%;border:2px solid #2ee6d6aa;background:radial-gradient(circle at 35% 30%,#2ee6d655,#0d2a2a);font:700 30px/1 system-ui;color:#fff;box-shadow:0 0 22px #2ee6d644;touch-action:none;cursor:pointer}
+#btnA:active,#btnA.appui{transform:scale(.93);background:#2ee6d677}
+#btnA small{display:block;font:700 10px "Silkscreen",monospace;margin-top:2px;letter-spacing:.05em}
+@media (prefers-reduced-motion:reduce){.badge,#dialogue i{animation:none}}
+</style>
+<script data-jack-world-nav src="../../jack-world-nav.js" defer></script>
+<script src="../../jack-appli.js" defer></script>
+</head>
+<body>
+<header>
+  <div class="logo"><b>JACK</b> JEU<span>La Cassette Perdue</span></div>
+  <div class="vide"></div>
+  <button class="ico" id="bSon" type="button" aria-label="Couper le son" title="Son">🔊</button>
+  <button class="ico" id="bPause" type="button" aria-label="Pause" title="Pause (Échap)">⏸</button>
+</header>
+
+<main>
+  <div id="scene">
+    <canvas id="jeu" width="256" height="192" aria-label="Le jeu : Jack explore le royaume de Vinylia"></canvas>
+    <div id="lieu" aria-live="polite"></div>
+    <div id="dialogue" hidden role="dialog" aria-live="polite"><b id="dQui"></b><span id="dTxt"></span><i aria-hidden="true">▼</i></div>
+  </div>
+  <p class="astuce" id="astuce"><kbd>↑↓←→</kbd>/<kbd>ZQSD</kbd> bouger · <kbd>Espace</kbd> épée et parler · <kbd>Échap</kbd> pause · Souris : clic = frapper, maintenir = marcher</p>
+</main>
+
+<div id="manette" hidden>
+  <div id="stick" aria-label="Croix de direction"><i></i></div>
+  <button id="btnA" type="button" aria-label="Épée / parler">⚔<small>ÉPÉE</small></button>
+</div>
+
+<section class="ecran" id="eMenu" aria-labelledby="tMenu">
+  <div class="boite">
+    <p class="surtitre">JACK WORLD · JACK JEU</p>
+    <h1 id="tMenu">La Cassette <em>Perdue</em></h1>
+    <p>Le Grand Larsen a brisé la Cassette Originelle de Vinylia en trois morceaux. Depuis, le royaume n’a plus de musique.</p>
+    <p>Prends ta Lame Néon, explore, et retrouve les <strong style="color:var(--jaune)">3 fragments</strong>.</p>
+    <div class="record" id="recMenu"></div>
+    <div class="btns">
+      <button class="btn principal" id="bJouer" type="button">▶ JOUER</button>
+      <button class="btn" id="bAide" type="button">Comment jouer</button>
+    </div>
+    <p class="petit">Au clavier, à la souris ou au doigt.</p>
+    <p class="petit">Version rétro en pixels · <a href="../app/index.html" style="color:var(--jaune)">jouer à la version 3D</a></p>
+  </div>
+</section>
+
+<section class="ecran" id="eAide" hidden aria-labelledby="tAide">
+  <div class="boite">
+    <p class="surtitre">JACK JEU</p>
+    <h2 id="tAide">Comment jouer</h2>
+    <dl class="commandes">
+      <dt>BOUGER</dt><dd>Flèches ou ZQSD · au doigt : la croix rouge en bas à gauche · à la souris : maintiens le clic sur la carte</dd>
+      <dt>ÉPÉE</dt><dd>Espace (ou J) · bouton ⚔ · un clic ou un tap rapide sur la carte frappe dans cette direction</dd>
+      <dt>PARLER</dt><dd>Mets-toi face à quelqu’un, un panneau ou un coffre, et appuie sur l’épée (ou fonce dedans)</dd>
+      <dt>PAUSE</dt><dd>Échap ou P · bouton ⏸ en haut</dd>
+    </dl>
+    <p class="petit">Coupe les buissons, vide les salles de leurs monstres pour faire apparaître des coffres, et cherche les clés. Les pièces et les monstres vaincus rapportent des points ; finir vite donne un bonus.</p>
+    <div class="btns"><button class="btn principal" id="bAideOk" type="button">COMPRIS</button></div>
+  </div>
+</section>
+
+<section class="ecran" id="ePause" hidden aria-labelledby="tPause">
+  <div class="boite">
+    <p class="surtitre">JACK JEU</p>
+    <h2 id="tPause">Pause</h2>
+    <div class="record" id="recPause"></div>
+    <div class="btns">
+      <button class="btn principal" id="bReprendre" type="button">▶ REPRENDRE</button>
+      <button class="btn" id="bRecommencer" type="button">Recommencer la partie</button>
+      <button class="btn" id="bMenu1" type="button">Retour au menu</button>
+    </div>
+  </div>
+</section>
+
+<section class="ecran" id="eFin" hidden aria-labelledby="tFin">
+  <div class="boite">
+    <p class="surtitre" id="fSur">JACK JEU</p>
+    <h2 id="tFin">Fin</h2>
+    <p id="fTxt"></p>
+    <div class="stats" id="fStats"></div>
+    <span class="badge" id="fBadge" hidden>NOUVEAU RECORD !</span>
+    <div class="record" id="recFin"></div>
+    <div class="btns">
+      <button class="btn principal" id="bRejouer" type="button">↻ REJOUER</button>
+      <button class="btn" id="bMenu2" type="button">Menu</button>
+    </div>
+  </div>
+</section>
+
+<script>
+(() => {
+'use strict';
+/* ====================================================================
+   JACK JEU · La Cassette Perdue — petit jeu d'aventure original de Jack World.
+   Tout est dessiné au code (pas d'image), le son est fabriqué par le navigateur.
+   ==================================================================== */
+const TS = 16, RW = 16, RH = 11, HUD = 16;
+const cv = document.getElementById('jeu'), g = cv.getContext('2d');
+g.imageSmoothingEnabled = false;
+const $ = s => document.querySelector(s);
+const SOLIDE = new Set('#r~bCcLWoP');
+const SOLIDE_TIR = new Set('#rbCcLWoP');
+const DIRS = { haut: [0, -1], bas: [0, 1], gauche: [-1, 0], droite: [1, 0] };
+const rnd = (a, b) => a + Math.random() * (b - a);
+let FLASH = false;
+const r = (c, x, y, w, h) => { g.fillStyle = FLASH ? '#ffffff' : c; g.fillRect(x, y, w, h); };
+function hash(x, y, s) { let n = (x * 374761393 + y * 668265263 + s * 1442695041) | 0; n = Math.imul(n ^ (n >>> 13), 1274126177); return ((n ^ (n >>> 16)) >>> 0) / 4294967296; }
+const chev = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+
+/* ---------------- Le royaume de Vinylia ----------------
+   Chaque salle : 14 × 9 cases intérieures (le bord est ajouté tout seul, avec les passages).
+   .  sol      ,  herbe    :  fleurs (étoiles de mer sur la plage)    s  chemin
+   #  arbre    r  rocher   ~  eau (lave au donjon)   =  pont   b  buisson (se coupe)
+   C  coffre   L  porte à clé   E  entrée du donjon   S  escalier de sortie   o  pilier   P  panneau */
+const SALLES = {
+  'o0,0': { nom: 'Forêt des Échos', theme: 'foret', sorties: 'ES',
+    carte: ['..#..#....#...', '.#...b..b...#.', '....#....#....', '.b.....:....b.', '...#..:.:..#..', '.b.....:....b.', '....#....#....', '.#...b..b...#.', '..#...ss..#...'],
+    ennemis: [['gloop', 4, 3], ['gloop', 11, 8], ['gloop', 5, 8], ['gresil', 12, 3]], tresor: { x: 8, y: 5, item: 'fragment' } },
+  'o1,0': { nom: 'Ruines du Studio', theme: 'ruines', bord: 'r', sorties: 'WES',
+    carte: ['..,rrrrrrrr,..', '...rrrrErrr...', '..o..,.L..P.o.', '..............', '......ss......', '.r....ss....r.', '......ss......', '..,...ss...,..', '......ss......'],
+    ennemis: [['ampli', 3, 5], ['ampli', 13, 5], ['gloop', 5, 8], ['gloop', 10, 4]],
+    panneau: '« STUDIO HANTÉ » · Fermé à clé. Depuis que le Grand Larsen s’y est installé, les murs grésillent toute la nuit.',
+    warps: { '8,2': { vers: 'd0,1', x: 8, y: 8, dir: 'haut' } } },
+  'o2,0': { nom: 'Lac Miroir', theme: 'lac', sorties: 'WS',
+    carte: ['..~~~~~~~~~~..', '.~~~~~~~~~~~~.', '.~~~~....~~~~.', '.~~~~.C..~~~~.', '.~~~~~==~~~~~.', '..~~~~==~~~~..', '......ss......', '..,...ss..,...', '......ss......'],
+    ennemis: [['gloop', 3, 8], ['gloop', 12, 8]], coffre: 'coeurMax' },
+  'o0,1': { nom: 'Plaine de l’Ouest', theme: 'plaine', sorties: 'NES',
+    carte: ['..,...ss..,...', '.#....ss....#.', '...b..ss..b...', '.....,ss......', '..P...ssssssss', '.....,ss......', '...b..ss..b...', '.#....ss....#.', '..,...ss..,...'],
+    ennemis: [['gloop', 5, 3], ['gloop', 11, 8], ['gloop', 10, 4]],
+    panneau: 'Au nord, la Forêt des Échos. On raconte que ses arbres offrent un trésor à qui fait taire tous ses monstres.' },
+  'o1,1': { nom: 'Clairière de Vinylia', theme: 'clairiere', sorties: 'NESW',
+    carte: ['..#...ss....#.', '.:....ss...:..', '...,..ss..,...', '......ss......', 'ssssssssssssss', '......ss......', '..:...ss...P..', '.#....ss....#.', '......ss......'],
+    ennemis: [], pnj: { x: 5, y: 4 },
+    panneau: 'VINYLIA · Nord : Ruines du Studio · Sud : Plage des Bobines · Est et Ouest : les Plaines.' },
+  'o2,1': { nom: 'Plaine de l’Est', theme: 'plaine', sorties: 'NWS',
+    carte: ['..:...ss...:..', '..r...ss...r..', '.....,ss,.....', '......ss......', 'ssssssss..r...', '......ss......', '.r...,ss,...r.', '......ss......', '..:...ss...:..'],
+    ennemis: [['gloop', 4, 3], ['gloop', 12, 8], ['ampli', 12, 5]] },
+  'o0,2': { nom: 'Marais Gris', theme: 'marais', sorties: 'NE',
+    carte: ['......ss......', '.~~...ss..~~..', '.~~~..ss.~~~..', '..~...ss..~...', '......ssssssss', '.~~.......~~..', '.~~~.:..:.~~~.', '..~~......~~..', '..............'],
+    ennemis: [['gresil', 5, 7], ['gresil', 10, 4], ['gresil', 8, 9]] },
+  'o1,2': { nom: 'Plage des Bobines', theme: 'plage', sorties: 'NWE', bordBas: '~',
+    carte: ['..b...........', '.b.b....b.b...', '........,.....', '..............', '..............', '...b.b....b:b.', '..b...b.b..b..', '...........:..', '~~~~......~~~~'],
+    ennemis: [['gloop', 4, 4], ['gloop', 10, 5], ['gloop', 6, 9]], cache: { x: 12, y: 7, item: 'fragment' } },
+  'o2,2': { nom: 'Grotte Rouge', theme: 'grotte', bord: 'r', sorties: 'NW',
+    carte: ['......ss......', '.rr...ss...rr.', '.r..........r.', '......rr......', '...r......r...', '......rr......', '.r..........r.', '.rr........rr.', '..............'],
+    ennemis: [['ampli', 3, 4], ['ampli', 12, 4], ['gresil', 8, 7], ['gloop', 5, 9]], tresor: { x: 8, y: 8, item: 'cle' } },
+  'd0,1': { nom: 'Studio Hanté', theme: 'donjon', bord: 'W', sorties: 'NE',
+    carte: ['..............', '.o..........o.', '..............', '....o....o....', '..............', '....o....o....', '..............', '.o..........o.', '.......S......'],
+    ennemis: [['gloop', 4, 3], ['gloop', 11, 3], ['gloop', 7, 6]],
+    warps: { '8,9': { vers: 'o1,0', x: 8, y: 3, dir: 'bas' } } },
+  'd1,1': { nom: 'Studio Hanté', theme: 'donjon', bord: 'W', sorties: 'W',
+    carte: ['..............', '..o........o..', '..............', '.....oooo.....', '..............', '.....oooo.....', '..............', '..o........o..', '..............'],
+    ennemis: [['ampli', 4, 2], ['ampli', 13, 9], ['gloop', 12, 3], ['gloop', 5, 8]], tresor: { x: 8, y: 5, item: 'cle' } },
+  'd0,0': { nom: 'Studio Hanté', theme: 'donjon', bord: 'W', sorties: 'SE', verrou: 'E',
+    carte: ['..............', '.~~~......~~~.', '.~~~......~~~.', '..............', '......oo......', '..............', '.~~~......~~~.', '.~~~......~~~.', '..............'],
+    ennemis: [['gresil', 5, 4], ['gresil', 11, 4], ['gresil', 8, 8]] },
+  'd1,0': { nom: 'Antre du Grand Larsen', theme: 'donjon', bord: 'W', sorties: 'W',
+    carte: ['..............', '.o..........o.', '..............', '..............', '..............', '..............', '..............', '.o..........o.', '..............'],
+    ennemis: [], boss: true },
+};
+const SOL = { foret: '#101a15', plaine: '#14141c', ruines: '#17151d', lac: '#121821', marais: '#121914', plage: '#2a2330', grotte: '#1c1418', clairiere: '#131a17', donjon: '#0e0b12' };
+
+function construire(cle) {
+  const d = SALLES[cle], b = d.bord || '#', t = [];
+  for (let y = 0; y < RH; y++) {
+    const l = [];
+    for (let x = 0; x < RW; x++) {
+      if (y === 0 || x === 0 || y === RH - 1 || x === RW - 1) l.push(y === RH - 1 && d.bordBas ? d.bordBas : b);
+      else l.push(d.carte[y - 1][x - 1]);
+    }
+    t.push(l);
+  }
+  const ouvre = (dir, cases) => { const c = (d.verrou || '').includes(dir) ? 'L' : '.'; cases.forEach(([x, y]) => { t[y][x] = c; }); };
+  for (const dir of d.sorties) {
+    if (dir === 'N') ouvre('N', [[7, 0], [8, 0]]);
+    if (dir === 'S') ouvre('S', [[7, 10], [8, 10]]);
+    if (dir === 'W') ouvre('W', [[0, 4], [0, 5], [0, 6]]);
+    if (dir === 'E') ouvre('E', [[15, 4], [15, 5], [15, 6]]);
+  }
+  const coffres = {};
+  for (let y = 0; y < RH; y++) for (let x = 0; x < RW; x++) if (t[y][x] === 'C') coffres[x + ',' + y] = d.coffre;
+  return { t, coffres, nettoyee: false, tresorPose: false, vuVerrou: false };
+}
+
+/* ---------------- Dessin des cases ---------------- */
+function tuile(ctx, t, tx, ty, th, f) {
+  const ch = t[ty][tx], X = tx * TS, Y = ty * TS, hh = k => hash(tx, ty, k), don = th === 'donjon';
+  const R = (c, a, b, w, h) => { ctx.fillStyle = c; ctx.fillRect(X + a, Y + b, w, h); };
+  if (ch === 'W') {
+    R('#1a0c14', 0, 0, 16, 16); R('#24111b', 0, 0, 16, 1);
+    for (let i = 0; i < 4; i++) { R('#2c1520', 0, i * 4 + 3, 16, 1); R('#2c1520', (i % 2) ? 4 : 11, i * 4, 1, 3); }
+    if (ty < RH - 1 && t[ty + 1][tx] !== 'W') { R('#ff2a3d55', 0, 12, 16, 3); R('#ff2a3d', 0, 15, 16, 1); }
+    if (ty > 0 && t[ty - 1][tx] !== 'W') R('#ff2a3d', 0, 0, 16, 1);
+    return;
+  }
+  if (don) {
+    R('#0e0b12', 0, 0, 16, 16); R('#17121e', 0, 0, 16, 1); R('#17121e', 0, 0, 1, 16);
+    if (hh(1) < .1) R('#ff2a3d88', 2 + (hh(2) * 11 | 0), 2 + (hh(3) * 11 | 0), 1, 1);
+  } else {
+    R(SOL[th], 0, 0, 16, 16);
+    for (let k = 0; k < 3; k++) R(th === 'plage' ? '#3a3142' : '#1c2923', hh(k) * 15 | 0, hh(k + 5) * 15 | 0, 1, 1);
+    if (th === 'plage' && hh(9) < .3) R('#463c50', hh(11) * 14 | 0, hh(12) * 14 | 0, 2, 1);
+  }
+  switch (ch) {
+    case ',': R('#2c5a44', 4, 9, 1, 3); R('#2c5a44', 6, 8, 1, 4); R('#2c5a44', 8, 9, 1, 3); R('#24493a', 11, 4, 1, 3); R('#24493a', 12, 3, 1, 4); break;
+    case ':':
+      if (th === 'plage') { R('#ff8a3d', 7, 4, 2, 7); R('#ff8a3d', 4, 6, 8, 2); R('#ff8a3d', 5, 10, 2, 2); R('#ff8a3d', 9, 10, 2, 2); R('#ffd166', 7, 6, 2, 2); }
+      else { R('#ff5fa2', 3, 4, 2, 2); R('#ffd166', 10, 9, 2, 2); R('#2ee6d6', 6, 12, 2, 2); R('#9b5cff', 12, 3, 2, 2); R('#1f4a36', 4, 6, 1, 2); R('#1f4a36', 11, 11, 1, 2); }
+      break;
+    case 's': R(th === 'ruines' ? '#221e29' : '#251f2c', 0, 0, 16, 16); R('#352d3e', hh(7) * 13 | 0, hh(8) * 13 | 0, 2, 1); R('#352d3e', hh(9) * 13 | 0, hh(10) * 13 | 0, 1, 1); R('#2e2737', hh(13) * 13 | 0, hh(14) * 13 | 0, 2, 2); break;
+    case '#': R('#00000055', 2, 13, 13, 3); R('#3a2416', 6, 10, 4, 6); R('#0d2c22', 1, 1, 14, 10); R('#0d2c22', 3, 0, 10, 13); R('#164a37', 3, 2, 6, 3); R('#164a37', 2, 4, 3, 3); R('#1f6b4a', 4, 2, 2, 1); R('#ff2a3d', 10, 5, 1, 1); R('#ff5fa2', 6, 9, 1, 1); R('#08201a', 2, 10, 12, 1); break;
+    case 'r': R('#00000055', 2, 13, 13, 3); R('#3b3448', 1, 3, 14, 11); R('#3b3448', 3, 1, 10, 14); R('#574d6b', 3, 3, 6, 2); R('#574d6b', 2, 5, 2, 3); R('#29232f', 10, 10, 4, 3); R('#29232f', 4, 13, 8, 1); if (th === 'grotte' && hh(4) < .35) R('#ff2a3d', 11, 4, 1, 2); break;
+    case '~': {
+      const c1 = don ? '#33060c' : '#0a1838', c2 = don ? '#ff2a3d' : '#1f6fd1', c3 = don ? '#ff8a3d' : '#2ee6d6', o = f * 4;
+      R(c1, 0, 0, 16, 16); R(c2, (2 + o + tx * 3) % 12, 4, 4, 1); R(c3, (9 + o + tx * 5) % 12, 10, 3, 1);
+      if (ty > 0 && !'~='.includes(t[ty - 1][tx])) R(don ? '#5a0a14' : '#163566', 0, 0, 16, 2);
+      break;
+    }
+    case '=': R('#0a1838', 0, 0, 16, 16); R('#7a4a2a', 1, 0, 14, 16); for (let i = 0; i < 4; i++) R('#4a2a18', 1, i * 4 + 3, 14, 1); R('#a06a3a', 1, 0, 1, 16); R('#a06a3a', 14, 0, 1, 16); break;
+    case 'b': R('#00000055', 2, 13, 12, 3); R('#165c3c', 2, 3, 12, 11); R('#165c3c', 1, 5, 14, 7); R('#2fa06a', 4, 4, 3, 2); R('#2fa06a', 9, 6, 2, 2); R('#2fa06a', 5, 9, 2, 1); R('#0c3a26', 2, 13, 12, 1); break;
+    case 'C': case 'c':
+      R('#00000055', 2, 13, 13, 3); R('#7a3b1e', 2, 5, 12, 10);
+      if (ch === 'C') { R('#9a5228', 2, 3, 12, 4); R('#ffd166', 2, 7, 12, 1); R('#ffd166', 7, 7, 2, 3); R('#ff2a3d', 3, 4, 10, 1); }
+      else { R('#140a06', 3, 5, 10, 3); R('#9a5228', 2, 1, 12, 3); }
+      R('#4a220f', 2, 14, 12, 1); break;
+    case 'L':
+      if (don) { R('#5a0f1c', 0, 0, 16, 16); R('#ff2a3d', 0, 0, 16, 1); R('#3a0812', 2, 2, 12, 14); R('#ffd166', 7, 6, 2, 2); R('#ffd166', 7, 8, 1, 3); }
+      else { R('#221d2a', 0, 0, 16, 16); for (let i = 1; i < 16; i += 4) R('#8a8398', i, 0, 2, 16); R('#8a8398', 0, 3, 16, 2); R('#8a8398', 0, 11, 16, 2); R('#ffd166', 6, 6, 4, 4); R('#221d2a', 7, 7, 2, 2); }
+      break;
+    case 'E': R('#000', 2, 2, 12, 14); R('#ff2a3d33', 3, 3, 10, 13); R('#ff2a3d', 2, 1, 1, 15); R('#ff2a3d', 13, 1, 1, 15); R('#ff2a3d', 3, 0, 10, 1); R('#ffd166', 7, 0, 2, 1); break;
+    case 'S': R('#000', 1, 1, 14, 14); ['#4a4256', '#3b3448', '#2b2533', '#1b1622'].forEach((c, i) => R(c, 1, 2 + i * 3, 14, 2)); R('#ff2a3d', 1, 1, 14, 1); break;
+    case 'o': R('#00000066', 2, 12, 13, 4); R('#2b2533', 3, 1, 10, 14); R('#3d3548', 4, 1, 4, 13); R('#ff2a3d', 3, 6, 10, 1); R('#ff2a3d55', 3, 7, 10, 1); R('#1a1520', 3, 14, 10, 1); break;
+    case 'P': R('#00000055', 3, 13, 11, 3); R('#5a3a22', 7, 9, 2, 7); R('#8a5a32', 2, 3, 12, 7); R('#a87442', 2, 3, 12, 1); R('#3a2414', 4, 5, 8, 1); R('#3a2414', 4, 7, 6, 1); break;
+  }
+}
+
+/* ---------------- Son : bruitages et musique fabriqués en direct ---------------- */
+const A = { ctx: null, son: true };
+try { A.son = localStorage.getItem('jackjeu.son') !== 'non'; } catch (e) {}
+function audio() {
+  if (A.ctx) { if (A.ctx.state === 'suspended') A.ctx.resume(); return; }
+  try {
+    const C = window.AudioContext || window.webkitAudioContext; A.ctx = new C();
+    A.m = A.ctx.createGain(); A.m.gain.value = A.son ? .55 : 0; A.m.connect(A.ctx.destination);
+    A.mus = A.ctx.createGain(); A.mus.gain.value = .5; A.mus.connect(A.m);
+  } catch (e) { A.ctx = null; }
+}
+const mf = m => 440 * Math.pow(2, (m - 69) / 12);
+function note(f, d, type, v, f2, dest, t0) {
+  if (!A.ctx) return;
+  const c = A.ctx, t = t0 || c.currentTime, o = c.createOscillator(), gg = c.createGain();
+  o.type = type; o.frequency.setValueAtTime(f, t);
+  if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
+  gg.gain.setValueAtTime(.0001, t); gg.gain.linearRampToValueAtTime(v, t + .006); gg.gain.exponentialRampToValueAtTime(.0001, t + d);
+  o.connect(gg); gg.connect(dest || A.m); o.start(t); o.stop(t + d + .03);
+}
+function suite(notes, type, v, pas) { if (!A.ctx) return; const t = A.ctx.currentTime; notes.forEach((m, i) => { if (m) note(mf(m), pas * 1.4, type, v, 0, null, t + i * pas); }); }
+const SFX = {
+  epee: () => note(1200, .1, 'sawtooth', .04, 260),
+  touche: () => note(240, .09, 'square', .08, 90),
+  boum: () => { note(180, .3, 'sawtooth', .09, 40); note(90, .35, 'square', .06, 30); },
+  aie: () => note(330, .22, 'sawtooth', .1, 80),
+  piece: () => suite([88, 93], 'square', .05, .06),
+  coeur: () => suite([76, 81, 84], 'triangle', .1, .05),
+  buisson: () => note(500, .07, 'triangle', .06, 140),
+  tir: () => note(720, .12, 'triangle', .05, 480),
+  porte: () => suite([55, 60, 67], 'square', .06, .07),
+  secret: () => suite([79, 78, 75, 69, 68, 76, 80, 84], 'square', .045, .085),
+  objet: () => suite([72, 76, 79, 84, 0, 84], 'square', .06, .09),
+  fragment: () => suite([72, 76, 79, 84, 79, 84, 88, 0, 91], 'square', .06, .1),
+  bloque: () => note(150, .1, 'square', .05),
+  perdu: () => suite([67, 63, 60, 55, 0, 48], 'triangle', .12, .16),
+  gagne: () => suite([72, 72, 72, 76, 0, 79, 0, 84, 84, 0, 88], 'square', .06, .11),
+};
+const MUS = {
+  monde: { bpm: 118, basse: [45, 0, 52, 45, 0, 45, 52, 0, 41, 0, 48, 41, 0, 41, 48, 0, 43, 0, 50, 43, 0, 43, 50, 0, 40, 0, 47, 40, 0, 40, 47, 52],
+    lead: [69, 0, 72, 76, 74, 0, 72, 71, 72, 0, 69, 0, 65, 0, 0, 0, 67, 0, 71, 74, 72, 0, 71, 69, 71, 0, 67, 0, 64, 0, 0, 0,
+           69, 0, 72, 76, 79, 0, 77, 76, 74, 0, 72, 0, 77, 0, 0, 0, 76, 0, 74, 72, 71, 0, 72, 74, 76, 0, 0, 0, 0, 0, 0, 0] },
+  donjon: { bpm: 84, basse: [38, 0, 0, 38, 41, 0, 0, 40, 38, 0, 0, 38, 36, 0, 37, 0],
+    lead: [62, 0, 0, 0, 65, 0, 64, 0, 0, 0, 61, 0, 62, 0, 0, 0, 69, 0, 0, 0, 68, 0, 65, 0, 0, 0, 64, 0, 62, 0, 0, 0] },
+  boss: { bpm: 156, basse: [40, 40, 52, 40, 40, 52, 40, 43, 41, 41, 53, 41, 41, 53, 41, 39],
+    lead: [76, 0, 75, 0, 76, 0, 71, 0, 74, 0, 72, 0, 69, 0, 0, 0, 77, 0, 76, 0, 77, 0, 72, 0, 75, 0, 74, 0, 71, 0, 0, 0] },
+};
+let musique = null, pasM = 0, tM = 0;
+function jouerMusique(nom) { if (musique === nom) return; musique = nom; pasM = 0; if (A.ctx) tM = A.ctx.currentTime + .1; }
+setInterval(() => {
+  if (!A.ctx) return;
+  if (!musique || etat !== 'jeu' || (P && P.mort)) { tM = A.ctx.currentTime + .05; return; }
+  const m = MUS[musique], dur = 60 / m.bpm / 2;
+  if (tM < A.ctx.currentTime) tM = A.ctx.currentTime + .02;
+  while (tM < A.ctx.currentTime + .15) {
+    const b = m.basse[pasM % m.basse.length], l = m.lead[pasM % m.lead.length];
+    if (b) note(mf(b), dur * .9, 'triangle', .13, 0, A.mus, tM);
+    if (l) note(mf(l), dur * .8, 'square', .03, 0, A.mus, tM);
+    if (pasM % 2 === 0 && musique !== 'donjon') note(6000, .02, 'square', .006, 0, A.mus, tM);
+    pasM++; tM += dur;
+  }
+}, 30);
+
+/* ---------------- Record ---------------- */
+const CLE_REC = 'jackjeu.cassette.record';
+function lireRecord() { try { return Object.assign({ score: 0, temps: 0 }, JSON.parse(localStorage.getItem(CLE_REC)) || {}); } catch (e) { return { score: 0, temps: 0 }; } }
+function ecrireRecord(v) { try { localStorage.setItem(CLE_REC, JSON.stringify(v)); } catch (e) {} }
+const fmtTemps = s => { s = Math.floor(s); return Math.floor(s / 60) + ' min ' + String(s % 60).padStart(2, '0') + ' s'; };
+const fmtNb = n => n.toLocaleString('fr-FR');
+function afficherRecord(el) {
+  const rec = lireRecord();
+  el.innerHTML = rec.score ? `<span>Record : <strong>${fmtNb(rec.score)} pts</strong></span>` + (rec.temps ? `<span>Meilleur temps : <strong>${fmtTemps(rec.temps)}</strong></span>` : '') : '<span>Pas encore de record : à toi de jouer !</span>';
+}
+
+/* ---------------- La partie ---------------- */
+let P = null, salle = null, def = null, fonds = [], etat = 'menu', T = 0, dlg = null, appuiAction = false;
+const HB_J = { ox: 3, oy: 8, w: 10, h: 7 };
+const HB = { gloop: { ox: 2, oy: 5, w: 12, h: 10 }, gresil: { ox: 2, oy: 3, w: 12, h: 9 }, ampli: { ox: 1, oy: 1, w: 14, h: 14 }, larsen: { ox: 3, oy: 3, w: 26, h: 26 } };
+
+function nouvellePartie() {
+  P = { salles: {}, cle: null, j: { x: 120, y: 88, dir: 'bas', pv: 6, pvMax: 6, inv: 0, atk: 0, kx: 0, ky: 0, kt: 0, anim: 0, pousse: 0, touches: new Set() },
+    cles: 0, pieces: 0, tues: 0, frags: 0, temps: 0, ennemis: [], tirs: [], objets: [], parts: [], bossBattu: false, mort: 0, trans: null, fondu: null, secousse: 0, lieu: '', gagne: false };
+  for (const k in SALLES) P.salles[k] = construire(k);
+  entrerSalle('o1,1');
+}
+
+function entrerSalle(cle) {
+  P.cle = cle; salle = P.salles[cle]; def = SALLES[cle];
+  rendreSalle();
+  P.ennemis = []; P.tirs = []; P.objets = [];
+  if (!salle.nettoyee) for (const [type, x, y] of def.ennemis) P.ennemis.push(creerEnnemi(type, x * TS, y * TS));
+  if (def.boss && !P.bossBattu) P.ennemis.push(creerEnnemi('larsen', 112, 56));
+  if (def.nom !== P.lieu) { P.lieu = def.nom; montrerLieu(def.nom); }
+  jouerMusique(def.theme !== 'donjon' ? 'monde' : (def.boss && !P.bossBattu ? 'boss' : 'donjon'));
+}
+
+function rendreSalle() {
+  fonds = [0, 1].map(f => {
+    const c = document.createElement('canvas'); c.width = RW * TS; c.height = RH * TS;
+    const x = c.getContext('2d');
+    for (let ty = 0; ty < RH; ty++) for (let tx = 0; tx < RW; tx++) tuile(x, salle.t, tx, ty, def.theme, f);
+    return c;
+  });
+}
+
+let minuteurLieu = 0;
+function montrerLieu(nom) {
+  const el = $('#lieu'); el.textContent = nom; el.classList.add('vu');
+  clearTimeout(minuteurLieu); minuteurLieu = setTimeout(() => el.classList.remove('vu'), 2200);
+}
+
+function creerEnnemi(type, x, y) {
+  const base = { type, x, y, vx: 0, vy: 0, t: rnd(.2, 1), inv: 0, kx: 0, ky: 0, kt: 0, anim: Math.random() * 5, apparition: .45, hb: HB[type] };
+  if (type === 'gloop') return Object.assign(base, { pv: 2, deg: 1 });
+  if (type === 'gresil') return Object.assign(base, { pv: 1, deg: 1, vol: false });
+  if (type === 'ampli') return Object.assign(base, { pv: 3, deg: 2, t: rnd(1, 2), charge: 0 });
+  return Object.assign(base, { pv: 16, pvMax: 16, deg: 2, vx: 42, vy: 30, t: 2, apparition: .8 });
+}
+
+/* ---------------- Collisions ---------------- */
+function rectSolide(X, Y, w, h, set) {
+  const t = salle.t, x0 = Math.floor(X / TS), x1 = Math.floor((X + w - 1) / TS), y0 = Math.floor(Y / TS), y1 = Math.floor((Y + h - 1) / TS);
+  for (let ty = y0; ty <= y1; ty++) for (let tx = x0; tx <= x1; tx++) {
+    const cx = Math.min(RW - 1, Math.max(0, tx)), cy = Math.min(RH - 1, Math.max(0, ty));
+    if (set.has(t[cy][cx])) return true;
+  }
+  return false;
+}
+function pnjRect() { return def.pnj ? { x: def.pnj.x * TS + 2, y: def.pnj.y * TS + 6, w: 12, h: 10 } : null; }
+function libre(x, y, hb, set, joueur) {
+  const b = { x: x + hb.ox, y: y + hb.oy, w: hb.w, h: hb.h };
+  if (rectSolide(b.x, b.y, b.w, b.h, set)) return false;
+  if (joueur) { const p = pnjRect(); if (p && chev(b, p)) return false; }
+  return true;
+}
+function deplacer(e, dx, dy, hb, set, aide, joueur) {
+  let bloque = false;
+  const coince = !libre(e.x, e.y, hb, set, joueur);
+  if (dx) { if (coince || libre(e.x + dx, e.y, hb, set, joueur)) e.x += dx; else { bloque = true; if (aide && !dy) glisser(e, dx, 0, hb, set, joueur); } }
+  if (dy) { if (coince || libre(e.x, e.y + dy, hb, set, joueur)) e.y += dy; else { bloque = true; if (aide && !dx) glisser(e, 0, dy, hb, set, joueur); } }
+  return bloque;
+}
+// Aide aux coins : si on frôle un passage, on est poussé doucement dedans.
+function glisser(e, dx, dy, hb, set, joueur) {
+  const v = Math.max(Math.abs(dx), Math.abs(dy));
+  for (let k = 1; k <= 7; k++) for (const s of [-1, 1]) {
+    const ox = dx ? 0 : s * k, oy = dy ? 0 : s * k;
+    if (libre(e.x + ox, e.y + oy, hb, set, joueur) && libre(e.x + ox + dx, e.y + oy + dy, hb, set, joueur)) {
+      e.x += dx ? 0 : s * Math.min(v, k); e.y += dy ? 0 : s * Math.min(v, k); return;
+    }
+  }
+}
+const boite = e => ({ x: e.x + e.hb.ox, y: e.y + e.hb.oy, w: e.hb.w, h: e.hb.h });
+const boiteJ = () => ({ x: P.j.x + 3, y: P.j.y + 6, w: 10, h: 9 });
+
+/* ---------------- Commandes ---------------- */
+const touches = new Set();
+const stick = { actif: false, id: null, x: 0, y: 0 };
+let cible = { actif: false };
+let tactile = matchMedia('(pointer:coarse)').matches;
+// Un ordinateur à écran tactile : la manette apparaît dès qu'on touche l'écran avec le doigt.
+addEventListener('pointerdown', e => {
+  if (e.pointerType === 'touch' && !tactile) { tactile = true; ajuster(); if (etat === 'jeu') $('#manette').hidden = false; }
+}, true);
+if (document.fonts) document.fonts.load('8px Silkscreen').catch(() => {});
+
+function entree() {
+  let x = 0, y = 0;
+  if (touches.has('g')) x--; if (touches.has('d')) x++; if (touches.has('h')) y--; if (touches.has('b')) y++;
+  if (x || y) return { x, y };
+  if (stick.actif && Math.hypot(stick.x, stick.y) > .25) {
+    const a = Math.round(Math.atan2(stick.y, stick.x) / (Math.PI / 4)) * (Math.PI / 4), m = Math.min(1, Math.hypot(stick.x, stick.y) * 1.4);
+    let sx = Math.cos(a), sy = Math.sin(a); if (Math.abs(sx) < .01) sx = 0; if (Math.abs(sy) < .01) sy = 0;
+    return { x: sx * m, y: sy * m };
+  }
+  if (cible.actif && cible.marche) {
+    const j = P.j, dx = cible.x - (j.x + 8), dy = cible.y - (j.y + 11), d = Math.hypot(dx, dy);
+    if (d > 5) {
+      // Mouvement « en croix » quand on est presque aligné : plus facile pour passer les portes.
+      if (Math.abs(dx) < 4) return { x: 0, y: Math.sign(dy) };
+      if (Math.abs(dy) < 4) return { x: Math.sign(dx), y: 0 };
+      return { x: dx / d, y: dy / d };
+    }
+  }
+  return { x: 0, y: 0 };
+}
+
+const CODES = { ArrowLeft: 'g', KeyA: 'g', ArrowRight: 'd', KeyD: 'd', ArrowUp: 'h', KeyW: 'h', ArrowDown: 'b', KeyS: 'b' };
+addEventListener('keydown', e => {
+  if (etat !== 'jeu') { if (e.code === 'Escape' && etat === 'pause') { e.preventDefault(); reprendre(); } return; }
+  if (CODES[e.code]) { touches.add(CODES[e.code]); e.preventDefault(); }
+  else if (['Space', 'KeyJ', 'KeyK', 'KeyX', 'Enter', 'NumpadEnter'].includes(e.code)) { e.preventDefault(); if (!e.repeat) { audio(); appuiAction = true; } }
+  else if (e.code === 'Escape' || e.code === 'KeyP') { e.preventDefault(); pause(); }
+});
+addEventListener('keyup', e => { if (CODES[e.code]) touches.delete(CODES[e.code]); });
+addEventListener('blur', () => { touches.clear(); if (etat === 'jeu') pause(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden && etat === 'jeu') pause(); });
+
+function posJeu(e) { const b = cv.getBoundingClientRect(); return { x: (e.clientX - b.left) / b.width * 256, y: (e.clientY - b.top) / b.height * 192 - HUD }; }
+cv.addEventListener('pointerdown', e => {
+  if (etat !== 'jeu') return;
+  e.preventDefault(); audio();
+  if (dlg) { appuiAction = true; return; }
+  try { cv.setPointerCapture(e.pointerId); } catch (_) {}
+  const p = posJeu(e);
+  cible = { actif: true, id: e.pointerId, x: p.x, y: p.y, x0: p.x, y0: p.y, t0: performance.now(), marche: false };
+});
+cv.addEventListener('pointermove', e => {
+  if (!cible.actif || e.pointerId !== cible.id) return;
+  const p = posJeu(e); cible.x = p.x; cible.y = p.y;
+  if (Math.hypot(p.x - cible.x0, p.y - cible.y0) > 8) cible.marche = true;
+});
+function finCible(e) {
+  if (!cible.actif || e.pointerId !== cible.id) return;
+  if (!cible.marche && P && !P.mort && !P.trans && !P.fondu) {
+    const j = P.j, dx = cible.x - (j.x + 8), dy = cible.y - (j.y + 10);
+    if (Math.abs(dx) > 2 || Math.abs(dy) > 2) j.dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'droite' : 'gauche') : (dy > 0 ? 'bas' : 'haut');
+    appuiAction = true;
+  }
+  cible = { actif: false };
+}
+cv.addEventListener('pointerup', finCible);
+cv.addEventListener('pointercancel', e => { if (cible.actif && e.pointerId === cible.id) cible = { actif: false }; });
+cv.addEventListener('contextmenu', e => e.preventDefault());
+$('#dialogue').addEventListener('pointerdown', e => { e.preventDefault(); appuiAction = true; });
+
+const elStick = $('#stick'), bouton = elStick.querySelector('i');
+function majStick(e) {
+  const b = elStick.getBoundingClientRect(), R = b.width / 2;
+  let x = (e.clientX - b.left - R) / R, y = (e.clientY - b.top - R) / R; const n = Math.hypot(x, y);
+  if (n > 1) { x /= n; y /= n; }
+  stick.x = x; stick.y = y; bouton.style.transform = `translate(${x * R * .55}px,${y * R * .55}px)`;
+}
+elStick.addEventListener('pointerdown', e => { e.preventDefault(); audio(); stick.actif = true; stick.id = e.pointerId; try { elStick.setPointerCapture(e.pointerId); } catch (_) {} majStick(e); });
+elStick.addEventListener('pointermove', e => { if (stick.actif && e.pointerId === stick.id) majStick(e); });
+const lacheStick = e => { if (e.pointerId !== stick.id) return; stick.actif = false; stick.x = stick.y = 0; bouton.style.transform = ''; };
+elStick.addEventListener('pointerup', lacheStick); elStick.addEventListener('pointercancel', lacheStick);
+const btnA = $('#btnA');
+btnA.addEventListener('pointerdown', e => { e.preventDefault(); audio(); appuiAction = true; btnA.classList.add('appui'); });
+['pointerup', 'pointercancel', 'pointerleave'].forEach(n => btnA.addEventListener(n, () => btnA.classList.remove('appui')));
+
+/* ---------------- Dialogues ---------------- */
+function dire(pages, cb, qui) {
+  dlg = { pages: pages.map(p => typeof p === 'string' ? { q: qui || '', t: p } : p), i: 0, n: 0, cb };
+  $('#dialogue').hidden = false; majDialogue();
+}
+function majDialogue() {
+  const p = dlg.pages[dlg.i];
+  $('#dQui').textContent = p.q; $('#dQui').hidden = !p.q;
+  $('#dTxt').textContent = p.t.slice(0, Math.floor(dlg.n));
+}
+function majDlg(dt) {
+  const p = dlg.pages[dlg.i];
+  if (dlg.n < p.t.length) { dlg.n = Math.min(p.t.length, dlg.n + dt * 55); majDialogue(); }
+  if (appuiAction) {
+    appuiAction = false;
+    if (dlg.n < p.t.length) { dlg.n = p.t.length; majDialogue(); return; }
+    dlg.i++; dlg.n = 0;
+    if (dlg.i >= dlg.pages.length) { const cb = dlg.cb; dlg = null; $('#dialogue').hidden = true; if (cb) cb(); }
+    else majDialogue();
+  }
+}
+
+function parlerMamie() {
+  const ss = P.salles, q = 'MAMIE BOBINE';
+  if (P.frags === 0 && !P.vuMamie) {
+    P.vuMamie = true;
+    return dire(['Jack ! Te voilà enfin. Cette nuit, le Grand Larsen a brisé la Cassette Originelle en trois fragments…',
+      'Sans elle, plus une seule note ne résonne à Vinylia. Toi seul peux la reconstituer.',
+      'Ta Lame Néon coupe les buissons et fait fuir les monstres. Reviens me voir si tu ne sais plus où aller !'], null, q);
+  }
+  const conseils = [];
+  if (!ss['o0,0'].tresorPose || ss['o0,0'].coffres['8,5']) conseils.push('Un fragment dort dans la Forêt des Échos, au nord-ouest. Fais taire tous ses monstres et elle te le rendra.');
+  if (ss['o1,2'].t[7][12] === 'b') conseils.push('Sur la Plage des Bobines, au sud, un buisson entouré d’étoiles de mer cache quelque chose…');
+  if (ss['o1,0'].t[3][8] === 'L' && P.cles === 0) conseils.push('La clé du Studio Hanté est gardée dans la Grotte Rouge, au sud-est. Là-bas aussi, il faut vaincre tous les monstres.');
+  else if (!P.bossBattu) conseils.push('Le dernier fragment est entre les griffes du Grand Larsen, tout au fond du Studio Hanté, au nord. Fonce !');
+  if (P.j.pvMax < 8) conseils.push('Psst… un coffre attend sur l’île du Lac Miroir, au nord-est. Il rend plus solide.');
+  dire(conseils.slice(0, 2).length ? conseils.slice(0, 2) : ['Tu as presque réussi, Jack. Je crois en toi !'], null, q);
+}
+
+/* ---------------- Objets ---------------- */
+function obtenir(item, puis) {
+  if (item === 'fragment') {
+    P.frags++; SFX.fragment();
+    dire([`Tu as trouvé un fragment de la Cassette Originelle ! (${P.frags}/3)`, P.frags < 3 ? 'Encore ' + (3 - P.frags) + ' à trouver. Mamie Bobine, dans la clairière, peut t’aider.' : 'Les trois fragments s’emboîtent… La Cassette Originelle est reconstituée !'],
+      () => { if (P.frags >= 3) gagner(); else if (puis) puis(); });
+  } else if (item === 'cle') {
+    P.cles++; SFX.objet(); dire(['Tu as trouvé une clé ! Elle ouvre une porte verrouillée.'], puis);
+  } else if (item === 'coeurMax') {
+    P.j.pvMax += 2; P.j.pv = P.j.pvMax; SFX.coeur(); dire(['Réceptacle de cœur ! Ta vie maximum augmente d’un cœur.'], puis);
+  } else { P.pieces += 5; SFX.piece(); }
+}
+function ouvrirCoffre(tx, ty) {
+  salle.t[ty][tx] = 'c'; rendreSalle(); SFX.porte();
+  const item = salle.coffres[tx + ',' + ty]; delete salle.coffres[tx + ',' + ty];
+  obtenir(item || 'pieces');
+}
+function deverrouiller() {
+  P.cles--; SFX.porte();
+  for (let y = 0; y < RH; y++) for (let x = 0; x < RW; x++) if (salle.t[y][x] === 'L') { salle.t[y][x] = '.'; particules(x * TS + 8, y * TS + 8, '#ffd166', 8); }
+  rendreSalle();
+}
+function lacher(x, y) {
+  const v = Math.random();
+  if (v < .18 && P.j.pv < P.j.pvMax) P.objets.push({ type: 'coeur', x, y, vie: 9 });
+  else if (v < .3) P.objets.push({ type: 'gemme', x, y, vie: 9 });
+  else if (v < .7) P.objets.push({ type: 'piece', x, y, vie: 9 });
+}
+function particules(x, y, c, n, v = 60) { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, s = rnd(.3, 1) * v; P.parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, vie: rnd(.3, .7), c }); } }
+
+/* ---------------- Interactions ---------------- */
+function devant() { const j = P.j, d = DIRS[j.dir]; return { x: j.x + 8 + d[0] * 11, y: j.y + 11 + d[1] * 10 }; }
+function interagirDevant(contact) {
+  const p = devant(), pn = pnjRect();
+  if (pn && p.x > pn.x - 4 && p.x < pn.x + pn.w + 4 && p.y > pn.y - 6 && p.y < pn.y + pn.h + 4) { parlerMamie(); return true; }
+  const tx = Math.floor(p.x / TS), ty = Math.floor(p.y / TS);
+  if (tx < 0 || ty < 0 || tx >= RW || ty >= RH) return false;
+  const c = salle.t[ty][tx];
+  if (c === 'C') { ouvrirCoffre(tx, ty); return true; }
+  if (c === 'P') { dire([def.panneau || '…']); return true; }
+  if (c === 'L') {
+    if (P.cles > 0) deverrouiller();
+    else if (!contact || !salle.vuVerrou) { salle.vuVerrou = true; SFX.bloque(); dire(['C’est fermé à clé. Il faut trouver une clé quelque part…']); }
+    return true;
+  }
+  return false;
+}
+function zoneEpee(j) {
+  const x = j.x, y = j.y;
+  switch (j.dir) {
+    case 'droite': return { x: x + 11, y: y + 5, w: 17, h: 11 };
+    case 'gauche': return { x: x - 12, y: y + 5, w: 17, h: 11 };
+    case 'bas': return { x: x + 2, y: y + 11, w: 12, h: 16 };
+    default: return { x: x + 2, y: y - 10, w: 12, h: 16 };
+  }
+}
+function frapper() { P.j.atk = .26; P.j.touches = new Set(); SFX.epee(); }
+
+function blesserJoueur(deg, sx, sy) {
+  const j = P.j; if (j.inv > 0 || P.mort) return;
+  j.pv = Math.max(0, j.pv - deg); j.inv = 1.1; SFX.aie(); P.secousse = .2;
+  const dx = j.x + 8 - sx, dy = j.y + 10 - sy, d = Math.hypot(dx, dy) || 1;
+  j.kx = dx / d * 170; j.ky = dy / d * 170; j.kt = .16; j.atk = 0;
+  if (j.pv <= 0) { P.mort = 1.6; SFX.perdu(); musique = null; }
+}
+function blesserEnnemi(e, sx, sy) {
+  if (e.inv > 0 || e.apparition > 0) return;
+  e.pv--; e.inv = e.type === 'larsen' ? .55 : .3; SFX.touche();
+  const dx = e.x + e.hb.ox + e.hb.w / 2 - sx, dy = e.y + e.hb.oy + e.hb.h / 2 - sy, d = Math.hypot(dx, dy) || 1, f = e.type === 'larsen' ? 60 : e.type === 'ampli' ? 50 : 160;
+  e.kx = dx / d * f; e.ky = dy / d * f; e.kt = .15;
+  if (e.pv <= 0) mortEnnemi(e);
+}
+function mortEnnemi(e) {
+  const cx = e.x + e.hb.ox + e.hb.w / 2, cy = e.y + e.hb.oy + e.hb.h / 2;
+  e.mort = true; P.tues++;
+  if (e.type === 'larsen') {
+    P.bossBattu = true; P.secousse = .8; SFX.boum(); P.tirs = [];
+    for (let i = 0; i < 6; i++) setTimeout(() => { if (P) { particules(cx + rnd(-14, 14), cy + rnd(-14, 14), ['#ff2a3d', '#ffd166', '#9b5cff', '#2ee6d6'][i % 4], 18, 90); SFX.boum(); } }, i * 160);
+    jouerMusique('donjon');
+    P.finBoss = 1.2; // le fragment est donné par la boucle de jeu : rien ne se perd si on met pause
+  } else { SFX.boum(); particules(cx, cy, e.type === 'gloop' ? '#9b5cff' : e.type === 'ampli' ? '#ff2a3d' : '#ffd166', 12); lacher(cx - 8, cy - 8); }
+}
+
+/* ---------------- Mise à jour ---------------- */
+function maj(dt) {
+  T += dt;
+  if (P.secousse > 0) P.secousse -= dt;
+  for (const p of P.parts) { p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= .92; p.vy *= .92; p.vie -= dt; }
+  P.parts = P.parts.filter(p => p.vie > 0);
+  if (dlg) { majDlg(dt); return; }
+  if (P.mort) { P.mort -= dt; P.j.dir = ['bas', 'gauche', 'haut', 'droite'][Math.floor(T * 10) % 4]; if (P.mort <= 0) { P.mort = 0; fin(false); } return; }
+  if (P.trans) { P.trans.t += dt; if (P.trans.t >= P.trans.dur) P.trans = null; appuiAction = false; return; }
+  if (P.fondu) {
+    P.fondu.t += dt; appuiAction = false;
+    if (!P.fondu.fait && P.fondu.t >= .3) { P.fondu.fait = true; const w = P.fondu.w; entrerSalle(w.vers); P.j.x = w.x * TS; P.j.y = w.y * TS - 8; P.j.dir = w.dir; }
+    if (P.fondu.t >= .6) P.fondu = null;
+    return;
+  }
+  if (P.intro > 0) { P.intro -= dt; if (P.intro <= 0 && !P.vuMamie && P.cle === 'o1,1') return parlerMamie(); }
+  if (def.boss && !P.bossBattu && !P.vuBoss) {
+    P.vuBoss = true;
+    return dire([{ q: 'LE GRAND LARSEN', t: 'BZZZZRRRRR ! Qui ose entrer dans MON studio ?' }, { q: 'LE GRAND LARSEN', t: 'Le dernier fragment est à moi ! Plus jamais une note ne résonnera à Vinylia !' }]);
+  }
+  if (P.finBoss > 0) {
+    P.finBoss -= dt;
+    if (P.finBoss <= 0) return dire([{ q: 'LE GRAND LARSEN', t: 'BzzzZZZ… Impossible… la musique… revient…' }], () => obtenir('fragment'));
+  }
+  P.temps += dt;
+  if (cible.actif && !cible.marche && performance.now() - cible.t0 > 200) cible.marche = true;
+  majJoueur(dt);
+  for (const e of P.ennemis) majEnnemi(e, dt);
+  P.ennemis = P.ennemis.filter(e => !e.mort);
+  majTirs(dt); majObjets(dt);
+  // Salle vidée : un coffre apparaît
+  if (def.tresor && !salle.tresorPose && P.ennemis.length === 0) {
+    salle.tresorPose = true; salle.nettoyee = true;
+    salle.t[def.tresor.y][def.tresor.x] = 'C'; salle.coffres[def.tresor.x + ',' + def.tresor.y] = def.tresor.item;
+    particules(def.tresor.x * TS + 8, def.tresor.y * TS + 8, '#ffd166', 20, 80); rendreSalle(); SFX.secret();
+  }
+  verifierSortie();
+}
+
+function majJoueur(dt) {
+  const j = P.j;
+  if (j.inv > 0) j.inv -= dt;
+  if (j.atk > 0) j.atk -= dt;
+  if (j.kt > 0) { j.kt -= dt; deplacer(j, j.kx * dt, j.ky * dt, HB_J, SOLIDE, false, true); }
+  else if (j.atk <= 0) {
+    let { x: ix, y: iy } = entree();
+    if (ix || iy) {
+      const n = Math.hypot(ix, iy), m = Math.min(1, n); ix /= n; iy /= n;
+      const ax = Math.abs(ix), ay = Math.abs(iy);
+      if (ax > ay * 1.2) j.dir = ix > 0 ? 'droite' : 'gauche';
+      else if (ay > ax * 1.2) j.dir = iy > 0 ? 'bas' : 'haut';
+      else if (!((j.dir === 'droite' && ix > 0) || (j.dir === 'gauche' && ix < 0) || (j.dir === 'bas' && iy > 0) || (j.dir === 'haut' && iy < 0))) j.dir = iy > 0 ? 'bas' : 'haut';
+      const v = 74 * m;
+      const bloque = deplacer(j, ix * v * dt, iy * v * dt, HB_J, SOLIDE, true, true);
+      j.anim += dt * m;
+      if (bloque && (ax < .01 || ay < .01)) { j.pousse += dt; if (j.pousse > .3) { j.pousse = -.5; interagirDevant(true); } }
+      else j.pousse = 0;
+    } else { j.pousse = 0; j.anim = 0; }
+  }
+  if (appuiAction) { appuiAction = false; if (j.atk <= 0 && !interagirDevant(false)) frapper(); }
+  // Coups d'épée
+  if (j.atk > .05) {
+    const z = zoneEpee(j);
+    for (const e of P.ennemis) if (!j.touches.has(e) && chev(z, boite(e))) { j.touches.add(e); blesserEnnemi(e, j.x + 8, j.y + 10); }
+    for (const t of P.tirs) if (chev(z, { x: t.x - 3, y: t.y - 3, w: 6, h: 6 })) { t.vie = 0; particules(t.x, t.y, '#2ee6d6', 4); }
+    const x0 = Math.floor(z.x / TS), x1 = Math.floor((z.x + z.w - 1) / TS), y0 = Math.floor(z.y / TS), y1 = Math.floor((z.y + z.h - 1) / TS);
+    let change = false;
+    for (let ty = Math.max(0, y0); ty <= Math.min(RH - 1, y1); ty++) for (let tx = Math.max(0, x0); tx <= Math.min(RW - 1, x1); tx++) {
+      if (salle.t[ty][tx] !== 'b') continue;
+      salle.t[ty][tx] = '.'; change = true; SFX.buisson(); particules(tx * TS + 8, ty * TS + 8, '#2fa06a', 10);
+      if (def.cache && def.cache.x === tx && def.cache.y === ty) { particules(tx * TS + 8, ty * TS + 8, '#ffd166', 16, 80); obtenir(def.cache.item); }
+      else if (Math.random() < .35) lacher(tx * TS, ty * TS);
+    }
+    if (change) rendreSalle();
+  }
+  // Contact avec les monstres
+  const bj = boiteJ();
+  for (const e of P.ennemis) if (e.apparition <= 0 && chev(bj, boite(e))) blesserJoueur(e.deg, e.x + e.hb.ox + e.hb.w / 2, e.y + e.hb.oy + e.hb.h / 2);
+  // Passages vers le donjon
+  const fx = Math.floor((j.x + 8) / TS), fy = Math.floor((j.y + 12) / TS);
+  const w = def.warps && def.warps[fx + ',' + fy];
+  if (w) P.fondu = { t: 0, w, fait: false };
+}
+
+function voisin(cle, dir) {
+  const m = cle[0], [a, b] = cle.slice(1).split(',').map(Number);
+  const [x, y] = dir === 'W' ? [a - 1, b] : dir === 'E' ? [a + 1, b] : dir === 'N' ? [a, b - 1] : [a, b + 1];
+  const k = m + x + ',' + y; return SALLES[k] ? k : null;
+}
+function verifierSortie() {
+  const j = P.j, cx = j.x + 8, cy = j.y + 12;
+  const dir = cx < 0 ? 'W' : cx > 256 ? 'E' : cy < 2 ? 'N' : cy > 176 ? 'S' : null;
+  if (!dir) return;
+  const k = voisin(P.cle, dir);
+  if (!k) { j.x = Math.max(-6, Math.min(246, j.x)); j.y = Math.max(-8, Math.min(162, j.y)); return; }
+  const ancien = fonds, ax = j.x, ay = j.y;
+  entrerSalle(k);
+  if (dir === 'W') j.x = 244; if (dir === 'E') j.x = -4; if (dir === 'N') j.y = 162; if (dir === 'S') j.y = -8;
+  P.trans = { dir, t: 0, dur: .5, ancien, ax, ay, nx: j.x, ny: j.y };
+}
+
+function majEnnemi(e, dt) {
+  e.anim += dt;
+  if (e.apparition > 0) { e.apparition -= dt; return; }
+  if (e.inv > 0) e.inv -= dt;
+  const j = P.j, jx = j.x + 8, jy = j.y + 10, ex = e.x + e.hb.ox + e.hb.w / 2, ey = e.y + e.hb.oy + e.hb.h / 2;
+  if (e.kt > 0) { e.kt -= dt; deplacer(e, e.kx * dt, e.ky * dt, e.hb, e.type === 'gresil' || e.type === 'larsen' ? new Set('W') : SOLIDE, false, false); borner(e); return; }
+  if (e.type === 'gloop') {
+    e.t -= dt;
+    if (e.t <= 0) {
+      e.t = rnd(.6, 1.6);
+      const ch = Math.random(); const vers = Math.random() < .35;
+      if (ch < .2) { e.vx = e.vy = 0; }
+      else if (vers) { const dx = jx - ex, dy = jy - ey; if (Math.abs(dx) > Math.abs(dy)) { e.vx = Math.sign(dx) * 24; e.vy = 0; } else { e.vy = Math.sign(dy) * 24; e.vx = 0; } }
+      else { const d = [[1, 0], [-1, 0], [0, 1], [0, -1]][Math.random() * 4 | 0]; e.vx = d[0] * 24; e.vy = d[1] * 24; }
+    }
+    if (deplacer(e, e.vx * dt, e.vy * dt, e.hb, SOLIDE, false, false)) e.t = 0;
+  } else if (e.type === 'gresil') {
+    e.t -= dt;
+    if (e.t <= 0) {
+      e.vol = !e.vol; e.t = e.vol ? rnd(1, 1.6) : rnd(.5, 1);
+      if (e.vol) { const a = Math.atan2(jy - ey, jx - ex) + rnd(-.9, .9); e.vx = Math.cos(a) * 58; e.vy = Math.sin(a) * 58; }
+    }
+    if (e.vol) { e.x += e.vx * dt; e.y += e.vy * dt + Math.sin(e.anim * 8) * .4; }
+  } else if (e.type === 'ampli') {
+    e.t -= dt;
+    if (e.charge > 0) { e.charge -= dt; if (e.charge <= 0) { const a = Math.atan2(jy - ey, jx - ex); tirer(ex, ey, a, 72, '#ff5fa2'); } }
+    else if (e.t <= 0 && Math.hypot(jx - ex, jy - ey) < 150) { e.t = rnd(2, 2.8); e.charge = .4; }
+  } else if (e.type === 'larsen') {
+    const furie = e.pv <= e.pvMax / 2, vit = furie ? 1.45 : 1;
+    e.x += e.vx * vit * dt; e.y += e.vy * vit * dt;
+    if (e.x < 18 || e.x > 206) { e.vx *= -1; e.x = Math.max(18, Math.min(206, e.x)); }
+    if (e.y < 18 || e.y > 126) { e.vy *= -1; e.y = Math.max(18, Math.min(126, e.y)); }
+    e.t -= dt;
+    if (e.t <= 0) {
+      e.t = furie ? 1.5 : 2.3; e.salve = (e.salve || 0) + 1;
+      const n = furie ? 12 : 8, dec = e.salve * .3;
+      for (let i = 0; i < n; i++) tirer(ex, ey, dec + i * Math.PI * 2 / n, furie ? 66 : 56, '#ff2a3d');
+      if (furie) { const a = Math.atan2(jy - ey, jx - ex); [-.25, 0, .25].forEach(o => tirer(ex, ey, a + o, 95, '#ffd166')); }
+      P.secousse = .12;
+    }
+  }
+  borner(e);
+}
+function borner(e) { if (e.type === 'larsen') return; e.x = Math.max(16, Math.min(224, e.x)); e.y = Math.max(12, Math.min(146, e.y)); }
+
+function tirer(x, y, a, v, c) { P.tirs.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, vie: 4, c }); SFX.tir(); }
+function majTirs(dt) {
+  const bj = boiteJ();
+  for (const t of P.tirs) {
+    t.x += t.vx * dt; t.y += t.vy * dt; t.vie -= dt;
+    if (t.x < -8 || t.y < -8 || t.x > 264 || t.y > 184 || rectSolide(t.x - 1, t.y - 1, 2, 2, SOLIDE_TIR)) t.vie = 0;
+    if (t.vie > 0 && chev(bj, { x: t.x - 2, y: t.y - 2, w: 4, h: 4 })) { t.vie = 0; blesserJoueur(1, t.x, t.y); }
+  }
+  P.tirs = P.tirs.filter(t => t.vie > 0);
+}
+function majObjets(dt) {
+  const bj = boiteJ();
+  for (const o of P.objets) {
+    o.vie -= dt;
+    if (chev(bj, { x: o.x + 4, y: o.y + 4, w: 8, h: 8 })) {
+      o.vie = 0;
+      if (o.type === 'piece') { P.pieces++; SFX.piece(); }
+      else if (o.type === 'gemme') { P.pieces += 5; SFX.piece(); }
+      else if (o.type === 'coeur') { P.j.pv = Math.min(P.j.pvMax, P.j.pv + 2); SFX.coeur(); }
+    }
+  }
+  P.objets = P.objets.filter(o => o.vie > 0);
+}
+
+/* ---------------- Dessin des personnages ---------------- */
+function dJack(x, y, dir, pas, atk, cligne) {
+  x = Math.round(x); y = Math.round(y);
+  if (cligne && Math.floor(T * 16) % 2) return;
+  r('#00000066', x + 3, y + 14, 10, 2);
+  const epee = atk > 0;
+  if (epee && dir === 'haut') dEpee(x, y, dir, atk);
+  const p = Math.floor(pas * 8) % 2, L = '#20202c', peau = '#f0bf96', che = '#16121c', ca = '#ffd166';
+  // jambes + baskets
+  const hg = p ? 2 : 3, hd = p ? 3 : 2;
+  if (dir === 'gauche' || dir === 'droite') { r(L, x + 5, y + 12, 2, hg); r(L, x + 9, y + 12, 2, hd); r('#f4f4f6', x + (dir === 'droite' ? 5 : 4), y + 12 + hg, 3, 1); r('#f4f4f6', x + (dir === 'droite' ? 9 : 8), y + 12 + hd, 3, 1); }
+  else { r(L, x + 5, y + 12, 2, hg); r(L, x + 9, y + 12, 2, hd); r('#f4f4f6', x + 5, y + 12 + hg, 2, 1); r('#f4f4f6', x + 9, y + 12 + hd, 2, 1); }
+  // blouson rouge
+  if (dir === 'gauche' || dir === 'droite') {
+    r('#ff2a3d', x + 5, y + 8, 6, 5); r('#b3122a', x + 5, y + 12, 6, 1);
+    r('#b3122a', dir === 'droite' ? x + 7 : x + 8, y + 9, 2, 3 + (epee ? -1 : 0));
+  } else {
+    r('#ff2a3d', x + 4, y + 8, 8, 5); r('#b3122a', x + 4, y + 12, 8, 1);
+    if (dir === 'bas') { r('#16121c', x + 7, y + 8, 2, 4); r('#ffd166', x + 7, y + 9, 1, 1); }
+    r('#b3122a', x + 3, y + 8, 1, 4); r('#b3122a', x + 12, y + 8, 1, 4); r(peau, x + 3, y + 12, 1, 1); r(peau, x + 12, y + 12, 1, 1);
+  }
+  // tête
+  r(peau, x + 4, y + 2, 8, 6);
+  if (dir === 'bas') {
+    r(che, x + 4, y + 1, 8, 2); r(che, x + 3, y + 2, 1, 3); r(che, x + 12, y + 2, 1, 3); r(che, x + 5, y + 3, 2, 1); r(che, x + 9, y + 3, 1, 1);
+    r(che, x + 6, y + 5, 1, 2); r(che, x + 9, y + 5, 1, 2); r('#e0907a', x + 7, y + 7, 2, 1);
+  } else if (dir === 'haut') { r(che, x + 4, y + 1, 8, 6); r(che, x + 3, y + 2, 1, 4); r(che, x + 12, y + 2, 1, 4); }
+  else {
+    const d = dir === 'droite';
+    r(che, x + 4, y + 1, 8, 2); r(che, d ? x + 4 : x + 9, y + 2, 3, 4); r(che, d ? x + 10 : x + 5, y + 3, 1, 1);
+    r(che, d ? x + 10 : x + 5, y + 5, 1, 2);
+  }
+  // casque audio jaune (signature de Jack)
+  r(ca, x + 3, y, 10, 1);
+  if (dir === 'gauche' || dir === 'droite') r(ca, dir === 'droite' ? x + 6 : x + 7, y + 3, 3, 4);
+  else { r(ca, x + 2, y + 3, 2, 4); r(ca, x + 12, y + 3, 2, 4); }
+  if (epee && dir !== 'haut') dEpee(x, y, dir, atk);
+}
+function dEpee(x, y, dir, atk) {
+  const k = 1 - atk / .26; // progression du coup
+  const lame = '#2ee6d6', coeur = '#ffffff', garde = '#ffd166';
+  g.save(); g.globalAlpha = .45 * (1 - k); g.strokeStyle = '#2ee6d6'; g.lineWidth = 3; g.beginPath();
+  const cx = x + 8, cy = y + 10, base = { droite: 0, bas: Math.PI / 2, gauche: Math.PI, haut: -Math.PI / 2 }[dir];
+  g.arc(cx, cy, 15, base - 1.2, base - 1.2 + 2.4 * Math.min(1, k * 1.6)); g.stroke(); g.restore();
+  if (dir === 'droite') { r(garde, x + 12, y + 8, 2, 5); r(lame, x + 14, y + 9, 12, 3); r(coeur, x + 14, y + 10, 11, 1); }
+  else if (dir === 'gauche') { r(garde, x + 2, y + 8, 2, 5); r(lame, x - 10, y + 9, 12, 3); r(coeur, x - 9, y + 10, 11, 1); }
+  else if (dir === 'bas') { r(garde, x + 7, y + 13, 5, 2); r(lame, x + 8, y + 15, 3, 12); r(coeur, x + 9, y + 15, 1, 11); }
+  else { r(garde, x + 3, y + 5, 5, 2); r(lame, x + 4, y - 8, 3, 13); r(coeur, x + 5, y - 7, 1, 12); }
+}
+function dMamie(x, y) {
+  const b = Math.floor(T * 2) % 2;
+  r('#00000066', x + 3, y + 14, 10, 2);
+  r('#9b5cff', x + 3, y + 8, 10, 7); r('#7a3fe0', x + 3, y + 14, 10, 1);
+  r('#ff5fa2', x + 3, y + 7, 10, 2); r('#ffd166', x + 7, y + 9, 2, 2);
+  r('#f0bf96', x + 4, y + 2 + b, 8, 5);
+  r('#c8c8d4', x + 4, y + 1 + b, 8, 2); r('#c8c8d4', x + 6, y - 1 + b, 4, 2); r('#c8c8d4', x + 3, y + 2 + b, 1, 3); r('#c8c8d4', x + 12, y + 2 + b, 1, 3);
+  r('#2ee6d6', x + 5, y + 4 + b, 2, 1); r('#2ee6d6', x + 9, y + 4 + b, 2, 1); r('#222', x + 6, y + 4 + b, 1, 1); r('#222', x + 9, y + 4 + b, 1, 1);
+  r('#c06a5a', x + 7, y + 6 + b, 2, 1);
+  r('#8a5a32', x + 13, y + 5, 1, 10); r('#a87442', x + 12, y + 5, 2, 1);
+  if (!P.vuMamie && Math.floor(T * 3) % 2) { r('#ffd166', x + 7, y - 8, 2, 4); r('#ffd166', x + 7, y - 3, 2, 1); }
+}
+function dEnnemi(e) {
+  const x = Math.round(e.x), y = Math.round(e.y);
+  if (e.apparition > 0) { const s = Math.floor(e.apparition * 10) % 2; g.save(); g.globalAlpha = .7; r(s ? '#ff2a3d' : '#ffd166', x + 4, y + 4, 8, 8); r('#ffffff', x + 6, y + 6, 4, 4); g.restore(); return; }
+  FLASH = e.inv > 0 && Math.floor(T * 20) % 2 === 0;
+  if (e.type === 'gloop') {
+    const sq = Math.sin(e.anim * 9) > 0 ? 1 : 0;
+    r('#00000066', x + 3, y + 14, 10, 2);
+    r('#6a2fd0', x + 2, y + 7 + sq, 12, 8 - sq); r('#9b5cff', x + 3, y + 5 + sq, 10, 9 - sq); r('#9b5cff', x + 5, y + 3 + sq, 6, 3);
+    r('#d0b0ff', x + 5, y + 5 + sq, 2, 2);
+    r('#fff', x + 5, y + 8 + sq, 2, 3); r('#fff', x + 9, y + 8 + sq, 2, 3); r('#120b20', x + 6, y + 9 + sq, 1, 2); r('#120b20', x + 10, y + 9 + sq, 1, 2);
+  } else if (e.type === 'gresil') {
+    const ail = Math.sin(e.anim * (e.vol ? 26 : 10)) > 0, h = e.vol ? 0 : 2;
+    r('#00000055', x + 4, y + 15, 8, 1);
+    r('#1b1b26', x + 4, y + 3 + h, 8, 9); r('#1b1b26', x + 3, y + 4 + h, 10, 7); r('#33334a', x + 5, y + 4 + h, 3, 1);
+    r('#ff2a3d', x + 7, y + 7 + h, 2, 2);
+    if (ail) { r('#4a4a66', x, y + 2 + h, 4, 3); r('#4a4a66', x + 12, y + 2 + h, 4, 3); } else { r('#4a4a66', x, y + 7 + h, 4, 3); r('#4a4a66', x + 12, y + 7 + h, 4, 3); }
+    r('#ffd166', x + 5, y + 5 + h, 1, 1); r('#ffd166', x + 10, y + 5 + h, 1, 1);
+  } else if (e.type === 'ampli') {
+    const c = e.charge > 0, p = c ? 1 : 0;
+    r('#00000066', x + 2, y + 14, 13, 2);
+    r('#2b2b36', x + 1, y + 1, 14, 14); r('#3d3d4c', x + 2, y + 2, 12, 12); r('#55556a', x + 2, y + 2, 12, 1);
+    r('#111', x + 4 - p, y + 5 - p, 8 + p * 2, 8 + p * 2); r(c ? '#ff5fa2' : '#55556a', x + 6, y + 7, 4, 4); r('#111', x + 7, y + 8, 2, 2);
+    r(c ? '#ffffff' : '#ff2a3d', x + 11, y + 3, 2, 1); r('#ffd166', x + 3, y + 3, 1, 1); r('#ffd166', x + 5, y + 3, 1, 1);
+  } else {
+    const furie = e.pv <= e.pvMax / 2, pul = Math.sin(e.anim * (furie ? 14 : 7)) > 0 ? 1 : 0, corps = furie && Math.floor(T * 8) % 2 ? '#3a0a2a' : '#2a0a12';
+    r('#00000077', x + 4, y + 29, 24, 3);
+    r('#ff2a3d', x + 3, y - 1 + pul, 3, 6); r('#ff2a3d', x + 26, y - 1 + pul, 3, 6);
+    r(corps, x + 2, y + 4, 28, 26); r(corps, x + 1, y + 7, 30, 20); r('#ff2a3d', x + 2, y + 4, 28, 2); r('#ff2a3d55', x + 2, y + 6, 28, 1);
+    r('#111', x + 5, y + 9, 9, 9); r('#111', x + 18, y + 9, 9, 9);
+    r('#55556a', x + 7, y + 11, 5, 5); r('#55556a', x + 20, y + 11, 5, 5);
+    r(furie ? '#ff2a3d' : '#ffd166', x + 8 + pul, y + 12, 3, 3); r(furie ? '#ff2a3d' : '#ffd166', x + 21 - pul, y + 12, 3, 3);
+    r('#111', x + 7, y + 21, 18, 6 + pul);
+    for (let i = 0; i < 4; i++) { r('#f4f4f6', x + 8 + i * 4, y + 21, 2, 2); r('#f4f4f6', x + 10 + i * 4, y + 25 + pul, 2, 2); }
+    r('#9b5cff', x + 1, y + 16, 2, 6); r('#9b5cff', x + 29, y + 16, 2, 6);
+  }
+  FLASH = false;
+}
+function dObjet(o) {
+  if (o.vie < 2.5 && Math.floor(T * 10) % 2) return;
+  const x = Math.round(o.x), y = Math.round(o.y) + (Math.floor(T * 4) % 2);
+  r('#00000055', x + 5, y + 13, 6, 1);
+  if (o.type === 'piece') { r('#ffd166', x + 7, y + 4, 2, 8); r('#ffd166', x + 6, y + 5, 4, 6); r('#fff3c4', x + 7, y + 5, 1, 2); r('#c99a2e', x + 9, y + 7, 1, 3); }
+  else if (o.type === 'gemme') { r('#2ee6d6', x + 7, y + 3, 2, 10); r('#2ee6d6', x + 5, y + 5, 6, 6); r('#d0fffb', x + 6, y + 6, 2, 2); r('#1a9a90', x + 9, y + 8, 2, 3); }
+  else coeur(x + 4, y + 5, 2);
+}
+function dTir(t) {
+  const x = Math.round(t.x), y = Math.round(t.y);
+  r(t.c, x - 2, y - 1, 4, 3); r(t.c, x + 1, y - 6, 1, 6); r(t.c, x + 1, y - 6, 3, 1); r('#ffffff', x - 1, y - 1, 1, 1);
+}
+const COEUR = ['.XX.XX.', 'XXXXXXX', 'XXXXXXX', '.XXXXX.', '..XXX..', '...X...'];
+function coeur(x, y, e) {
+  COEUR.forEach((l, j) => { for (let i = 0; i < 7; i++) if (l[i] === 'X') r(e === 2 || (e === 1 && i < 4) ? '#ff2a3d' : '#3a2a32', x + i, y + j, 1, 1); });
+  if (e) r('#ffb3bc', x + 1, y + 1, 1, 1);
+}
+function txt(s, x, y, c = '#f4f4f6', al = 'left') { g.font = '8px Silkscreen, monospace'; g.textAlign = al; g.textBaseline = 'top'; g.fillStyle = c; g.fillText(s, x, y); }
+
+function hud() {
+  r('#07070b', 0, 0, 256, HUD);
+  ['#ffd166', '#ff8a3d', '#ff2a3d', '#ff5fa2', '#9b5cff', '#2ee6d6'].forEach((c, i) => r(c, Math.floor(i * 256 / 6), 15, 43, 1));
+  const j = P.j;
+  for (let i = 0; i < j.pvMax / 2; i++) { const v = j.pv - i * 2; coeur(4 + i * 9, 4, v >= 2 ? 2 : v === 1 ? 1 : 0); }
+  r('#ffd166', 62, 4, 2, 7); r('#ffd166', 61, 5, 4, 5); txt(String(P.pieces).padStart(3, '0'), 67, 4);
+  r('#ffd166', 96, 4, 4, 4); r('#07070b', 97, 5, 2, 2); r('#ffd166', 97, 8, 2, 4); r('#ffd166', 99, 10, 2, 1); txt('x' + P.cles, 103, 4);
+  for (let i = 0; i < 3; i++) {
+    const x = 126 + i * 15, ok = i < P.frags;
+    r(ok ? '#ff2a3d' : '#2a2a36', x, 3, 13, 9); r('#07070b', x + 2, 5, 9, 3);
+    r(ok ? '#ffd166' : '#3a3a48', x + 3, 6, 2, 1); r(ok ? '#2ee6d6' : '#3a3a48', x + 8, 6, 2, 1); r(ok ? '#9b5cff' : '#3a3a48', x + 3, 9, 7, 2);
+  }
+  txt(fmtNb(score()), 252, 4, '#ffd166', 'right');
+}
+const score = () => P.pieces * 10 + P.tues * 25 + P.frags * 1000;
+
+function dessinerMonde(dx, dy) {
+  g.drawImage(fonds[Math.floor(T * 2) % 2], dx, dy);
+}
+function dessiner() {
+  g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = '#000'; g.fillRect(0, 0, 256, 192);
+  if (!P) return;
+  let sx = 0, sy = 0;
+  if (P.secousse > 0) { sx = Math.round(rnd(-2, 2)); sy = Math.round(rnd(-2, 2)); }
+  g.save(); g.translate(sx, HUD + sy); g.beginPath(); g.rect(0, 0, 256, 176); g.clip();
+  const j = P.j;
+  if (P.trans) {
+    const tr = P.trans, p = Math.min(1, tr.t / tr.dur), e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+    const W = 256, H = 176, o = { E: [-W, 0], W: [W, 0], N: [0, H], S: [0, -H] }[tr.dir];
+    g.drawImage(tr.ancien[0], o[0] * e, o[1] * e);
+    g.drawImage(fonds[0], -o[0] * (1 - e), -o[1] * (1 - e));
+    dJack(tr.ax + (tr.nx - tr.ax) * e, tr.ay + (tr.ny - tr.ay) * e, j.dir, T, 0, false);
+  } else {
+    dessinerMonde(0, 0);
+    for (const o of P.objets) dObjet(o);
+    if (def.pnj) dMamie(def.pnj.x * TS, def.pnj.y * TS);
+    const sol = P.ennemis.filter(e => e.type !== 'gresil'), air = P.ennemis.filter(e => e.type === 'gresil');
+    for (const e of sol) if (e.y + 8 < j.y) dEnnemi(e);
+    dJack(j.x, j.y, j.dir, j.anim, j.atk, j.inv > 0 && !P.mort);
+    for (const e of sol) if (e.y + 8 >= j.y) dEnnemi(e);
+    for (const e of air) dEnnemi(e);
+    for (const t of P.tirs) dTir(t);
+    for (const p of P.parts) r(p.c, Math.round(p.x), Math.round(p.y), 2, 2);
+    const b = P.ennemis.find(e => e.type === 'larsen');
+    if (b && b.apparition <= 0) { r('#000000aa', 63, 3, 130, 7); r('#3a0a12', 64, 4, 128, 5); r('#ff2a3d', 64, 4, Math.round(128 * b.pv / b.pvMax), 5); r('#ffffff55', 64, 4, Math.round(128 * b.pv / b.pvMax), 1); }
+  }
+  if (P.mort) { g.fillStyle = `rgba(120,0,16,${Math.min(.6, (1.6 - P.mort) * .5)})`; g.fillRect(0, 0, 256, 176); }
+  g.restore();
+  if (P.fondu) { const t = P.fondu.t, a = t < .3 ? t / .3 : 1 - (t - .3) / .3; g.fillStyle = `rgba(0,0,0,${Math.max(0, Math.min(1, a))})`; g.fillRect(0, HUD, 256, 176); }
+  hud();
+}
+
+/* ---------------- Boucle ---------------- */
+let dernier = 0;
+function boucle(t) {
+  const dt = Math.min(.05, (t - dernier) / 1000 || 0); dernier = t;
+  if (etat === 'jeu') maj(dt); else T += dt * (etat === 'menu' ? 1 : 0);
+  dessiner();
+  requestAnimationFrame(boucle);
+}
+
+/* ---------------- Écrans ---------------- */
+const ecrans = ['#eMenu', '#eAide', '#ePause', '#eFin'];
+function montrer(id) {
+  ecrans.forEach(s => { $(s).hidden = s !== id; });
+  $('#manette').hidden = !(tactile && !id);
+  if (id) { const b = $(id).querySelector('.btn.principal'); if (b) setTimeout(() => b.focus({ preventScroll: true }), 30); }
+}
+function jouer() {
+  audio(); nouvellePartie(); etat = 'jeu'; montrer(null); touches.clear();
+  dlg = null; $('#dialogue').hidden = true;
+  P.intro = .7; // Mamie Bobine se présente au bout d'un court instant
+}
+function pause() { if (etat !== 'jeu') return; etat = 'pause'; touches.clear(); stick.actif = false; afficherRecord($('#recPause')); montrer('#ePause'); }
+function reprendre() { audio(); etat = 'jeu'; montrer(null); }
+function menu() { etat = 'menu'; dlg = null; $('#dialogue').hidden = true; afficherRecord($('#recMenu')); montrer('#eMenu'); }
+function gagner() {
+  P.gagne = true; SFX.gagne(); musique = null; etat = 'attente';
+  const bonus = Math.max(0, 3000 - Math.floor(P.temps) * 3) + P.j.pv * 100;
+  P.bonus = bonus;
+  setTimeout(() => fin(true), 600);
+}
+function fin(gagne) {
+  etat = 'fin';
+  const total = score() + (gagne ? P.bonus : 0), rec = lireRecord();
+  let nouveau = false;
+  if (total > rec.score) { rec.score = total; nouveau = true; }
+  if (gagne && (!rec.temps || P.temps < rec.temps)) { rec.temps = Math.floor(P.temps); nouveau = true; }
+  ecrireRecord(rec);
+  $('#fSur').textContent = gagne ? 'VICTOIRE !' : 'JACK EST K.O.';
+  $('#tFin').textContent = gagne ? 'La musique est revenue !' : 'Partie terminée';
+  $('#fTxt').textContent = gagne ? 'La Cassette Originelle est reconstituée et Vinylia se remet à danser. Bravo Jack !' : 'Le Grand Larsen rit dans ses enceintes… Retente ta chance, tu vas y arriver !';
+  const st = [['Score', fmtNb(total) + ' pts'], ['Fragments', P.frags + ' / 3'], ['Pièces', P.pieces], ['Monstres vaincus', P.tues], ['Temps', fmtTemps(P.temps)]];
+  if (gagne) st.push(['Bonus de fin', '+' + fmtNb(P.bonus)]);
+  $('#fStats').innerHTML = st.map(([a, b]) => `<div><small>${a}</small><strong>${b}</strong></div>`).join('');
+  $('#fBadge').hidden = !nouveau;
+  afficherRecord($('#recFin'));
+  montrer('#eFin');
+}
+$('#bJouer').onclick = jouer;
+$('#bAide').onclick = () => montrer('#eAide');
+$('#bAideOk').onclick = () => { if (etat === 'menu') montrer('#eMenu'); else montrer('#ePause'); };
+$('#bReprendre').onclick = reprendre;
+$('#bRecommencer').onclick = jouer;
+$('#bMenu1').onclick = menu;
+$('#bMenu2').onclick = menu;
+$('#bRejouer').onclick = jouer;
+$('#bPause').onclick = () => { if (etat === 'jeu') pause(); else if (etat === 'pause') reprendre(); };
+function majBoutonSon() { const b = $('#bSon'); b.textContent = A.son ? '🔊' : '🔇'; b.setAttribute('aria-label', A.son ? 'Couper le son' : 'Remettre le son'); }
+$('#bSon').onclick = () => { A.son = !A.son; try { localStorage.setItem('jackjeu.son', A.son ? 'oui' : 'non'); } catch (e) {} if (A.ctx) A.m.gain.value = A.son ? .55 : 0; majBoutonSon(); };
+majBoutonSon();
+
+/* ---------------- Taille de l'écran ---------------- */
+function ajuster() {
+  const portrait = innerHeight > innerWidth, astuce = $('#astuce');
+  astuce.hidden = tactile;
+  const w = innerWidth - 16, h = innerHeight - 48 - 16 - (tactile ? (portrait ? 210 : 0) : 34);
+  let s = Math.min(w / 256, h / 192);
+  if (s >= 3) s = Math.floor(s);
+  s = Math.max(1, s);
+  document.documentElement.style.setProperty('--s', s.toFixed(3));
+}
+addEventListener('resize', ajuster); addEventListener('orientationchange', () => setTimeout(ajuster, 200));
+ajuster();
+
+// Accès de test (seulement avec #test dans l'adresse) : fait avancer le jeu image par image.
+if (location.hash === '#test') window.JJ = { get P() { return P; }, get etat() { return etat; }, get dlg() { return dlg; }, get salle() { return salle; }, maj, jouer, dessiner, entrerSalle, touches, action: () => { appuiAction = true; } };
+
+// Fond du menu : la clairière de départ
+nouvellePartie();
+menu();
+requestAnimationFrame(boucle);
+})();
+</script>
+</body>
+</html>
