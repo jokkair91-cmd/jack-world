@@ -1,0 +1,101 @@
+<!doctype html>
+<html class="site-jeu" lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07070b">
+<meta name="description" content="JACK JEU · La Cassette Perdue : un jeu d'aventure de Jack World. Explore Vinylia, affronte les monstres du Grand Larsen et retrouve les 3 fragments de la Cassette Originelle. Gratuit, au clavier, à la souris ou au doigt.">
+<title>JACK JEU — La Cassette Perdue</title>
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="../retro.css">
+</head>
+<body>
+<a class="skip" href="#contenu">Aller au contenu</a>
+<header>
+  <div class="wrap">
+    <a class="logo" href="index.html" aria-label="JACK JEU, accueil"><img src="favicon.svg" alt="" width="36" height="36"><span>JACK <b>JEU</b></span></a>
+    <nav aria-label="Navigation principale"><a href="#histoire">L'histoire</a><a href="#jouer">Comment jouer</a><a href="#questions">Questions</a></nav>
+    <a class="cta" href="app/index.html" target="_blank" rel="noopener">Jouer <span aria-hidden="true">↗</span></a>
+  </div>
+</header>
+
+<main id="contenu" tabindex="-1">
+  <section class="hero" aria-labelledby="titre">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">JACK WORLD · JACK JEU · AVENTURE</p>
+        <h1 id="titre">La Cassette<br><em>Perdue.</em></h1>
+        <p class="lead">Le Grand Larsen a brisé la Cassette Originelle de Vinylia en trois morceaux. Depuis, le royaume n'a plus de musique. Prends ta Lame Néon, explore, et retrouve les 3 fragments.</p>
+        <div class="actions"><a class="btn" href="app/index.html" target="_blank" rel="noopener">▶ Jouer à JACK JEU</a><a class="btn ghost" href="#jouer">Comment jouer <span aria-hidden="true">↓</span></a></div>
+        <p class="petit">Gratuit, dans ton navigateur, sans compte. Au clavier, à la souris ou au doigt.</p>
+      </div>
+      <div class="ecran">
+        <img src="apercu-jeu.jpg" alt="L'écran d'accueil de JACK JEU : « La Cassette Perdue », avec le bouton Jouer, sur la carte du royaume de Vinylia" width="800" height="500">
+        <div class="fragments" aria-hidden="true"><i></i><i></i><i></i></div>
+      </div>
+    </div>
+  </section>
+  <div data-jack-pub-ici></div>
+
+  <div class="bande" aria-hidden="true"><div>EXPLORE <span>◆</span> COMBATS <span>◆</span> COFFRES ET CLÉS <span>◆</span> 3 FRAGMENTS <span>◆</span> LE GRAND LARSEN <span>◆</span> EXPLORE <span>◆</span> COMBATS <span>◆</span> COFFRES ET CLÉS <span>◆</span> 3 FRAGMENTS <span>◆</span> LE GRAND LARSEN <span>◆</span></div></div>
+
+  <section class="section" id="histoire" aria-labelledby="t-histoire">
+    <div class="wrap">
+      <div class="head"><p class="eyebrow">L'HISTOIRE</p><h2 id="t-histoire">Rends la musique<br><em>à Vinylia.</em></h2><p>Un jeu d'aventure en pixel, à explorer salle par salle.</p></div>
+      <div class="grille">
+        <article class="carte"><span class="ic" aria-hidden="true">🗺️</span><h3>Explore le royaume</h3><p>La Forêt des Échos, le Lac Miroir, le Marais Gris, la Plage des Bobines, la Grotte Rouge… jusqu'au Studio Hanté : chaque région cache son secret.</p></article>
+        <article class="carte"><span class="ic" aria-hidden="true">⚔️</span><h3>Affronte les monstres</h3><p>Ta Lame Néon contre les monstres du Grand Larsen. Vide une salle pour faire apparaître un coffre.</p></article>
+        <article class="carte"><span class="ic" aria-hidden="true">🔑</span><h3>Coffres, clés et fragments</h3><p>Coupe les buissons, trouve les clés, ouvre les portes, et rassemble les 3 fragments de la Cassette Originelle.</p></article>
+        <article class="carte"><span class="ic" aria-hidden="true">👑</span><h3>Le Grand Larsen</h3><p>Au bout du chemin, le boss qui a brisé la cassette t'attend. Garde tes cœurs pour lui.</p></article>
+        <article class="carte"><span class="ic" aria-hidden="true">🏆</span><h3>Bats ton record</h3><p>Les pièces et les monstres vaincus rapportent des points ; finir vite donne un bonus. Ton meilleur score reste en mémoire.</p></article>
+        <article class="carte"><span class="ic" aria-hidden="true">🎵</span><h3>Musique 8 bits</h3><p>Une musique de jeu vidéo à l'ancienne, avec un thème rien que pour le combat contre le boss.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="jouer" aria-labelledby="t-jouer">
+    <div class="wrap">
+      <div class="head"><p class="eyebrow">COMMENT JOUER</p><h2 id="t-jouer">Quatre commandes,<br><em>c'est tout.</em></h2><p>Sur ordinateur, tablette ou téléphone.</p></div>
+      <div class="commandes">
+        <div><h3>Bouger</h3><p><kbd>↑↓←→</kbd> ou <kbd>ZQSD</kbd>. Au doigt : la croix rouge en bas à gauche. À la souris : maintiens le clic sur la carte.</p></div>
+        <div><h3>Épée</h3><p><kbd>Espace</kbd> ou <kbd>J</kbd>, ou le bouton ⚔. Un clic ou un tap rapide frappe dans cette direction.</p></div>
+        <div><h3>Parler</h3><p>Mets-toi face à quelqu'un, un panneau ou un coffre, et appuie sur l'épée.</p></div>
+        <div><h3>Pause</h3><p><kbd>Échap</kbd> ou <kbd>P</kbd>, ou le bouton ⏸ en haut de l'écran.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section faq" id="questions" aria-labelledby="t-questions">
+    <div class="wrap">
+      <div class="head"><p class="eyebrow">QUESTIONS</p><h2 id="t-questions">Tu te demandes…</h2></div>
+      <details><summary>C'est gratuit ?</summary><p>Oui. JACK JEU se joue dans ton navigateur, sans compte et sans rien à installer.</p></details>
+      <details><summary>Ça marche sur téléphone ?</summary><p>Oui : une croix et un bouton d'épée apparaissent à l'écran pour jouer au doigt. Tu peux aussi l'ajouter à ton écran d'accueil comme une appli.</p></details>
+      <details><summary>Mon record est gardé ?</summary><p>Oui, dans le navigateur de cet appareil. La languette « Changer de site » permet aussi de sauvegarder ta progression de toutes les applis Jack World dans un fichier.</p></details>
+      <details><summary>Et si je ne sais plus où aller ?</summary><p>Retourne voir Mamie Bobine : elle te remet sur la bonne piste.</p></details>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="t-fin">
+    <div class="wrap">
+      <div class="fin">
+        <img src="favicon.svg" alt="" width="120" height="120" loading="lazy">
+        <div><h2 id="t-fin">Prends ta Lame Néon, <em>on y va.</em></h2><p>Trois fragments, un boss, et tout un royaume qui attend sa musique.</p>
+          <div class="actions"><a class="btn" href="app/index.html" target="_blank" rel="noopener">▶ Jouer maintenant</a></div></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">
+  <span>JACK JEU · 2026 · Une création NEW DUC</span>
+  <span>Un jeu Jack World, gratuit, dans ton navigateur.</span>
+</div></footer>
+<script data-jack-world-nav src="../jack-world-nav.js" defer></script>
+<script data-jack-pub src="../jack-pub.js" defer></script>
+</body>
+</html>

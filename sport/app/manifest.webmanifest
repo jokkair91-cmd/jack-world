@@ -1,0 +1,31 @@
+{
+    "name":  "JACK SPORT",
+    "short_name":  "JACK SPORT",
+    "description":  "Exercices en 3D, programmes maison et salle, conseils alimentaires.",
+    "lang":  "fr",
+    "start_url":  "index.html",
+    "scope":  "./",
+    "display":  "standalone",
+    "background_color":  "#040912",
+    "theme_color":  "#040912",
+    "icons":  [
+                  {
+                      "purpose":  "any",
+                      "type":  "image/png",
+                      "sizes":  "192x192",
+                      "src":  "icon-192.png"
+                  },
+                  {
+                      "purpose":  "any",
+                      "type":  "image/png",
+                      "sizes":  "512x512",
+                      "src":  "icon-512.png"
+                  },
+                  {
+                      "purpose":  "any",
+                      "type":  "image/svg+xml",
+                      "sizes":  "any",
+                      "src":  "jack-sport.svg"
+                  }
+              ]
+}

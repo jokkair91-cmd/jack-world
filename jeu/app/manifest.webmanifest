@@ -1,0 +1,32 @@
+{
+    "name":  "JACK JEU · La Cassette Perdue",
+    "short_name":  "JACK JEU",
+    "description":  "Un petit jeu d\u0027aventure de Jack World : explore Vinylia et retrouve les trois fragments de la Cassette Originelle.",
+    "lang":  "fr",
+    "start_url":  "index.html",
+    "scope":  "./",
+    "display":  "standalone",
+    "orientation":  "any",
+    "background_color":  "#07070b",
+    "theme_color":  "#07070b",
+    "icons":  [
+                  {
+                      "purpose":  "any",
+                      "type":  "image/png",
+                      "sizes":  "192x192",
+                      "src":  "icon-192.png"
+                  },
+                  {
+                      "purpose":  "any",
+                      "type":  "image/png",
+                      "sizes":  "512x512",
+                      "src":  "icon-512.png"
+                  },
+                  {
+                      "src":  "favicon.svg",
+                      "sizes":  "any",
+                      "type":  "image/svg+xml",
+                      "purpose":  "any"
+                  }
+              ]
+}

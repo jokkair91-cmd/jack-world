@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#040912">
+<meta name="description" content="JACK SPORT : exercices en 3D pour la maison et la salle, programmes minceur, prise de masse, tonifier, et conseils alimentaires.">
+<title>JACK SPORT</title>
+<link rel="icon" href="jack-sport.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="style.css">
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js">
+<script data-jack-world-nav src="../../jack-world-nav.js" defer></script>
+<script src="../../jack-appli.js" defer></script>
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="#accueil" data-go="accueil" aria-label="JACK SPORT, accueil">
+    <img src="jack-sport.svg" alt="" width="42" height="42">
+    <span><b>JACK</b><em>SPORT</em></span>
+  </a>
+  <nav class="tabs" aria-label="Sections">
+    <button data-go="accueil">Accueil</button>
+    <button data-go="exercices">Exercices</button>
+    <button data-go="programmes">Programmes</button>
+    <button data-go="nutrition">Alimentation</button>
+    <button data-go="suivi">Mon suivi</button>
+  </nav>
+  <div class="look" role="group" aria-label="Mannequin">
+    <button data-look="fille">Fille</button>
+    <button data-look="garcon">Garçon</button>
+  </div>
+</header>
+
+<main id="main">
+  <!-- ACCUEIL -->
+  <section class="view" id="v-accueil" aria-labelledby="t-accueil">
+    <div class="hero">
+      <div class="hero-txt">
+        <p class="eyebrow">JACK WORLD · SPORT</p>
+        <h1 id="t-accueil">Ton coach.<br><span class="glowline">En 3D.</span></h1>
+        <p><span class="letsgo">LET'S GO</span></p>
+        <p class="lead">Des exercices montrés par un mannequin 3D que tu peux tourner dans tous les sens, des programmes pour la maison et la salle, et des conseils pour bien manger. Pour les filles comme pour les garçons.</p>
+        <h2 class="mini">1 · Ton objectif</h2>
+        <div class="objs" id="objs"></div>
+        <h2 class="mini">2 · Où tu t'entraînes</h2>
+        <div class="seg" id="lieux" role="group" aria-label="Lieu">
+          <button data-lieu="maison">🏠 À la maison</button>
+          <button data-lieu="salle">🏋️ En salle</button>
+        </div>
+      </div>
+      <div class="hero-3d">
+        <canvas id="hero-canvas" aria-label="Mannequin 3D qui fait un exercice"></canvas>
+        <div class="hero-tag"><span id="hero-name">Squat</span><small>Fais-le tourner avec le doigt ou la souris</small></div>
+        <div class="glow" aria-hidden="true"></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-head"><h2>3 · Programmes pour toi</h2><button class="link" data-go="programmes">Tous les programmes →</button></div>
+      <div class="grid progs" id="reco"></div>
+    </div>
+    <div class="block stats-band" id="home-stats"></div>
+  </section>
+
+  <!-- EXERCICES -->
+  <section class="view" id="v-exercices" aria-labelledby="t-ex" hidden>
+    <div class="page-head">
+      <h1 id="t-ex">Exercices</h1>
+      <p class="muted">Touche un exercice pour le voir en 3D, avec les muscles travaillés qui s'allument en vert.</p>
+    </div>
+    <div class="filters">
+      <div class="seg small" id="f-lieu" role="group" aria-label="Lieu">
+        <button data-f="tout">Tout</button><button data-f="maison">Maison</button><button data-f="salle">Salle</button>
+      </div>
+      <div class="chips" id="f-zones" role="group" aria-label="Muscles"></div>
+      <input type="search" id="f-q" placeholder="Chercher un exercice…" aria-label="Chercher un exercice">
+    </div>
+    <div class="grid exs" id="ex-grid"></div>
+  </section>
+
+  <!-- PROGRAMMES -->
+  <section class="view" id="v-programmes" aria-labelledby="t-pr" hidden>
+    <div class="page-head">
+      <h1 id="t-pr">Programmes</h1>
+      <p class="muted">4 semaines, 3 séances par semaine. Ça devient un peu plus dur chaque semaine.</p>
+    </div>
+    <div class="seg small" id="p-filtre" role="group" aria-label="Objectif"></div>
+    <div class="grid progs" id="prog-grid"></div>
+  </section>
+
+  <!-- UN PROGRAMME -->
+  <section class="view" id="v-programme" hidden></section>
+
+  <!-- ALIMENTATION -->
+  <section class="view" id="v-nutrition" aria-labelledby="t-nu" hidden>
+    <div class="page-head">
+      <h1 id="t-nu">Alimentation</h1>
+      <p class="muted">Calcule ce dont ton corps a besoin, puis pioche des idées de repas.</p>
+    </div>
+    <div class="nutri">
+      <form class="card calc" id="calc">
+        <h2>Ton calcul</h2>
+        <div class="seg small" id="n-sexe" role="group" aria-label="Sexe"><button type="button" data-look="fille">Fille</button><button type="button" data-look="garcon">Garçon</button></div>
+        <label>Âge <input type="number" id="n-age" min="14" max="90" required></label>
+        <label>Poids (kg) <input type="number" id="n-poids" min="35" max="200" step="0.5" required></label>
+        <label>Taille (cm) <input type="number" id="n-taille" min="130" max="220" required></label>
+        <label>Activité <select id="n-act"></select></label>
+        <label>Objectif <select id="n-obj"></select></label>
+      </form>
+      <div class="card result" id="n-result" aria-live="polite"></div>
+    </div>
+    <div class="block">
+      <div class="seg small" id="n-tabs" role="tablist" aria-label="Conseils par objectif"></div>
+      <div id="n-conseils"></div>
+    </div>
+    <div class="block">
+      <h2>Où trouver des protéines</h2>
+      <div class="prot" id="prot"></div>
+    </div>
+    <p class="note">Ces conseils sont généraux et ne remplacent pas l'avis d'un médecin ou d'un diététicien. Si tu as moins de 18 ans, un problème de santé, ou si tu es enceinte, demande d'abord conseil à un professionnel.</p>
+  </section>
+
+  <!-- SUIVI -->
+  <section class="view" id="v-suivi" aria-labelledby="t-su" hidden>
+    <div class="page-head">
+      <h1 id="t-su">Mon suivi</h1>
+      <p class="muted">Tout reste dans ton navigateur, rien n'est envoyé sur Internet.</p>
+    </div>
+    <div class="stats" id="stats"></div>
+    <div class="block card">
+      <h2>Les 14 derniers jours</h2>
+      <div class="days" id="days"></div>
+    </div>
+    <div class="suivi-2">
+      <div class="card">
+        <h2>Mon poids</h2>
+        <form class="poids-form" id="poids-form">
+          <input type="number" id="poids-in" min="30" max="250" step="0.1" placeholder="Poids du jour (kg)" aria-label="Poids du jour en kilos" required>
+          <button class="btn">Noter</button>
+        </form>
+        <div id="poids-chart" class="chart"></div>
+      </div>
+      <div class="card">
+        <h2>Mes séances</h2>
+        <ol class="histo" id="histo"></ol>
+      </div>
+    </div>
+  </section>
+</main>
+
+<nav class="bottom" aria-label="Sections">
+  <button data-go="accueil"><span>🏠</span>Accueil</button>
+  <button data-go="exercices"><span>🏃</span>Exercices</button>
+  <button data-go="programmes"><span>📅</span>Programmes</button>
+  <button data-go="nutrition"><span>🥗</span>Manger</button>
+  <button data-go="suivi"><span>📈</span>Suivi</button>
+</nav>
+
+<!-- FICHE D'UN EXERCICE -->
+<dialog id="ex-dialog" aria-labelledby="ex-title">
+  <div class="sheet">
+    <div class="sheet-3d">
+      <canvas id="ex-canvas" aria-label="Mannequin 3D qui montre l'exercice"></canvas>
+      <div class="views" role="group" aria-label="Angle de vue">
+        <button data-view="face">Face</button><button data-view="trois">3/4</button><button data-view="profil">Profil</button><button data-view="dos">Dos</button><button data-view="dessus">Dessus</button>
+      </div>
+      <label class="speed">Vitesse <input type="range" id="ex-speed" min="0.4" max="1.6" step="0.1" value="1"></label>
+    </div>
+    <div class="sheet-txt" id="ex-txt"></div>
+    <button class="close" id="ex-close" aria-label="Fermer">✕</button>
+  </div>
+</dialog>
+
+<!-- SÉANCE EN COURS -->
+<div class="player" id="player" hidden role="dialog" aria-modal="true" aria-labelledby="pl-name">
+  <div class="pl-top">
+    <button class="ghost-btn" id="pl-quit">✕ Arrêter</button>
+    <div class="pl-progress"><i id="pl-bar"></i></div>
+    <button class="ghost-btn" id="pl-voice" aria-pressed="true">🔊 Voix</button>
+  </div>
+  <div class="pl-body">
+    <div class="pl-3d">
+      <canvas id="pl-canvas" aria-label="Mannequin 3D de l'exercice en cours"></canvas>
+      <div class="pl-phase" id="pl-phase">C'est parti</div>
+    </div>
+    <div class="pl-side">
+      <p class="pl-label" id="pl-label"></p>
+      <h2 id="pl-name"></h2>
+      <div class="pl-dose" id="pl-dose"></div>
+      <div class="pl-count" id="pl-count" aria-live="polite"></div>
+      <ul class="pl-tips" id="pl-tips"></ul>
+      <div class="pl-actions">
+        <button class="btn big" id="pl-next">Fait ✓</button>
+        <button class="ghost-btn" id="pl-pause">⏸ Pause</button>
+        <button class="ghost-btn" id="pl-skip">Passer ⏭</button>
+      </div>
+      <p class="pl-after" id="pl-after"></p>
+    </div>
+  </div>
+  <div class="pl-end" id="pl-end" hidden></div>
+</div>
+</body>
+</html>

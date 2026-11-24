@@ -10,7 +10,7 @@
   const relative = decodeURIComponent(location.pathname.slice(base.pathname.length));
   const actuel = relative.startsWith('newduc/') ? 'nd' : relative.startsWith('studio/') ? 'studio'
     : relative.startsWith('j-dj/') ? 'dj' : relative.startsWith('radio/') ? 'radio'
-    : relative.startsWith('blabla/') ? 'blabla' : relative.startsWith('fusion/') ? 'fusion' : relative.startsWith('finance/') ? 'finance' : relative.startsWith('bours/') ? 'bours' : relative.startsWith('batiment/') ? 'batiment' : 'home';
+    : relative.startsWith('blabla/') ? 'blabla' : relative.startsWith('fusion/') ? 'fusion' : relative.startsWith('finance/') ? 'finance' : relative.startsWith('bours/') ? 'bours' : relative.startsWith('batiment/') ? 'batiment' : relative.startsWith('ia/') ? 'ia' : relative.startsWith('jeu/') ? 'jeu' : relative.startsWith('sport/') ? 'sport' : 'home';
   if (actuel === 'home') return; // Jack World, le big boss : pas de pub
 
   // [id, nom, phrase, site, logo] — chaque pub mène au SITE ; c'est le site qui ouvre l'appli.
@@ -25,6 +25,9 @@
     ['finance', 'JACK FINANCE', 'Ton argent, enfin clair.', 'finance/index.html', 'finance/favicon.svg'],
     ['bours', 'JACK BOURS', 'Apprends la Bourse sans risquer un centime.', 'bours/index.html', 'bours/app/images/icone.svg'],
     ['batiment', 'JACK BÂTIMENT', 'Grimpe l\'échelle du chantier.', 'batiment/index.html', 'batiment/app/images/castor.svg'],
+    ['ia', 'AI JACK', 'Une IA pour discuter, coder et écrire.', 'ia/index.html', 'ia/app/jack-ia.svg'],
+    ['jeu', 'JACK JEU', 'Retrouve la Cassette Perdue.', 'jeu/index.html', 'jeu/favicon.svg'],
+    ['sport', 'JACK SPORT', 'Ton coach sportif en 3D.', 'sport/index.html', 'sport/app/jack-sport.svg'],
   ].filter(([id]) => id !== actuel);
 
   const n = sites.length;

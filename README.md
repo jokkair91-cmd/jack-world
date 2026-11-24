@@ -22,6 +22,10 @@ J-DJ, JACK22 Studio, Jack Radio, Jack Blabla, Jack Fusion, Jack Finance, Jack Bo
 | `batiment/app/` | Jack Bâtiment (l'appli) | copie de `Bureau/Jack Batiment` du 19 nov. 2026 à 3 h 41, avec Prix et devis (sans serveur.ps1 ni l'image jack-jungle inutilisée), + icônes et bouton « Changer de site ». Formation d'auto-apprentissage, ne remplace pas les formations obligatoires |
 | `ia/index.html` | Site vitrine AI JACK | créé le 22 nov. 2026 (logo robot vert et bleu, paysage de nuit) |
 | `ia/app/` | AI JACK (l'appli) | créé le 22 nov. 2026 à partir de `Bureau/AI-JACK-Claude` (même look), mais l'IA tourne dans le navigateur avec WebLLM 0.2.89 (WebGPU, chargé depuis cdn.jsdelivr.net) : gratuit, sans clé, sans serveur. Le « cerveau » (modèle de 0,5 à 3 Go selon Léger / Rapide / Malin) se télécharge une fois dans le navigateur puis marche hors ligne. Il faut Edge ou Chrome à jour sur ordinateur. Le `sw.js` garde aussi le moteur WebLLM pour le hors ligne |
+| `jeu/index.html` | Site vitrine JACK JEU | créé le 24 nov. 2026 (pixel et néon rouge du jeu) |
+| `jeu/app/` | JACK JEU · La Cassette Perdue (le jeu) | jeu en un seul fichier, ajouté le 23 nov. 2026, + icônes, hors connexion et « Changer de site » |
+| `sport/index.html` | Site vitrine JACK SPORT | créé le 23 nov. 2026, complété le 24 (capture, pub, police) |
+| `sport/app/` | JACK SPORT (l'appli) | coach en 3D (Three.js chargé depuis jsdelivr) : marche en ligne, pas en double-clic sur le fichier |
 | `newduc/` | Site NEW DUC | V6 (`NEW DUC - travail/NEWDUKE-V6`) |
 
 ## Ajouts propres à la version en ligne (19 nov. 2026)

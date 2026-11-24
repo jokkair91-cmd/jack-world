@@ -7,9 +7,9 @@
   const script = document.currentScript;
   const base = new URL('.', script.src);
   const relative = decodeURIComponent(location.pathname.slice(base.pathname.length));
-  const current = relative.startsWith('newduc/') ? 'nd' : relative.startsWith('studio/') ? 'studio' : relative.startsWith('j-dj/') ? 'dj' : relative.startsWith('radio/') ? 'radio' : relative.startsWith('blabla/') ? 'blabla' : relative.startsWith('fusion/') ? 'fusion' : relative.startsWith('finance/') ? 'finance' : relative.startsWith('bours/') ? 'bours' : relative.startsWith('batiment/') ? 'batiment' : relative.startsWith('ia/') ? 'ia' : 'home';
+  const current = relative.startsWith('newduc/') ? 'nd' : relative.startsWith('studio/') ? 'studio' : relative.startsWith('j-dj/') ? 'dj' : relative.startsWith('radio/') ? 'radio' : relative.startsWith('blabla/') ? 'blabla' : relative.startsWith('fusion/') ? 'fusion' : relative.startsWith('finance/') ? 'finance' : relative.startsWith('bours/') ? 'bours' : relative.startsWith('batiment/') ? 'batiment' : relative.startsWith('ia/') ? 'ia' : relative.startsWith('jeu/') ? 'jeu' : relative.startsWith('sport/') ? 'sport' : 'home';
   // Pages d'appli : les sites s'ouvrent dans un nouvel onglet pour ne pas fermer l'appli
-  const preserve = /^(studio\/studio\/|j-dj\/console\.html|radio\/studio\.html|blabla\/app\/|fusion\/app\/|finance\/app\/|bours\/app\/|batiment\/app\/|ia\/app\/)/.test(relative);
+  const preserve = /^(studio\/studio\/|j-dj\/console\.html|radio\/studio\.html|blabla\/app\/|fusion\/app\/|finance\/app\/|bours\/app\/|batiment\/app\/|ia\/app\/|jeu\/app\/|sport\/app\/)/.test(relative);
   // Pour ajouter un projet (Jack Bourse…) : une ligne [id, nom, site, logo], + son dossier dans « current » et « preserve »
   const destinations = [
     ['home','Accueil Jack World','index.html','jack-world-logo.svg'],
@@ -23,6 +23,8 @@
     ['bours','Jack Bours','bours/index.html','bours/app/images/icone.svg'],
     ['batiment','Jack Bâtiment','batiment/index.html','batiment/app/images/castor.svg'],
     ['ia','AI JACK','ia/index.html','ia/app/jack-ia.svg'],
+    ['jeu','JACK JEU','jeu/index.html','jeu/favicon.svg'],
+    ['sport','JACK SPORT','sport/index.html','sport/app/jack-sport.svg'],
   ];
   const ici = destinations.find(([id]) => id === current) || destinations[0];
   const host = document.createElement('div');
