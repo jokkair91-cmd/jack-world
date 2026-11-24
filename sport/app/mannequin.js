@@ -45,12 +45,23 @@ export function sample(anim, phase, frames) {
     p.spine += Math.sin(phase * Math.PI * 2) * 1.2; // respiration
     return p;
   }
-  const seg = phase * n;
-  const i = Math.floor(seg) % n;
-  const f = seg - Math.floor(seg);
+  // tempo réaliste : certaines phases durent plus longtemps (on descend lentement, on remonte plus vite)
+  let i, f;
+  const w = anim.tempo;
+  if (w && w.length === n) {
+    const tot = w.reduce((a, x) => a + x, 0);
+    let at = phase * tot;
+    i = 0;
+    while (i < n - 1 && at >= w[i]) { at -= w[i]; i++; }
+    f = Math.min(1, at / w[i]);
+  } else {
+    const seg = phase * n;
+    i = Math.floor(seg) % n;
+    f = seg - Math.floor(seg);
+  }
   const hold = anim.hold ?? 0.12;
   let e = Math.min(1, Math.max(0, (f - hold) / (1 - 2 * hold)));
-  e = e * e * (3 - 2 * e);
+  e = e < 0.5 ? 4 * e * e * e : 1 - Math.pow(-2 * e + 2, 3) / 2; // départ et arrivée en douceur, comme un vrai geste
   return lerpPose(frames[i], frames[(i + 1) % n], e);
 }
 
@@ -161,6 +172,7 @@ function buildBody(lookName) {
   const face = new THREE.Group();
   face.scale.setScalar(1.32);
   head.add(face);
+  const eyes = [];
   const skull = own(ellipsoid(0.1, 0.12, 0.106, M.skin));
   skull.position.y = 0.11;
   face.add(skull);
@@ -177,6 +189,7 @@ function buildBody(lookName) {
     const shine = ellipsoid(0.0045, 0.0045, 0.003, M.white, false);
     shine.position.set(s * 0.036 + 0.005, 0.127, 0.11);
     face.add(shine);
+    eyes.push(white, iris, shine);
     const brow = piece(new THREE.CapsuleGeometry(0.006, 0.026, 4, 8), M.hair, false);
     brow.rotation.z = Math.PI / 2 + s * 0.18;
     brow.position.set(s * 0.038, 0.158, 0.098);
@@ -334,7 +347,8 @@ function buildBody(lookName) {
     J[side + 'Hip'] = hp; J[side + 'Knee'] = kn; J[side + 'Ank'] = an;
   }
 
-  return { root, spine, head, J, meshes, zones, hands, chest, abdo, pelvis, pony, mouth, L };
+  eyes.forEach(m => { m.userData.sy = m.scale.y; });
+  return { root, spine, head, J, meshes, zones, hands, chest, abdo, pelvis, pony, mouth, eyes, chestBase: chest.scale.clone(), L };
 }
 
 function applyPose(b, q) {
@@ -447,6 +461,228 @@ function mat() {
   return m;
 }
 
+// ---------- la salle de sport autour du coach ----------
+function canvasTex(w, h, draw) {
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  draw(c.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 4;
+  return t;
+}
+const glow = c => new THREE.MeshBasicMaterial({ color: c });
+
+function signJackSport() {
+  return canvasTex(1024, 320, (x, w, h) => {
+    x.clearRect(0, 0, w, h);
+    x.fillStyle = '#ffffff';
+    x.font = 'italic 900 150px "Segoe UI", system-ui, sans-serif';
+    x.shadowColor = '#00c8ff'; x.shadowBlur = 30;
+    x.fillText('JACK', 40, 160);
+    x.font = '600 70px "Segoe UI", system-ui, sans-serif';
+    x.fillText('S P O R T', 60, 250);
+    x.shadowBlur = 0;
+    x.save(); x.translate(560, 70); x.transform(1, 0, -0.15, 1, 0, 0);
+    x.fillStyle = '#7cff00'; x.fillRect(0, 0, 420, 130);
+    x.fillStyle = '#04120a'; x.font = 'italic 900 92px "Segoe UI", system-ui, sans-serif';
+    x.fillText("LET'S GO", 22, 100);
+    x.restore();
+  });
+}
+
+function floorTex() {
+  const t = canvasTex(256, 256, (x, w, h) => {
+    x.fillStyle = '#0c1628'; x.fillRect(0, 0, w, h);
+    x.strokeStyle = '#18294a'; x.lineWidth = 6; x.strokeRect(0, 0, w, h);
+    x.fillStyle = '#0e1a30'; for (let i = 0; i < 120; i++) x.fillRect(Math.random() * w, Math.random() * h, 3, 3);
+  });
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.repeat.set(8, 8);
+  return t;
+}
+
+function deco(geo, color, x, y, z, ink = true) {
+  const m = piece(geo, material(color), ink);
+  m.position.set(x, y, z);
+  m.castShadow = false;
+  return m;
+}
+
+function treadmill() {
+  const g = new THREE.Group();
+  g.add(deco(new THREE.BoxGeometry(0.85, 0.16, 2.0), 0x1b2a44, 0, 0.08, 0));
+  const belt = deco(new THREE.BoxGeometry(0.62, 0.02, 1.86), 0x070b12, 0, 0.17, 0, false);
+  g.add(belt);
+  const marks = [];
+  for (let i = 0; i < 8; i++) { const m = deco(new THREE.BoxGeometry(0.6, 0.006, 0.03), 0x22324e, 0, 0.183, 0, false); g.add(m); marks.push(m); }
+  for (const s of [1, -1]) {
+    g.add(deco(new THREE.BoxGeometry(0.06, 1.15, 0.06), 0x9aa0aa, s * 0.38, 0.72, 0.85));
+    g.add(deco(new THREE.BoxGeometry(0.05, 0.05, 0.5), 0x9aa0aa, s * 0.38, 1.12, 0.62));
+  }
+  g.add(deco(new THREE.BoxGeometry(0.82, 0.28, 0.12), 0x13254a, 0, 1.3, 0.88));
+  g.add(deco(new THREE.BoxGeometry(0.5, 0.16, 0.01), 0x7cff00, 0, 1.3, 0.82, false)).material = glow(0x7cff00);
+  g.userData.marks = marks;
+  return g;
+}
+
+function bike() {
+  const g = new THREE.Group();
+  g.add(deco(new THREE.BoxGeometry(0.5, 0.06, 0.12), 0x1b2a44, 0, 0.03, 0.45));
+  g.add(deco(new THREE.BoxGeometry(0.5, 0.06, 0.12), 0x1b2a44, 0, 0.03, -0.45));
+  const frame = deco(new THREE.BoxGeometry(0.08, 0.95, 0.08), 0x13254a, 0, 0.52, -0.12);
+  frame.rotation.x = -0.35;
+  g.add(frame);
+  const post = deco(new THREE.BoxGeometry(0.07, 0.9, 0.07), 0x13254a, 0, 0.5, 0.42);
+  post.rotation.x = 0.25;
+  g.add(post);
+  g.add(deco(new THREE.BoxGeometry(0.22, 0.06, 0.3), 0x0a0a0d, 0, 0.95, -0.25));
+  g.add(deco(new THREE.BoxGeometry(0.5, 0.04, 0.06), 0x9aa0aa, 0, 1.02, 0.6));
+  const wheel = deco(new THREE.CylinderGeometry(0.26, 0.26, 0.08, 28), 0x7cff00, 0, 0.36, 0.38);
+  wheel.rotation.z = Math.PI / 2;
+  g.add(wheel);
+  const crank = new THREE.Group();
+  crank.position.set(0, 0.42, 0.05);
+  g.add(crank);
+  for (const s of [1, -1]) {
+    const arm = deco(new THREE.BoxGeometry(0.03, 0.34, 0.03), 0x9aa0aa, s * 0.12, 0, 0);
+    if (s < 0) arm.rotation.x = Math.PI;
+    arm.position.y = s * 0.0;
+    crank.add(arm);
+  }
+  g.userData.crank = crank;
+  return g;
+}
+
+function squatRack() {
+  const g = new THREE.Group();
+  for (const x of [-0.65, 0.65]) for (const z of [-0.35, 0.35]) g.add(deco(new THREE.BoxGeometry(0.08, 2.3, 0.08), 0x1b2a44, x, 1.15, z));
+  g.add(deco(new THREE.BoxGeometry(1.4, 0.08, 0.08), 0x7cff00, 0, 2.26, 0.35));
+  g.add(deco(new THREE.BoxGeometry(1.4, 0.08, 0.08), 0x1b2a44, 0, 2.26, -0.35));
+  const bb = barbell();
+  bb.position.set(0, 1.35, 0.35);
+  g.add(bb);
+  return g;
+}
+
+function dumbbellRack() {
+  const g = new THREE.Group();
+  for (const [y, z] of [[0.45, 0.1], [0.8, -0.1]]) {
+    g.add(deco(new THREE.BoxGeometry(2, 0.05, 0.3), 0x1b2a44, 0, y, z));
+    for (let i = 0; i < 6; i++) {
+      const d = dumbbell(i % 2 ? 0x13254a : 0x1b1b20);
+      d.position.set(-0.8 + i * 0.32, y + 0.07, z);
+      d.rotation.y = Math.PI / 2;
+      g.add(d);
+    }
+  }
+  for (const x of [-0.95, 0.95]) g.add(deco(new THREE.BoxGeometry(0.06, 0.85, 0.5), 0x13254a, x, 0.42, 0));
+  return g;
+}
+
+function buildGym(withPeople) {
+  const g = new THREE.Group();
+  const R = 8, H = 4.2;
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(R * 2, R * 2), new THREE.MeshToonMaterial({ map: floorTex(), gradientMap: TONES }));
+  floor.rotation.x = -Math.PI / 2;
+  floor.receiveShadow = true;
+  g.add(floor);
+  // zone du coach
+  const zone = new THREE.Mesh(new THREE.CircleGeometry(1.55, 64), material(0x0f2242));
+  zone.rotation.x = -Math.PI / 2; zone.position.y = 0.002; zone.receiveShadow = true;
+  g.add(zone);
+  const ring = new THREE.Mesh(new THREE.RingGeometry(1.55, 1.61, 96), glow(0x7cff00));
+  ring.rotation.x = -Math.PI / 2; ring.position.y = 0.004;
+  g.add(ring);
+  // murs (une seule face, tournée vers l'intérieur : quand la caméra passe derrière, le mur s'efface)
+  const wallMat = material(0x0d1b33);
+  [[0, -R, 0], [-R, 0, Math.PI / 2], [R, 0, -Math.PI / 2], [0, R, Math.PI]].forEach(([x, z, ry], i) => {
+    const w = new THREE.Mesh(new THREE.PlaneGeometry(R * 2, H), wallMat);
+    w.position.set(x, H / 2, z); w.rotation.y = ry;
+    g.add(w);
+    const strip = new THREE.Mesh(new THREE.PlaneGeometry(R * 2, 0.06), glow(i % 2 ? 0x00c8ff : 0x7cff00));
+    strip.position.set(x * 0.998, 3.8, z * 0.998); strip.rotation.y = ry;
+    g.add(strip);
+    const base = new THREE.Mesh(new THREE.PlaneGeometry(R * 2, 0.05), glow(0x00c8ff));
+    base.position.set(x * 0.998, 0.14, z * 0.998); base.rotation.y = ry;
+    g.add(base);
+  });
+  // miroirs et enseigne au fond
+  for (const x of [-3.6, -1.2, 1.2, 3.6]) {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(2.25, 2.1), new THREE.MeshToonMaterial({ color: 0x5e8fbf, gradientMap: TONES, emissive: 0x16324f }));
+    m.position.set(x, 1.45, -R + 0.02);
+    g.add(m);
+    const shine = new THREE.Mesh(new THREE.PlaneGeometry(0.18, 2.1), new THREE.MeshBasicMaterial({ color: 0xbfe6ff, transparent: true, opacity: 0.25 }));
+    shine.position.set(x - 0.5, 1.45, -R + 0.03); shine.rotation.z = 0.35;
+    g.add(shine);
+  }
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(4.6, 1.44), new THREE.MeshBasicMaterial({ map: signJackSport(), transparent: true }));
+  sign.position.set(0, 3.15, -R + 0.04);
+  g.add(sign);
+  // fenêtres lumineuses à droite, affiche à gauche
+  for (const z of [-4.5, -1.5, 1.5, 4.5]) {
+    const win = new THREE.Mesh(new THREE.PlaneGeometry(2, 1.8), new THREE.MeshBasicMaterial({ color: 0x1d4a7a }));
+    win.position.set(R - 0.02, 2.1, z); win.rotation.y = -Math.PI / 2;
+    g.add(win);
+  }
+  const poster = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 1), new THREE.MeshBasicMaterial({ map: signJackSport(), transparent: true }));
+  poster.position.set(-R + 0.03, 2.6, -1); poster.rotation.y = Math.PI / 2;
+  g.add(poster);
+
+  // le matériel
+  const rack = squatRack(); rack.position.set(-3.4, 0, -6.9); g.add(rack);
+  const dRack = dumbbellRack(); dRack.position.set(2.6, 0, -7.4); g.add(dRack);
+  for (let i = 0; i < 5; i++) { const k = kettlebell(); k.position.set(5.2 + i * 0.32, 0.23 + i * 0.008, -6.6); g.add(k); }
+  const bn = bench(); bn.position.set(5.6, 0.45, 2.8); bn.userData.legs.forEach(l => { l.scale.y = 0.38; l.position.y = -0.07 - 0.19; }); g.add(bn);
+  for (const [x, z, c] of [[-6.6, 4.8, 0x7cff00], [-6.1, 5.3, 0x00c8ff], [-6.9, 5.6, 0x13254a]]) g.add(deco(new THREE.SphereGeometry(0.18, 20, 14), c, x, 0.18, z));
+  const tm = treadmill(); tm.position.set(-5.1, 0, -2.2); tm.rotation.y = Math.PI / 2; g.add(tm);
+  const bk = bike(); bk.position.set(5.2, 0, -2.4); bk.rotation.y = -Math.PI / 2; g.add(bk);
+
+  // deux sportifs qui s'entraînent derrière le coach : ça vit !
+  const people = [];
+  if (withPeople) {
+    const runner = buildBody('fille');
+    runner.root.rotation.order = 'YXZ';
+    tm.add(runner.root);
+    const rider = buildBody('garcon');
+    bk.add(rider.root);
+    people.push({ b: runner, kind: 'run' }, { b: rider, kind: 'bike' });
+  }
+
+  const box = new THREE.Box3();
+  function update(now) {
+    const s = now / 1000;
+    tm.userData.marks.forEach((m, i) => { m.position.z = ((i / 8 + s * 0.45) % 1) * 1.8 - 0.9; });
+    bk.userData.crank.rotation.x = -s * 5.2;
+    for (const p of people) {
+      if (p.kind === 'run') {
+        const ph = s * 9;
+        const a = Math.sin(ph), c = Math.cos(ph);
+        const q = expand({
+          spine: 12, head: -8,
+          lHip: -38 * a, rHip: 38 * a, lKnee: 25 + 55 * Math.max(0, -c) + 20 * Math.max(0, a), rKnee: 25 + 55 * Math.max(0, c) + 20 * Math.max(0, -a),
+          lSh: 42 * a, rSh: -42 * a, lEl: -88, rEl: -88, shA: 8,
+        });
+        applyPose(p.b, q);
+        p.b.root.position.set(0, 0, 0);
+        p.b.root.updateMatrixWorld(true);
+        box.setFromObject(p.b.root);
+        p.b.root.position.y = 0.18 - box.min.y + Math.abs(a) * 0.05;
+      } else {
+        const th = -s * 5.2;
+        const k = Math.sin(th);
+        const q = expand({
+          spine: 28, head: -20, sh: -58, el: -18, shA: 10,
+          lHip: -72 + 16 * k, rHip: -72 - 16 * k, lKnee: 78 - 34 * k, rKnee: 78 + 34 * k, lAnk: 0, rAnk: 0,
+        });
+        applyPose(p.b, q);
+        p.b.root.position.set(0, 1.06, -0.27);
+      }
+    }
+  }
+  return { group: g, update };
+}
+
 // ---------- la scène ----------
 const tmpBox = new THREE.Box3();
 const bodyBox = new THREE.Box3();
@@ -482,19 +718,10 @@ export class Viewer {
     fill.position.set(-3.2, 1.2, 2.2);
     this.scene.add(fill);
 
-    const floor = new THREE.Mesh(new THREE.CircleGeometry(3.4, 72), material(0x07101f, { roughness: 0.92 }));
-    floor.rotation.x = -Math.PI / 2;
-    floor.receiveShadow = true;
-    this.scene.add(floor);
-    const ring = new THREE.Mesh(new THREE.RingGeometry(3.3, 3.36, 96), new THREE.MeshBasicMaterial({ color: 0x7cff00 }));
-    ring.rotation.x = -Math.PI / 2;
-    ring.position.y = 0.003;
-    this.scene.add(ring);
-    const grid = new THREE.GridHelper(6.6, 22, 0x00c8ff, 0x16304f);
-    grid.material.transparent = true;
-    grid.material.opacity = 0.28;
-    grid.position.y = 0.002;
-    this.scene.add(grid);
+    // la salle de sport (avec deux sportifs qui s'entraînent au fond)
+    this.gym = buildGym(true);
+    this.scene.add(this.gym.group);
+    this.scene.fog = new THREE.Fog(0x061020, 10, 22);
 
     this.look = opts.look || 'garcon';
     this.body = null;
@@ -554,7 +781,7 @@ export class Viewer {
     const end = () => { drag = null; };
     c.addEventListener('pointerup', end);
     c.addEventListener('pointercancel', end);
-    c.addEventListener('wheel', e => { e.preventDefault(); this.zoom = Math.max(0.55, Math.min(1.8, this.zoom * (e.deltaY > 0 ? 1.08 : 0.93))); }, { passive: false });
+    c.addEventListener('wheel', e => { e.preventDefault(); this.zoom = Math.max(0.55, Math.min(1.3, this.zoom * (e.deltaY > 0 ? 1.08 : 0.93))); }, { passive: false });
   }
 
   setView(name) {
@@ -692,6 +919,7 @@ export class Viewer {
     this.lastPhase = phase;
     this.pose(phase);
     this.alive(now);
+    this.gym.update(now);
     const pulse = 0.22 + 0.2 * Math.sin(now / 260);
     for (const m of this.hl) m.material.emissiveIntensity = pulse;
     this.place(this.smooth ? 0.06 : 1);
@@ -706,6 +934,27 @@ export class Viewer {
     const s = now / 1000;
     this.talkAmt += ((this.talking ? 1 : 0) - this.talkAmt) * 0.18;
     b.spine.rotation.x += Math.sin(s * 1.9) * 0.006;
+    const q = this.lastQ;
+    // respiration : la poitrine se gonfle et se dégonfle
+    const br = Math.sin(s * 1.7);
+    b.chest.scale.set(b.chestBase.x * (1 + 0.012 * br), b.chestBase.y * (1 + 0.018 * br), b.chestBase.z * (1 + 0.03 * br));
+    // clignement des yeux, toutes les 2 à 5 secondes
+    if (!this.blinkAt || s > this.blinkAt + 0.2) this.blinkAt = s + 2 + Math.random() * 3;
+    const bl = s >= this.blinkAt && s < this.blinkAt + 0.14 ? 0.08 : 1;
+    for (const m of b.eyes) m.scale.y = m.userData.sy * bl;
+    if (q) {
+      // le corps cherche son équilibre (debout) : léger balancement
+      if (!q.rx && this.ex.anim.mode !== 'hang') {
+        b.root.rotation.z += Math.sin(s * 0.9) * 0.012;
+        b.root.rotation.y += Math.sin(s * 0.53) * 0.035;
+      }
+      // la tête suit le mouvement avec un petit retard (pas comme un robot)
+      this.headLag = this.headLag === undefined ? q.spine : this.headLag + (q.spine - this.headLag) * 0.1;
+      b.head.rotation.x += (this.headLag - q.spine) * 0.4 * D;
+      // effort : les épaules se serrent un peu sur la phase difficile
+      const effort = Math.min(1, Math.abs(q.spine - this.headLag) / 12);
+      b.head.rotation.x -= effort * 0.05;
+    }
     if (b.mouth) {
       const open = this.talkAmt * Math.abs(Math.sin(s * 15.5)) * (0.55 + 0.45 * Math.sin(s * 5.3));
       b.mouth.visible = open > 0.06;
@@ -757,6 +1006,7 @@ export class Viewer {
     this.setExercise(ex);
     this.pose(phase);
     for (const m of this.hl) m.material.emissiveIntensity = 0.38;
+    this.gym.update(1200);
     this.place(1);
     this.renderer.render(this.scene, this.camera);
     return this.canvas.toDataURL('image/png');

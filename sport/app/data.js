@@ -217,6 +217,17 @@ export const EXERCICES = [
     anim: { dur: 2.4, props: ['barre'], frames: [{ ...BENT, spine: 55, sh: -55, shA: 12, el: 0 }, { ...BENT, spine: 55, sh: 15, shA: 14, el: -90 }] } },
 ];
 
+// Tempo réaliste : durée relative de chaque phase (aller vers la 2e pose, puis retour).
+// On descend / on freine lentement, on pousse / on tire plus vite.
+const TEMPO = {
+  squat: [1.3, 0.8], pompes: [1.3, 0.8], 'pompes-genoux': [1.3, 0.8], 'goblet-squat': [1.3, 0.8], 'squat-barre': [1.35, 0.8], 'squat-sumo': [1.3, 0.8],
+  'souleve-terre': [1.2, 0.85], 'extension-triceps': [1.3, 0.8],
+  curl: [0.8, 1.3], 'developpe-militaire': [0.8, 1.3], 'elevations-laterales': [0.8, 1.3], 'rowing-haltere': [0.8, 1.3], 'rowing-barre': [0.8, 1.3],
+  'developpe-couche': [0.8, 1.3], tractions: [0.85, 1.25], 'pont-fessier': [0.8, 1.2], 'hip-thrust': [0.8, 1.2],
+  crunch: [0.85, 1.2], 'releves-jambes': [0.9, 1.2], superman: [0.9, 1.2], 'donkey-kick': [0.8, 1.2], 'kettlebell-swing': [0.75, 1],
+};
+for (const e of EXERCICES) if (TEMPO[e.id] && e.anim.frames.length === 2) e.anim.tempo = TEMPO[e.id];
+
 export const EX = Object.fromEntries(EXERCICES.map(e => [e.id, e]));
 
 export const ECHAUFFEMENT = [

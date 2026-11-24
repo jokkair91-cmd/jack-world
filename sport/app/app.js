@@ -9,7 +9,7 @@ const LIEU = { maison: 'Maison', salle: 'Salle' };
 
 // ---------- mémoire (dans le navigateur seulement) ----------
 const KEY = 'jacksport.v1';
-const defaults = () => ({ look: 'garcon', objectif: 'minceur', lieu: 'maison', historique: [], poids: [], progres: {}, semaine: {}, nutri: { age: 25, poids: 70, taille: 175, act: 1.375 }, voix: true });
+const defaults = () => ({ look: 'garcon', objectif: 'minceur', lieu: 'maison', historique: [], poids: [], progres: {}, semaine: {}, nutri: { age: 25, poids: 70, taille: 175, act: 1.375 }, voix: true, musique: true });
 let S = (() => {
   try { const d = JSON.parse(localStorage.getItem(KEY) || '{}'); const base = defaults(); return { ...base, ...d, nutri: { ...base.nutri, ...(d.nutri || {}) } }; }
   catch { return defaults(); }
@@ -175,6 +175,7 @@ const Coach = (() => {
   }
   function quiet() {
     if (T.viewer) T.viewer.talking = false;
+    Music.duck(false);
     const b = T.box;
     if (!b) return;
     b.classList.remove('talk');
@@ -211,7 +212,12 @@ const Coach = (() => {
         const u = new SpeechSynthesisUtterance(it.say || it.text);
         u.lang = voice ? voice.lang : 'fr-FR';
         if (voice) u.voice = voice;
-        u.rate = it.kind === 'count' ? 1.12 : 1.04;
+        // ton de coach : plus rapide et plus énergique, les chiffres et les « allez » claquent
+        const punchy = it.kind === 'count' || /!\s*$/.test(it.say || it.text);
+        u.rate = it.kind === 'count' ? 1.18 : punchy ? 1.12 : 1.06;
+        u.pitch = punchy ? 1.12 : 1.02;
+        u.volume = 1;
+        Music.duck(true);
         u.onend = u.onerror = () => done(it, g);
         it.u = u; // garder une référence, sinon Chrome peut perdre la fin de la phrase
         speechSynthesis.speak(u);
@@ -265,6 +271,72 @@ function beep(f, d) {
   o.start(); o.stop(ac.currentTime + d + 0.02);
 }
 
+// ---------- MUSIQUE DE SPORT : un morceau électro original, joué en direct par le navigateur ----------
+// 126 BPM, grosse caisse, clap, charleston, basse et accords (la mineur : Am F C G).
+// Elle baisse quand le coach parle et s'adoucit pendant les repos.
+const Music = (() => {
+  const BPM = 126, STEP = 60 / BPM / 4;
+  const CHORDS = [[57, 60, 64], [53, 57, 60], [48, 52, 55], [55, 59, 62]]; // notes MIDI
+  const BASS = [45, 41, 36, 43];
+  const hz = n => 440 * Math.pow(2, (n - 69) / 12);
+  let out = null, filt = null, noise = null, timer = 0, step = 0, nextT = 0, on = false, ducked = false, soft = false;
+  function setup() {
+    if (out || !ac) return !!out;
+    out = ac.createGain(); out.gain.value = 0;
+    filt = ac.createBiquadFilter(); filt.type = 'lowpass'; filt.frequency.value = 18000;
+    out.connect(filt).connect(ac.destination);
+    noise = ac.createBuffer(1, ac.sampleRate * 0.5, ac.sampleRate);
+    const d = noise.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    return true;
+  }
+  function env(g, t, peak, dec) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, t + dec); }
+  function kick(t) {
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.14);
+    env(g, t, 0.95, 0.34); o.connect(g).connect(out); o.start(t); o.stop(t + 0.36);
+  }
+  function hiss(t, type, f, peak, dec) {
+    const s = ac.createBufferSource(), b = ac.createBiquadFilter(), g = ac.createGain();
+    s.buffer = noise; b.type = type; b.frequency.value = f;
+    env(g, t, peak, dec); s.connect(b).connect(g).connect(out); s.start(t); s.stop(t + dec + 0.02);
+  }
+  function tone(t, n, type, peak, dec, cut) {
+    const o = ac.createOscillator(), b = ac.createBiquadFilter(), g = ac.createGain();
+    o.type = type; o.frequency.value = hz(n); b.type = 'lowpass'; b.frequency.value = cut;
+    env(g, t, peak, dec); o.connect(b).connect(g).connect(out); o.start(t); o.stop(t + dec + 0.02);
+  }
+  function play(t, s) {
+    const bar = Math.floor(s / 16) % 4, i = s % 16, ch = CHORDS[bar];
+    if (i % 4 === 0) kick(t);
+    if (i === 4 || i === 12) hiss(t, 'bandpass', 1700, 0.35, 0.16);
+    if (i % 2 === 0) hiss(t, 'highpass', 8000, i % 4 === 2 ? 0.16 : 0.07, i % 4 === 2 ? 0.09 : 0.03);
+    if (i % 4 === 2 || i === 15) tone(t, BASS[bar] + (i === 15 ? 12 : 0), 'sawtooth', 0.28, STEP * 1.8, 420);
+    if (i === 0 || i === 6 || i === 10) ch.forEach(n => tone(t, n + 12, 'sawtooth', 0.06, STEP * 2.6, 2200));
+    if (Math.floor(s / 64) % 2 === 1 && i % 2 === 1) tone(t, ch[(i >> 1) % 3] + 24, 'square', 0.035, STEP * 0.9, 3000); // arpège un tour sur deux
+  }
+  function sched() {
+    while (nextT < ac.currentTime + 0.15) { play(nextT, step++); nextT += STEP; }
+  }
+  function level() {
+    if (!out) return;
+    const v = !on ? 0 : ducked ? 0.1 : soft ? 0.2 : 0.32;
+    out.gain.cancelScheduledValues(ac.currentTime);
+    out.gain.setTargetAtTime(v, ac.currentTime, ducked ? 0.08 : 0.35);
+    filt.frequency.setTargetAtTime(soft ? 900 : 18000, ac.currentTime, 0.4);
+  }
+  return {
+    start() {
+      if (!S.musique || !setup()) return;
+      if (!on) { on = true; step = 0; nextT = ac.currentTime + 0.08; clearInterval(timer); timer = setInterval(sched, 25); }
+      level();
+    },
+    stop() { on = false; level(); clearInterval(timer); timer = 0; },
+    duck(d) { ducked = d; level(); },
+    rest(r) { soft = r; level(); },
+  };
+})();
+
 // ---------- FICHE EXERCICE ----------
 let detailV = null;
 let sheetEx = null;
@@ -291,6 +363,8 @@ function openExercise(id) {
   detailV.resize();
   detailV.start();
   $('.sheet-txt').scrollTop = 0;
+  // le coach explique tout de suite comment faire (si la voix est activée)
+  if (S.voix) setTimeout(() => { if (dlg.open && sheetEx === e && !(Coach.box === $('#ex-say') && Coach.busy)) $('#ex-coach').click(); }, 450);
 }
 $('#ex-close').addEventListener('click', () => dlg.close());
 dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
@@ -459,6 +533,8 @@ function startSession(prog, sIdx, week) {
   setVoiceBtn();
   pickVoice();
   unlockAudio();
+  setMusicBtn();
+  Music.start();
   Coach.attach($('#pl-coach'), playerV);
   showStep();
 }
@@ -477,6 +553,7 @@ function showStep() {
   const prev = P.steps[P.i - 1];
   playerV.setPaused(false);
   playerV.speed = isRest ? 0.6 : 1; // pendant le repos, le coach montre le prochain exercice au ralenti
+  Music.rest(isRest);
   playerV.setExercise(ex);
   playerV.start();
   $('#pl-phase').textContent = st.intro ? 'PRÊT ?' : isRest ? 'REPOS' : 'À TOI';
@@ -665,6 +742,7 @@ function finish() {
 function closePlayer() {
   clearInterval(P.timer);
   Coach.hush();
+  Music.stop();
   $('#pl-go').classList.remove('show');
   $('#player').hidden = true;
   document.body.style.overflow = '';
@@ -682,6 +760,13 @@ $('#pl-pause').addEventListener('click', () => {
   Coach.say(P.paused ? 'Pause. Je t\'attends : reprends quand tu veux.' : "C'est reparti !", { urgent: true });
 });
 $('#pl-quit').addEventListener('click', () => { if (!$('#pl-end').hidden || confirm('Arrêter la séance ? Elle ne sera pas comptée.')) closePlayer(); });
+function setMusicBtn() { const b = $('#pl-music'); b.setAttribute('aria-pressed', String(S.musique)); b.textContent = S.musique ? '🎵 Musique' : '🔇 Musique'; }
+$('#pl-music').addEventListener('click', () => {
+  S.musique = !S.musique;
+  save();
+  setMusicBtn();
+  if (S.musique) { unlockAudio(); Music.start(); } else Music.stop();
+});
 function setVoiceBtn() { const b = $('#pl-voice'); b.setAttribute('aria-pressed', String(S.voix)); b.textContent = S.voix ? '🔊 Voix' : '🔇 Voix'; }
 $('#pl-voice').addEventListener('click', () => {
   S.voix = !S.voix;

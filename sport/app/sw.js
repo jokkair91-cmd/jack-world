@@ -1,7 +1,7 @@
 // JACK SPORT : garde l'appli en mémoire pour qu'elle s'ouvre aussi sans connexion.
 // Réseau d'abord : en ligne on reçoit la dernière version ; hors ligne, la dernière copie gardée.
 // On garde aussi le moteur 3D (Three.js sur cdn.jsdelivr.net).
-const CACHE = 'jackworld-sport-app-2026-11-24-coach';
+const CACHE = 'jackworld-sport-app-2026-11-24-salle';
 const DEPART = ['index.html', 'style.css', 'app.js', 'data.js', 'mannequin.js', 'jack-sport.svg', 'manifest.webmanifest'];
 
 self.addEventListener('install', event => {
